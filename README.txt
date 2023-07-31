@@ -1,8 +1,3 @@
-React Implementation of 6 Hour Vue.js & Firebase Project - FireBlogs by Travery Media
-https://www.youtube.com/watch?v=ISv22NNL-aE
-https://github.com/johnkomarnicki/FireBlogs-YouTube/tree/Finished-Source-Code
-
-
 fixes:
     1 - look up 'share state between components without redux'
     2- use onAuthStateChange with reacthooks/ figure out how to validate user is logged in before page loads / figure out how to effectively call authentication function
@@ -34,8 +29,6 @@ fixes:
         maybe use Context/Providers
     24 - make navbar return back to its place when link is clicked
     25 - fix cover image not saving after clicking preview
-    
-
 
 dependencies:
     react-quill: https://www.npmjs.com/package/react-quill
