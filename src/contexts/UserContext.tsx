@@ -2,10 +2,11 @@ import React, { useState, useEffect, createContext, useContext } from "react";
 import { auth, db } from '../firebase/firebase-config';
 import { doc, getDoc } from 'firebase/firestore';
 import { User, onAuthStateChanged, signInWithEmailAndPassword, signOut, createUserWithEmailAndPassword, UserCredential } from "firebase/auth";
+import Loading from "../components/Loading";
 
 //figure out how to deal with promises
 interface IContextProps {
-    isAuth: boolean | undefined;
+    isAuth: () => boolean;
     isAdmin: boolean | undefined;
     getProfileInfo: () => {
         id: string;
@@ -29,7 +30,6 @@ export function useAuth() {
 export function UserContext({ children }: { children: React.ReactNode }) {
 
     const [isAdmin, setIsAdmin] = useState<boolean>();
-    const [isAuth, setIsAuth] = useState<boolean>();
     const [loading, setLoading] = useState(true)
     const [profile, setProfile] = useState<{
         id: string,
@@ -41,6 +41,7 @@ export function UserContext({ children }: { children: React.ReactNode }) {
     }>({ id: "null", email: null, firstName: null, lastName: null, userName: null, initials: null });
 
     useEffect(() => {
+
         const unsubscribe = onAuthStateChanged(auth, user => {
             if (user) {
                 setProfileInfo(user)
@@ -48,6 +49,7 @@ export function UserContext({ children }: { children: React.ReactNode }) {
                 resetProfileInfo()
             }
             setLoading(false)
+            console.log(loading)
         })
 
         return unsubscribe
@@ -57,6 +59,10 @@ export function UserContext({ children }: { children: React.ReactNode }) {
     //     return auth.currentUser
     // }
 
+    const isAuth = () => {
+        return auth.currentUser ? true : false
+    }
+    
     const getProfileInfo = () => {
         return profile
     }
@@ -71,7 +77,6 @@ export function UserContext({ children }: { children: React.ReactNode }) {
             userName: null,
             initials: null
         })
-        setIsAuth(false)
         setIsAdmin(false)
     }
 
@@ -98,8 +103,7 @@ export function UserContext({ children }: { children: React.ReactNode }) {
                     userName: docSnap.data().userName,
                     initials: docSnap.data().firstName.match(/(\b\S)?/g).join("") + docSnap.data().lastName.match(/(\b\S)?/g).join("")
                 })
-                setIsAuth(true)
-                setAdmin(user)
+                await setAdmin(user).then((value)=> {setIsAdmin(value)})
                 console.log(`isAdmin ${user.email} is ${isAdmin}`)
             } else {
                 console.log("Document does not exist")
@@ -110,12 +114,10 @@ export function UserContext({ children }: { children: React.ReactNode }) {
         }
     }
 
-
     const login = (email: string, password: string) => {
         return signInWithEmailAndPassword(auth, email, password)
             .then(() => {
                 console.log(auth.currentUser?.uid)
-                setIsAuth(true)
             })
             .catch((error) => {
                 console.log(`${error.code}: ${error.message}`)
@@ -124,9 +126,6 @@ export function UserContext({ children }: { children: React.ReactNode }) {
 
     const logout = () => {
         return signOut(auth)
-            .then(() => {
-                setIsAuth(false)
-            })
             .catch((error) => {
                 console.log(`${error.code}: ${error.message}`)
             });
@@ -147,7 +146,7 @@ export function UserContext({ children }: { children: React.ReactNode }) {
 
     return (
         <AuthContext.Provider value={value}>
-            {!loading && children}
+            {isAdmin !== undefined ? children: <Loading/>}
         </AuthContext.Provider>
     )
 }

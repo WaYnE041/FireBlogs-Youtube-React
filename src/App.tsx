@@ -83,9 +83,6 @@ function App() {
 	useEffect(() => {
 		if(effectRan.current === false) {
 			getPosts();
-			console.log("isAuth is " + isAuth)
-			console.log("isAdmin is " + isAdmin)
-			console.log("isSignOut is " + (!isAuth && !isAdmin))
 		}
 		return () => {
 			effectRan.current = true
@@ -213,19 +210,19 @@ function App() {
 							<Route path="/view-blog/:blogid" element={<ViewBlog blogPostList={blogPostList} />} />
 
 							{/* Non-Authenticated Routes: accessible only if user in not authenticated */}
-							<Route element={<GuardedRoutes isRouteAccessible={!isAuth} redirectRoute={"/"}/>}>
+							<Route element={<GuardedRoutes isRouteAccessible={!isAuth()} redirectRoute={"/"}/>}>
 								<Route path="/forgot-password" element={<ForgotPassword />} />
 								<Route path="/login" element={<Login />} />
 								<Route path="/register" element={<Register />} />
 							</Route>
 
 							{/* Authenticated Routes */}
-							<Route element={<GuardedRoutes isRouteAccessible={isAuth} redirectRoute={"/"}/>}>
+							<Route element={<GuardedRoutes isRouteAccessible={isAuth()} redirectRoute={"/"}/>}>
 								<Route path="/profile" element={<Profile />} />
 							</Route>
 
 							{/* Authenticated & Admin Routes */}
-							<Route element={<GuardedRoutes isRouteAccessible={isAuth && isAdmin} redirectRoute={"/"}/>}>
+							<Route element={<GuardedRoutes isRouteAccessible={isAuth() && isAdmin} redirectRoute={"/"}/>}>
 								<Route path="/admin" element={<Admin />} />
 								<Route path="/blog-preview" element={<BlogPreview blogPost={blogPost} />} />
 								<Route path="/create-post" element={

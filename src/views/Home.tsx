@@ -27,7 +27,7 @@ function Home( { children }: { children: React.JSX.Element[]}) {
 
 	return (
 		<div className='home'>
-			{!isAuth && (<BlogPost posts={welcomeScreen} />)}
+			{!isAuth() && (<BlogPost posts={welcomeScreen} />)}
 			{children[0]}
 
 			<div className="blog-card-wrap">
@@ -38,7 +38,7 @@ function Home( { children }: { children: React.JSX.Element[]}) {
 					</div>
 				</div>
 			</div>
-			{!isAuth && (
+			{!isAuth() && (
 				<div className="updates">
 					<div className="container">
 						<h2>Never Miss A Post. Register For Your Free Account Today!</h2>
