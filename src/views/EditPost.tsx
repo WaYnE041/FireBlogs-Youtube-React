@@ -17,20 +17,20 @@ Quill.register("modules/imageResize", ImageResize)
 
 function EditBlog({ blogPost, resetCurrentPost, editCurrentPost, editPostAlignment }: {
 	blogPost: {
-		id: string,
-		title: string;
+		blogId: string;
 		blogHTML: string;
 		blogCoverPhoto: string;
 		blogCoverPhotoName: string;
+		blogTitle: string;
 		welcomeScreen: boolean;
 	},
 	resetCurrentPost: (id: string) => void,
 	editCurrentPost: (currentPost: {
-		id: string;
-		title: string;
+		blogId: string;
 		blogHTML: string;
 		blogCoverPhoto: string;
 		blogCoverPhotoName: string;
+		blogTitle: string;
 		welcomeScreen: boolean;
 	}) => void,
 	editPostAlignment:  (currentPost: {
@@ -56,7 +56,7 @@ function EditBlog({ blogPost, resetCurrentPost, editCurrentPost, editPostAlignme
 		document.title = "Edit Post | DeadMarket"
 
 		//only set data if id does not match route blogid or it is blank
-		if ((routeid && blogPost.id !== routeid) || (routeid && blogPost.id === "")) {
+		if ((routeid && blogPost.blogId !== routeid) || (routeid && blogPost.blogId === "")) {
 			resetCurrentPost(routeid)
 		}
 
@@ -64,6 +64,10 @@ function EditBlog({ blogPost, resetCurrentPost, editCurrentPost, editPostAlignme
 			document.title = "DeadMarket"
 		};
 	}, []);
+
+	const toggleModal = (value: boolean) => {
+		setModalActive(value)
+	}
 
 	const coverHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
 		if (e.target.files) {
@@ -145,7 +149,7 @@ function EditBlog({ blogPost, resetCurrentPost, editCurrentPost, editPostAlignme
 	const uploadHandler = async () => {
 		console.log("Handling Upload")
 
-		if (blogPost.title.length === 0 ||
+		if (blogPost.blogTitle.length === 0 ||
 			blogPost.blogHTML === "<p><br></p>" ||
 			blogPost.blogHTML.trim().length === 0) {
 			setError(true)
@@ -156,7 +160,7 @@ function EditBlog({ blogPost, resetCurrentPost, editCurrentPost, editPostAlignme
 			return
 		}
 
-		if (blogPost.title.trim().length === 0 ||
+		if (blogPost.blogTitle.trim().length === 0 ||
 			blogPost.blogHTML.replace(/\s/g, '') === "<p></p>") {
 			setError(true)
 			setErrorMsg("Please ensure Blog Title & Blog Post is not comprised of whitespaces")
@@ -197,7 +201,7 @@ function EditBlog({ blogPost, resetCurrentPost, editCurrentPost, editPostAlignme
 			const downloadURL = await getDownloadURL(storageRef)
 
 			await updateDoc(docRef, {
-				blogTitle: blogPost.title,
+				blogTitle: blogPost.blogTitle,
 				blogHTML: blogPost.blogHTML,
 				blogCoverPhoto: downloadURL,
 				blogCoverPhotoName: storageRef.name,
@@ -209,11 +213,11 @@ function EditBlog({ blogPost, resetCurrentPost, editCurrentPost, editPostAlignme
 				blogHTML: blogPost.blogHTML,
 				blogCoverPhoto: downloadURL,
 				blogCoverPhotoName: storageRef.name,
-				blogTitle: blogPost.title,
+				blogTitle: blogPost.blogTitle,
 			})
 		} else {
 			await updateDoc(docRef, {
-				blogTitle: blogPost.title,
+				blogTitle: blogPost.blogTitle,
 				blogHTML: blogPost.blogHTML
 			})
 
@@ -221,17 +225,17 @@ function EditBlog({ blogPost, resetCurrentPost, editCurrentPost, editPostAlignme
 			editPostAlignment({
 				blogID: routeid,
 				blogHTML: blogPost.blogHTML,
-				blogTitle: blogPost.title,
+				blogTitle: blogPost.blogTitle,
 			})
 		}
 
 		setisLoading(false);
 		editCurrentPost({
-			id: "",
-			title: "",
+			blogId: "",
 			blogHTML: "",
 			blogCoverPhoto: "",
 			blogCoverPhotoName: "",
+			blogTitle: "",
 			welcomeScreen: false
 		})
 
@@ -283,18 +287,18 @@ function EditBlog({ blogPost, resetCurrentPost, editCurrentPost, editPostAlignme
 
 	return (
 		<div className="create-post">
-			{modalActive && <BlogCoverPreview blogPhotoFileURL={blogPost.blogCoverPhoto} setModalActive={setModalActive} />}
+			{modalActive && <BlogCoverPreview blogPhotoFileURL={blogPost.blogCoverPhoto} toggleModal={toggleModal} />}
 			{isLoading && <Loading />}
 			<div className="container">
 				<div className={!error ? "err-message invisible" : "err-message"}>
 					<p><span>Error: </span>{errorMsg}</p>
 				</div>
 				<div className="blog-info">
-					<input type="text" value={blogPost.title} placeholder="Enter Blog Title"
+					<input type="text" value={blogPost.blogTitle} placeholder="Enter Blog Title"
 						onChange={e => 
 							editCurrentPost({
 								...blogPost,
-								title: e.target.value
+								blogTitle: e.target.value
 							})
 							// setBlogPost(prevState => ({
 							// 	...prevState,

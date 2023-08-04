@@ -18,19 +18,19 @@ Quill.register("modules/imageResize", ImageResize)
 function CreatePost({ profileId, blogPost, editCurrentPost, createPostAlignment }: {
 	profileId: string,
 	blogPost: {
-		id: string,
-		title: string;
+		blogId: string,
 		blogHTML: string;
 		blogCoverPhoto: string;
 		blogCoverPhotoName: string;
+		blogTitle: string;
 		welcomeScreen: boolean;
 	},
 	editCurrentPost: (currentPost: {
-		id: string;
-		title: string;
+		blogId: string;
 		blogHTML: string;
 		blogCoverPhoto: string;
 		blogCoverPhotoName: string;
+		blogTitle: string;
 		welcomeScreen: boolean;
 	}) => void,
 	createPostAlignment: (currentPost: {
@@ -144,7 +144,7 @@ function CreatePost({ profileId, blogPost, editCurrentPost, createPostAlignment 
 	const uploadHandler = async () => {
 		console.log("Handling Upload")
 
-		if (blogPost.title.length === 0 ||
+		if (blogPost.blogTitle.length === 0 ||
 			blogPost.blogHTML === "<p><br></p>" ||
 			blogPost.blogHTML.trim().length === 0) {
 			setError(true)
@@ -155,7 +155,7 @@ function CreatePost({ profileId, blogPost, editCurrentPost, createPostAlignment 
 			return
 		}
 
-		if (blogPost.title.trim().length === 0 ||
+		if (blogPost.blogTitle.trim().length === 0 ||
 			blogPost.blogHTML.replace(/\s/g, '') === "<p></p>") {
 			setError(true)
 			setErrorMsg("Please ensure Blog Title & Blog Post is not comprised of whitespaces")
@@ -193,7 +193,7 @@ function CreatePost({ profileId, blogPost, editCurrentPost, createPostAlignment 
 
 		await setDoc(docRef, {
 			blogID: docRef.id,
-			blogTitle: blogPost.title,
+			blogTitle: blogPost.blogTitle,
 			blogHTML: blogPost.blogHTML,
 			blogCoverPhoto: downloadURL,
 			blogCoverPhotoName: storageRef.name,
@@ -207,18 +207,18 @@ function CreatePost({ profileId, blogPost, editCurrentPost, createPostAlignment 
 			blogHTML: blogPost.blogHTML,
 			blogCoverPhoto: downloadURL,
 			blogCoverPhotoName: storageRef.name,
-			blogTitle: blogPost.title,
+			blogTitle: blogPost.blogTitle,
 			blogDate: timestamp
 		})
 
 		setisLoading(false);
 
 		editCurrentPost({
-			id: "",
-			title: "",
+			blogId: "",
 			blogHTML: "",
 			blogCoverPhoto: "",
 			blogCoverPhotoName: "",
+			blogTitle: "",
 			welcomeScreen: false
 		})
 
@@ -276,11 +276,11 @@ function CreatePost({ profileId, blogPost, editCurrentPost, createPostAlignment 
 					<p><span>Error: </span>{errorMsg}</p>
 				</div>
 				<div className="blog-info">
-					<input type="text" value={blogPost.title} placeholder="Enter Blog Title"
+					<input type="text" value={blogPost.blogTitle} placeholder="Enter Blog Title"
 						onChange={e => 
 							editCurrentPost({
 								...blogPost,
-								title:  e.target.value
+								blogTitle:  e.target.value
 							})
 							// setBlogPost(prevState => ({
 							// 	...prevState,

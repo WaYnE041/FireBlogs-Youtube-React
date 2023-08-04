@@ -61,13 +61,13 @@ function App(
 
 	const [editPostEnabled, setEditPostEnabled] = useState<boolean>(false);
 	const [blogPost, setBlogPost] = useState<{
-		id: string,
-		title: string,
+		blogId: string,
 		blogHTML: string,
 		blogCoverPhoto: string,
 		blogCoverPhotoName: string,
+		blogTitle: string,
         welcomeScreen: boolean,
-	}>({ id: "", title: "", blogHTML: "", blogCoverPhoto: "", blogCoverPhotoName: "", welcomeScreen: false});
+	}>({ blogId: "", blogHTML: "", blogCoverPhoto: "", blogCoverPhotoName: "", blogTitle: "", welcomeScreen: false});
 
 	//fix for strictmode double render
 	useEffect(() => {
@@ -89,22 +89,22 @@ function App(
 	const resetCurrentPost = (id: string) => {
 		const index = blogPostList.findIndex(item => item.blogID === id);
 		setBlogPost({
-			id: blogPostList[index].blogID,
-			title: blogPostList[index].blogTitle,
+			blogId: blogPostList[index].blogID,
 			blogHTML: blogPostList[index].blogHTML,
 			blogCoverPhoto: blogPostList[index].blogCoverPhoto,
 			blogCoverPhotoName: blogPostList[index].blogCoverPhotoName,
+			blogTitle: blogPostList[index].blogTitle,
 			welcomeScreen: false,
 		})
 	}
 
 	const editCurrentPost = (
 		currentPost: { 
-			id: string,
-			title: string,
+			blogId: string,
 			blogHTML: string,
 			blogCoverPhoto: string,
 			blogCoverPhotoName: string,
+			blogTitle: string,
 			welcomeScreen: boolean
 		}) => {
 			setBlogPost(currentPost)
