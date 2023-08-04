@@ -17,8 +17,6 @@ import ViewBlog from './views/ViewBlog';
 import { useAuth } from './contexts/UserContext';
 import GuardedRoutes from './routes/GuardedRoutes';
 
-//import Loading from './components/Loading.tsx';
-
 import { useState, useEffect, useRef } from 'react'
 import { Routes, Route, useLocation } from "react-router-dom";
 import { db } from './firebase/firebase-config';
