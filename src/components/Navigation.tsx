@@ -33,10 +33,8 @@ function Navigation()
     const checkScreen = () => {
         setWindowWith(window.innerWidth)
         if (windowWidth <= 800) {
-            localStorage.setItem("mobileView", "true");
             setMobileView(true)
         } else {
-            localStorage.setItem("mobileView", "false");
             setMobileView(false)
             setMobileNav(false)
         }
