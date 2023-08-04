@@ -1,12 +1,17 @@
 import './App.css'
+import Home from './views/Home';
+import BlogPost from './components/BlogPost';
+import BlogCard from './components/BlogCard';
+
+import Blogs from './views/Blogs';
 import Navigation from './components/Navigation'
 import Footer from './components/Footer';
-import Home from './views/Home';
+
 import CreatePost from './views/CreatePost';
 import Login from './views/Login';
 import Register from './views/Register';
 import ForgotPassword from './views/ForgotPassword';
-import Blogs from './views/Blogs';
+
 import Profile from './views/Profile';
 import Admin from './views/Admin';
 import BlogPreview from './views/BlogPreview';
@@ -67,7 +72,13 @@ function App(
 		blogCoverPhotoName: string,
         welcomeScreen: boolean,
 	}>({ id: "", title: "", blogHTML: "", blogCoverPhoto: "", blogCoverPhotoName: "", welcomeScreen: false});
-	
+
+	const blogPostsFeed = () => {
+		return blogPostList.slice(0,2)
+	}
+	const blogCardsFeed = () => {
+		return blogPostList.slice(2,6)
+	}
 
 	//fix for strictmode double render
 
@@ -78,7 +89,6 @@ function App(
 
     }, [auth.currentUser]);
 
-
 	return (
 		<> 
 			<div className="app-wrapper">
@@ -86,8 +96,21 @@ function App(
 						{ !disabledRoutes.includes(useLocation().pathname) && <Navigation isAuth={isAuth} setIsAuth={setIsAuth} isAdmin={isAdmin} profileInfo={profileInfo} />}
 						<Routes>
 							{/* Unguarded Routes */}
-							<Route path="/" element={<Home isAuth={isAuth} blogPostList={blogPostList} editPostEnabled={editPostEnabled} setBlogPostList={setBlogPostList}/>} />
-							<Route path="/blogs" element={<Blogs isAdmin={isAdmin} blogPostList={blogPostList} editPostEnabled={editPostEnabled} setEditPostEnabled={setEditPostEnabled} setBlogPostList={setBlogPostList}/>} />
+							<Route path="/" 
+								element={
+									<Home isAuth={isAuth}>
+										<BlogPost isAuth={isAuth} posts={blogPostsFeed()} />
+										<BlogCard editPostEnabled={editPostEnabled} cards={blogCardsFeed()} setBlogPostList={setBlogPostList}/>
+									</Home>
+								} 
+							/>
+							<Route path="/blogs" 
+								element={
+									<Blogs isAdmin={isAdmin} setEditPostEnabled={setEditPostEnabled}>
+										<BlogCard editPostEnabled={editPostEnabled} cards={blogPostList} setBlogPostList={setBlogPostList} />
+									</Blogs>
+								} 
+							/>
 							<Route path="/view-blog/:blogid" element={<ViewBlog postLoaded={postLoaded} blogPostList={blogPostList} />} />
 
 							{/* Non-Authenticated Routes: accessible only if user in not authenticated */}
@@ -106,8 +129,12 @@ function App(
 							<Route element={<GuardedRoutes isRouteAccessible={isAuth && isAdmin} redirectRoute={"/"}/>}>
 								<Route path="/admin" element={<Admin />} />
 								<Route path="/blog-preview" element={<BlogPreview blogPost={blogPost} />} />
-								<Route path="/create-post" element={<CreatePost profileId={profileInfo.id} blogPost={blogPost} setBlogPost={setBlogPost} setBlogPostList={setBlogPostList} />} />
-								<Route path="/edit-blog/:blogid" element={<EditPost blogPost={blogPost} setBlogPost={setBlogPost} blogPostList={blogPostList} setBlogPostList={setBlogPostList} />} />
+								<Route path="/create-post" element={
+									<CreatePost profileId={profileInfo.id} blogPost={blogPost} setBlogPost={setBlogPost} setBlogPostList={setBlogPostList} />
+								} />
+								<Route path="/edit-blog/:blogid" element={
+									<EditPost blogPost={blogPost} setBlogPost={setBlogPost} blogPostList={blogPostList} setBlogPostList={setBlogPostList} />
+								} />
 							</Route>
 
 							{/* Not found Route */}

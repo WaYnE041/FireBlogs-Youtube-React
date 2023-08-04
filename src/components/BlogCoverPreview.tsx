@@ -9,7 +9,6 @@ function BlogCoverPreview({ blogPhotoFileURL, setModalActive }: {
     <div className="modal">
         <div className="modal-content">
             <Close className="icon" onClick={() => setModalActive(false)} />
-            
             <img src={blogPhotoFileURL} alt="Cover Photo Preview" />
         </div>
     </div>

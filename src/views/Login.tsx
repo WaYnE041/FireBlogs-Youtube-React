@@ -1,8 +1,8 @@
 import '../styles/Login.css'
-import { Link, useNavigate} from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
-import {ReactComponent as Email} from '../assets/Icons/envelope-regular.svg'
-import {ReactComponent as Password} from '../assets/Icons/lock-alt-solid.svg'
+import {ReactComponent as Email } from '../assets/Icons/envelope-regular.svg'
+import {ReactComponent as Password } from '../assets/Icons/lock-alt-solid.svg'
 import { signInWithEmailAndPassword } from 'firebase/auth'
 import { auth } from '../firebase/firebase-config'
 
