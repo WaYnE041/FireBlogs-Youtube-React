@@ -1,6 +1,5 @@
 import '../styles/Home.css'
 import BlogPost from '../components/BlogPost'
-import BlogCard from '../components/BlogCard'
 import { ReactComponent as Arrow } from '../assets/Icons/arrow-right-light.svg'
 import { Link } from "react-router-dom";
 //import { NavLink } from "react-router-dom";
