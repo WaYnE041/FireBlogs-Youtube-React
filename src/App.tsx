@@ -14,50 +14,20 @@ import Login from './views/Login';
 import Profile from './views/Profile';
 import Register from './views/Register';
 import ViewBlog from './views/ViewBlog';
-import GuardedRoutes from './GuardedRoutes';
+import { useAuth } from './contexts/UserContext';
+import GuardedRoutes from './routes/GuardedRoutes';
 
-import { useState, useEffect } from 'react'
-import { auth } from './firebase/firebase-config';
+//import Loading from './components/Loading.tsx';
+
+import { useState, useEffect, useRef } from 'react'
 import { Routes, Route, useLocation } from "react-router-dom";
+import { db } from './firebase/firebase-config';
+import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 
-function App(
-	{ 
-		isAuth, setIsAuth, 
-		isAdmin, profileInfo, postLoaded,
-		blogPostList, setBlogPostList
-	 }: {
-		isAuth: boolean,
-		setIsAuth: React.Dispatch<React.SetStateAction<boolean | undefined>>
-		isAdmin: boolean,
-		profileInfo: {
-			id: string, 
-			email: string | null; 
-			firstName:string | null;
-			lastName: string | null;
-			userName: string | null;
-			initials: string | null;
-		},
-		postLoaded: boolean,
-		blogPostList: {
-			blogID: string,
-			blogHTML: string,
-			blogCoverPhoto: string,
-			blogCoverPhotoName: string,
-			blogTitle: string,
-			blogDate: number,
-			welcomeScreen: boolean,
-		}[],
-		setBlogPostList: React.Dispatch<React.SetStateAction<{
-			blogID: string;
-			blogHTML: string;
-			blogCoverPhoto: string;
-			blogCoverPhotoName: string;
-			blogTitle: string;
-			blogDate: number;
-			welcomeScreen: boolean;
-		}[]>>
-	}
-) {
+
+function App() {
+
+	const { isAuth, isAdmin } = useAuth()
 
 	const [editPostEnabled, setEditPostEnabled] = useState<boolean>(false);
 	const [blogPost, setBlogPost] = useState<{
@@ -68,19 +38,61 @@ function App(
 		blogTitle: string,
         welcomeScreen: boolean,
 	}>({ blogId: "", blogHTML: "", blogCoverPhoto: "", blogCoverPhotoName: "", blogTitle: "", welcomeScreen: false});
+	
+	const [blogPostList, setBlogPostList] = useState<{
+		blogID: string,
+		blogHTML: string,
+		blogCoverPhoto: string,
+		blogCoverPhotoName: string,
+		blogTitle: string,
+		blogDate: number,
+        welcomeScreen: boolean,
+	}[]>([]);
+
+	const getPosts = async () => {
+		const postCollectionRef = collection(db, "blogPosts",)
+		const dataQuery = query(postCollectionRef, orderBy("unixTimestamp", "desc"));
+		const dbResult = await getDocs(dataQuery)
+    	dbResult.docs.forEach((doc) => {
+			if (!blogPostList.some(post => post.blogID === doc.id)){
+				const data: {
+					blogID: string,
+					blogHTML: string,
+					blogCoverPhoto: string,
+					blogCoverPhotoName: string
+					blogTitle: string,
+					blogDate: number,
+					welcomeScreen: boolean
+				} = {
+					blogID: doc.data().blogID,
+					blogHTML: doc.data().blogHTML,
+					blogCoverPhoto: doc.data().blogCoverPhoto,
+					blogCoverPhotoName: doc.data().blogCoverPhotoName,					
+					blogTitle: doc.data().blogTitle,
+					blogDate: doc.data().unixTimestamp,
+					welcomeScreen: false
+				}
+				setBlogPostList(current => [...current, data])
+			}
+		})
+	}
 
 	//fix for strictmode double render
-	useEffect(() => {
-		console.log("isAuth is " + isAuth)
-		console.log("isAdmin is " + isAdmin)
-		console.log("isSignOut is " + (!isAuth && !isAdmin))
+	const effectRan = useRef(false)
 
-    }, [auth.currentUser]);
+	useEffect(() => {
+		if(effectRan.current === false) {
+			getPosts();
+			console.log("isAuth is " + isAuth)
+			console.log("isAdmin is " + isAdmin)
+			console.log("isSignOut is " + (!isAuth && !isAdmin))
+		}
+		return () => {
+			effectRan.current = true
+		}
+    }, []);
 
 	//Set State Functions ---------------------------------
-	const changeAuth = (value: boolean) => {
-		setIsAuth(value);
-	};
 
 	const toggleEditPost = (value: boolean) => {
 		setEditPostEnabled(value)
@@ -180,36 +192,36 @@ function App(
 		<> 
 			<div className="app-wrapper">
 				<div className="app">
-						{ !disabledRoutes.includes(useLocation().pathname) && <Navigation isAuth={isAuth} isAdmin={isAdmin} changeAuth={changeAuth} profileInfo={profileInfo} />}
+						{ !disabledRoutes.includes(useLocation().pathname) && <Navigation />}
 						<Routes>
 							{/* Unguarded Routes */}
 							<Route path="/" 
 								element={
-									<Home isAuth={isAuth}>
-										<BlogPost isAuth={isAuth} posts={blogPostsFeed()} />
+									<Home>
+										<BlogPost posts={blogPostsFeed()} />
 										<BlogCard editPostEnabled={editPostEnabled} cards={blogCardsFeed()} deletePostAlignment={deletePostAlignment}/>
 									</Home>
 								} 
 							/>
 							<Route path="/blogs" 
 								element={
-									<Blogs isAdmin={isAdmin} toggleEditPost={toggleEditPost}>
+									<Blogs toggleEditPost={toggleEditPost}>
 										<BlogCard editPostEnabled={editPostEnabled} cards={blogPostList} deletePostAlignment={deletePostAlignment} />
 									</Blogs>
 								} 
 							/>
-							<Route path="/view-blog/:blogid" element={<ViewBlog postLoaded={postLoaded} blogPostList={blogPostList} />} />
+							<Route path="/view-blog/:blogid" element={<ViewBlog blogPostList={blogPostList} />} />
 
 							{/* Non-Authenticated Routes: accessible only if user in not authenticated */}
 							<Route element={<GuardedRoutes isRouteAccessible={!isAuth} redirectRoute={"/"}/>}>
 								<Route path="/forgot-password" element={<ForgotPassword />} />
-								<Route path="/login" element={<Login changeAuth={changeAuth} />} />
+								<Route path="/login" element={<Login />} />
 								<Route path="/register" element={<Register />} />
 							</Route>
 
 							{/* Authenticated Routes */}
 							<Route element={<GuardedRoutes isRouteAccessible={isAuth} redirectRoute={"/"}/>}>
-								<Route path="/profile" element={<Profile profileInfo={profileInfo} />} />
+								<Route path="/profile" element={<Profile />} />
 							</Route>
 
 							{/* Authenticated & Admin Routes */}
@@ -217,7 +229,7 @@ function App(
 								<Route path="/admin" element={<Admin />} />
 								<Route path="/blog-preview" element={<BlogPreview blogPost={blogPost} />} />
 								<Route path="/create-post" element={
-									<CreatePost profileId={profileInfo.id} blogPost={blogPost} editCurrentPost={editCurrentPost} createPostAlignment={createPostAlignment} />
+									<CreatePost blogPost={blogPost} editCurrentPost={editCurrentPost} createPostAlignment={createPostAlignment} />
 								} />
 								<Route path="/edit-blog/:routeid" element={
 									<EditPost blogPost={blogPost} resetCurrentPost={resetCurrentPost} editCurrentPost={editCurrentPost} editPostAlignment={editPostAlignment} />
@@ -228,7 +240,7 @@ function App(
 							<Route path="*" element={<p>Page Not Found</p>} />
 						
 						</Routes>
-						{ !disabledRoutes.includes(useLocation().pathname) && <Footer isAuth={isAuth} isAdmin={isAdmin} />}
+						{ !disabledRoutes.includes(useLocation().pathname) && <Footer />}
 				</div>
 			</div>
 		</>

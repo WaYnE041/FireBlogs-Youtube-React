@@ -1,14 +1,17 @@
 import '../styles/Login.css'
-import { Link, useNavigate } from 'react-router-dom'
-import { useState, useEffect } from 'react'
+import { useAuth } from '../contexts/UserContext'
 import {ReactComponent as Email} from '../assets/Icons/envelope-regular.svg'
 import {ReactComponent as Password} from '../assets/Icons/lock-alt-solid.svg'
 import {ReactComponent as User} from '../assets/Icons/user-alt-light.svg'
-import { createUserWithEmailAndPassword } from "firebase/auth"
 import { doc, setDoc } from 'firebase/firestore'
-import { auth, db } from '../firebase/firebase-config'
+import { db } from '../firebase/firebase-config'
+import { Link, useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+
 
 function Register() {
+
+    const { register } = useAuth()
     const [authDetails, setAuthDetails] = useState<{
         firstName: null | string,
         lastName: null | string,
@@ -29,7 +32,7 @@ function Register() {
         };
     }, []);
 
-    const Register = async (ev: any) => {
+    const signUp = async (ev: any) => {
         ev.preventDefault();
         const isEmpty = Object.values(authDetails).some(x => x === null || x === '');
         if (isEmpty) {
@@ -42,7 +45,7 @@ function Register() {
                 console.log(`error is ${isError}`)
                 console.log(authDetails)
 
-            await createUserWithEmailAndPassword(auth, authDetails.email!, authDetails.password!)
+            await register(authDetails.email!, authDetails.password!)
             .then(async (userCredential) => {
                 const userCollectionRef = doc(db, "users", userCredential.user.uid)
                 await setDoc(userCollectionRef, {
@@ -80,7 +83,7 @@ function Register() {
 
     return (
         <div className="form-wrap">
-			<form className="register" onSubmit={Register}>
+			<form className="register" onSubmit={signUp}>
 				<p className="login-register">
 					Already have an account?
 					<Link className="router-link" to="/login">Login</Link>

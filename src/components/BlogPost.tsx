@@ -1,12 +1,12 @@
 import '../styles/BlogPost.css'
+import { useAuth } from '../contexts/UserContext';
+import { ReactComponent as Arrow } from '../assets/Icons/arrow-right-light.svg'
 import { Link } from "react-router-dom";
 //import { NavLink } from "react-router-dom";
-import { ReactComponent as Arrow } from '../assets/Icons/arrow-right-light.svg'
 import parse from 'html-react-parser';
 
 
-function BlogPost({ isAuth, posts }: { 
-	isAuth: boolean,
+function BlogPost({  posts }: { 
 	posts: { 
 		blogID: string
 		blogTitle: string; 
@@ -16,7 +16,8 @@ function BlogPost({ isAuth, posts }: {
 	}[] 
 }) 
 {
-
+	const { isAuth } = useAuth()
+	
 	const getImageUrl = (name: string) => {
 		return new URL(`../assets/blogPhotos/${name}.jpg`, import.meta.url).href
 	}

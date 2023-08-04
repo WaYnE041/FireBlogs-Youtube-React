@@ -1,14 +1,16 @@
 import '../styles/Blogs.css'
+import { useAuth } from '../contexts/UserContext'
 import { useEffect } from 'react'
 
 function Blogs(
-    { isAdmin, toggleEditPost, children}: {
-        isAdmin: boolean,
+    { toggleEditPost, children}: {
         toggleEditPost: (id: boolean) => void,
         children: React.ReactNode
-
     }
 ) {
+
+    const { isAdmin } = useAuth()
+
     useEffect(() => {
         document.title = "Blogs | DeadMarket"
         return () => {

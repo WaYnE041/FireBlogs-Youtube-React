@@ -1,21 +1,14 @@
 import '../styles/Profile.css'
 import Modal from '../components/Modal'
+import { useAuth } from '../contexts/UserContext'
 import { useState, useEffect } from 'react'
 import { ReactComponent as AdminIcon } from '../assets/Icons/user-crown-light.svg'
 import {  doc, setDoc } from "firebase/firestore";
 import { db } from '../firebase/firebase-config';
 
-function Profile({ profileInfo }: {
-	profileInfo: {
-		id: null | string,
-		email: null | string,
-		firstName: null | string,
-		lastName: null | string,
-		userName: null | string,
-		initials: null | string,
-	}
-}) {
+function Profile() {
 
+	const { getProfileInfo } = useAuth()
 	const [modalActive, setModalActive] = useState<boolean>(false);
 	const [modalMessage, setModalMessage] = useState<string | null>(null);
 
@@ -44,12 +37,12 @@ function Profile({ profileInfo }: {
 			setModalMessage("Please Fill Out All The Fields")
 			setModalActive(true)
 		} else {
-			const docRef = doc(db, "users", profileInfo.id!)
+			const docRef = doc(db, "users", getProfileInfo().id!)
 			await setDoc(docRef, {
 				firstName: profileVal.firstName,
 				lastName: profileVal.lastName,
 				userName: profileVal.userName,
-				email: profileInfo.email
+				email: getProfileInfo().email
 			})
 			.then(() => {
 				window.location.reload();
@@ -69,7 +62,7 @@ function Profile({ profileInfo }: {
 			<div className="container">
 				<h2>Account Settings</h2>
 				<div className="profile-info">
-					<div className="initials">{profileInfo.initials}</div>
+					<div className="initials">{getProfileInfo().initials}</div>
 					<div className="admin-badge">
 						<AdminIcon className="icon" />
 						<span>admin</span>
@@ -77,19 +70,19 @@ function Profile({ profileInfo }: {
 					<form onSubmit={updateProfile}>
 						<div className="input">
 							<label htmlFor="firstName">First Name:</label>
-							<input type="text" id="firstName" name="firstName" placeholder={profileInfo.firstName!}/>
+							<input type="text" id="firstName" name="firstName" placeholder={getProfileInfo().firstName!}/>
 						</div>
 						<div className="input">
 							<label htmlFor="lastName">Last Name:</label>
-							<input type="text" id="lastName" name="lastName" placeholder={profileInfo.lastName!} />
+							<input type="text" id="lastName" name="lastName" placeholder={getProfileInfo().lastName!} />
 						</div>
 						<div className="input">
 							<label htmlFor="userName">Username:</label>
-							<input type="text" id="userName" name="userName" placeholder={profileInfo.userName!} />
+							<input type="text" id="userName" name="userName" placeholder={getProfileInfo().userName!} />
 						</div>
 						<div className="input">
 							<label htmlFor="email">Email:</label>
-							<input disabled type="text" id="email" placeholder={profileInfo.email!}/>
+							<input disabled type="text" id="email" placeholder={getProfileInfo().email!}/>
 						</div>
 						<button type='submit'>Save Changes</button>
 					</form>

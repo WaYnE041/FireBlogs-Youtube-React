@@ -1,16 +1,18 @@
 import '../styles/Footer.css'
-import { Link } from "react-router-dom";
-//import { NavLink } from "react-router-dom";
+import { useAuth } from '../contexts/UserContext';
 import {ReactComponent as Youtube}  from "../assets/Icons/youtube-brands.svg";
 import {ReactComponent as Twitter}  from "../assets/Icons/twitter-brands.svg";
 import {ReactComponent as Instagram}  from "../assets/Icons/instagram-brands.svg";
 import {ReactComponent as LinkedIn}  from "../assets/Icons/linkedin-brands.svg";
+import { Link } from "react-router-dom";
+//import { NavLink } from "react-router-dom";
 
-function Footer({ isAuth, isAdmin }: {
-    isAuth: boolean,
-    isAdmin: boolean,
-})
+function Footer()
 {
+    const { 
+		isAuth,
+        isAdmin,
+	} = useAuth()
   return (
     <footer>
         <div className="container">

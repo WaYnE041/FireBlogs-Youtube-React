@@ -1,24 +1,21 @@
 import '../styles/Login.css'
+import { useAuth } from '../contexts/UserContext'
 import { Link, useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import {ReactComponent as Email } from '../assets/Icons/envelope-regular.svg'
 import {ReactComponent as Password } from '../assets/Icons/lock-alt-solid.svg'
-import { signInWithEmailAndPassword } from 'firebase/auth'
-import { auth } from '../firebase/firebase-config'
 
-function Login({ changeAuth }: {
-	changeAuth: (auth: boolean) => void,
-}) 
+function Login() 
 {
+    const { login } = useAuth()
+    const navigate = useNavigate();
+
 	const [loginDetails, setLoginDetails] = useState<{
 		email: null | string, 
 		password: null | string
 	}>({ email: null, password: null });
-
 	const [isError, setisError] = useState<boolean>(false);
     const [errorMessage, setErrorMessage] = useState<string>();
-
-    const navigate = useNavigate();
 
 	useEffect(() => {
         document.title = "Login | DeadMarket"
@@ -26,9 +23,8 @@ function Login({ changeAuth }: {
           document.title = "DeadMarket"
         };
       }, []);
-
 	
-	  const Login = async (ev: any) => {
+	  const signIn = async (ev: any) => {
         ev.preventDefault();
         const isEmpty = Object.values(loginDetails).some(x => x === null || x === '');
         if (isEmpty) {
@@ -41,10 +37,8 @@ function Login({ changeAuth }: {
                 console.log(`error is ${isError}`)
                 console.log(loginDetails)
 
-            await signInWithEmailAndPassword(auth, loginDetails.email!, loginDetails.password!)
+            await login(loginDetails.email!, loginDetails.password!)
             .then(() => {
-				console.log(auth.currentUser?.uid)
-				changeAuth(true)
                 navigate("/");
             })
             .catch((error) => {
@@ -66,7 +60,7 @@ function Login({ changeAuth }: {
 
 	return (
 		<div className="form-wrap">
-			<form className="login" onSubmit={Login}>
+			<form className="login" onSubmit={signIn}>
 				<p className="login-register">
 					Don't have an account?
 					<Link className="router-link" to="/register">Register</Link>

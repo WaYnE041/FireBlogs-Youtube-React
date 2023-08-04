@@ -1,28 +1,22 @@
 import '../styles/Navigation.css'
-import { useState, useEffect } from 'react'
-import { Link } from "react-router-dom";
-//import { NavLink } from "react-router-dom";
+import { useAuth } from '../contexts/UserContext';
 import { ReactComponent as MenuIcon} from '../assets/Icons/bars-regular.svg'
 import { ReactComponent as UserIcon } from '../assets/Icons/user-alt-light.svg'
 import { ReactComponent as AdminIcon } from '../assets/Icons/user-crown-light.svg'
 import { ReactComponent as SignOutIcon } from '../assets/Icons/sign-out-alt-regular.svg'
-import { signOut } from 'firebase/auth';
-import { auth} from '../firebase/firebase-config';
+import { useState, useEffect } from 'react'
+import { Link } from "react-router-dom";
+//import { NavLink } from "react-router-dom";
 
-function Navigation({ isAuth, isAdmin, changeAuth, profileInfo }: {
-    isAuth: boolean,
-    isAdmin: boolean,
-    changeAuth: (auth: boolean) => void,
-    profileInfo: {
-        id: null | string, 
-        email: null | string, 
-        firstName: null | string, 
-        lastName: null | string,
-        userName: null | string,
-        initials: null | string,
-    }
-})
+function Navigation()
 {
+    const { 
+        isAuth,
+        isAdmin,
+        getProfileInfo,
+        logout
+    } = useAuth()
+
     const [mobileView, setMobileView] = useState<boolean>(false);
     const [mobileNav, setMobileNav] = useState<boolean>(false);
     const [profileMenu, setProfileMenu] = useState<boolean>(false);
@@ -61,10 +55,7 @@ function Navigation({ isAuth, isAdmin, changeAuth, profileInfo }: {
     }
 
     const signUserOut = () => {
-		signOut(auth).then(() => {
-			localStorage.clear();
-			changeAuth(false)
-		})
+		logout()
 	}
     
   return (
@@ -84,15 +75,15 @@ function Navigation({ isAuth, isAdmin, changeAuth, profileInfo }: {
                 )}
                 
         { isAuth && (<div className="profile mobile-user-menu" id="profile" onClick={toggleProfileMenu}>
-                <span>{profileInfo.initials}</span>
+                <span>{getProfileInfo().initials}</span>
                 { profileMenu && (
                     <div className="profile-menu">
                         <div className="info">
-                            <p className='initials'>{profileInfo.initials}</p>
+                            <p className='initials'>{getProfileInfo().initials}</p>
                             <div className='right'>
-                                <p>{profileInfo.firstName} {profileInfo.lastName}</p>
-                                <p>{profileInfo.userName}</p>
-                                <p>{profileInfo.email}</p>
+                                <p>{getProfileInfo().firstName} {getProfileInfo().lastName}</p>
+                                <p>{getProfileInfo().userName}</p>
+                                <p>{getProfileInfo().email}</p>
                             </div>
                         </div>
                         <div className="options">

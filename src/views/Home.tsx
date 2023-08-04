@@ -1,12 +1,13 @@
 import '../styles/Home.css'
 import BlogPost from '../components/BlogPost'
+import { useAuth } from '../contexts/UserContext';
 import { ReactComponent as Arrow } from '../assets/Icons/arrow-right-light.svg'
+import { useEffect } from 'react'
 import { Link } from "react-router-dom";
 //import { NavLink } from "react-router-dom";
-import { useEffect } from 'react'
 
-function Home( { isAuth, children }: 
-	{  isAuth: boolean, children: React.JSX.Element[],}) {
+function Home( { children }: { children: React.JSX.Element[]}) {
+	const { isAuth } = useAuth()
 
 	const welcomeScreen = [{
 		blogID: "",
@@ -26,7 +27,7 @@ function Home( { isAuth, children }:
 
 	return (
 		<div className='home'>
-			{!isAuth && (<BlogPost isAuth={isAuth} posts={welcomeScreen} />)}
+			{!isAuth && (<BlogPost posts={welcomeScreen} />)}
 			{children[0]}
 
 			<div className="blog-card-wrap">

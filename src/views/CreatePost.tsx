@@ -1,6 +1,7 @@
 import '../styles/CreatePost.css'
 import BlogCoverPreview from '../components/BlogCoverPreview';
 import Loading from '../components/Loading';
+import { useAuth } from '../contexts/UserContext';
 
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom'
@@ -15,8 +16,7 @@ import { ImageResize } from "quill-image-resize-module-ts";
 import 'react-quill/dist/quill.snow.css';
 Quill.register("modules/imageResize", ImageResize)
 
-function CreatePost({ profileId, blogPost, editCurrentPost, createPostAlignment }: {
-	profileId: string,
+function CreatePost({ blogPost, editCurrentPost, createPostAlignment }: {
 	blogPost: {
 		blogId: string,
 		blogHTML: string;
@@ -45,6 +45,7 @@ function CreatePost({ profileId, blogPost, editCurrentPost, createPostAlignment 
 	const quillRef = useRef<ReactQuill>(null);
 	const navigate = useNavigate();
 	const blogContentFolderID = uuidv4();
+	const { getProfileInfo } = useAuth()
 
 	const [isLoading, setisLoading] = useState<boolean>(false);
 	const [error, setError] = useState<boolean>(false);
@@ -197,7 +198,7 @@ function CreatePost({ profileId, blogPost, editCurrentPost, createPostAlignment 
 			blogHTML: blogPost.blogHTML,
 			blogCoverPhoto: downloadURL,
 			blogCoverPhotoName: storageRef.name,
-			profileId: profileId,
+			profileId: getProfileInfo().id,
 			unixTimestamp: timestamp
 		})
 
