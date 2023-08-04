@@ -5,9 +5,10 @@ import { User, onAuthStateChanged, signInWithEmailAndPassword, signOut, createUs
 import Loading from "../components/Loading";
 
 //figure out how to deal with promises
+//might need to revert isAuth and isAdmin back to variables
 interface IContextProps {
-    isAuth: () => boolean;
-    isAdmin: () => boolean;
+    isAuth: boolean | undefined;
+    isAdmin: boolean | undefined;
     getProfileInfo: () => {
         id: string;
         email: string | null;
@@ -60,15 +61,15 @@ export function UserContext({ children }: { children: React.ReactNode }) {
         return false
     }
 
-    const isAuth = useCallback(() => {
-        // console.log("isAuth ran")
-        return authUser ? authUser : false
-    }, [authUser])
+    // const isAuth = useCallback(() => {
+    //     // console.log("isAuth ran")
+    //     return authUser ? authUser : false
+    // }, [authUser])
 
-    const isAdmin = useCallback(() => {
-        // console.log("isAdmin ran")
-        return adminUser ? adminUser : false
-    }, [adminUser])
+    // const isAdmin = useCallback(() => {
+    //     // console.log("isAdmin ran")
+    //     return adminUser ? adminUser : false
+    // }, [adminUser])
     
     const getProfileInfo = useCallback(() => {
         // console.log("getProfileInfo ran")
@@ -114,7 +115,6 @@ export function UserContext({ children }: { children: React.ReactNode }) {
                 })
                 setAuthUser(true)
                 await setAdmin(user).then((value)=> {setAdminUser(value)})
-                //console.log(`isAdmin ${user.email} is ${isAdmin()}`)
             } else {
                 console.log("Document does not exist")
             }
@@ -146,8 +146,8 @@ export function UserContext({ children }: { children: React.ReactNode }) {
     }
 
     const value = {
-        isAuth,
-        isAdmin,
+        isAuth: authUser,
+        isAdmin: adminUser,
         getProfileInfo,
         login,
         logout,

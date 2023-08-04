@@ -63,7 +63,7 @@ function Profile() {
 				<h2>Account Settings</h2>
 				<div className="profile-info">
 					<div className="initials">{getProfileInfo().initials}</div>
-					{ isAdmin() && 
+					{ isAdmin && 
 						<div className="admin-badge">
 							<AdminIcon className="icon" />
 							<span>admin</span>

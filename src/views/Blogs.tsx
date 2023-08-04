@@ -21,7 +21,7 @@ function Blogs(
     return (
         <div className="blog-card-wrap">
             <div className="blog-cards container">
-                { isAdmin() &&
+                { isAdmin &&
                     <div className="toggle-edit">
                         <span>Toggle Editing Post</span>
                         <input type="checkbox" onChange={e => toggleEditPost(e.target.checked)} />
