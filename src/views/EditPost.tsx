@@ -15,7 +15,7 @@ import { ImageResize } from "quill-image-resize-module-ts";
 import 'react-quill/dist/quill.snow.css';
 Quill.register("modules/imageResize", ImageResize)
 
-function EditBlog({ blogPost, setBlogPost, blogPostList, setBlogPostList }: {
+function EditBlog({ blogPost, resetCurrentPost, editCurrentPost, editPostAlignment }: {
 	blogPost: {
 		id: string,
 		title: string;
@@ -24,34 +24,24 @@ function EditBlog({ blogPost, setBlogPost, blogPostList, setBlogPostList }: {
 		blogCoverPhotoName: string;
 		welcomeScreen: boolean;
 	},
-	setBlogPost: React.Dispatch<React.SetStateAction<{
+	resetCurrentPost: (id: string) => void,
+	editCurrentPost: (currentPost: {
 		id: string;
 		title: string;
 		blogHTML: string;
 		blogCoverPhoto: string;
 		blogCoverPhotoName: string;
 		welcomeScreen: boolean;
-	}>>,
-	blogPostList: {
+	}) => void,
+	editPostAlignment:  (currentPost: {
 		blogID: string,
-		blogHTML: string,
-		blogCoverPhoto: string,
-		blogCoverPhotoName: string,
-		blogTitle: string,
-		blogDate: number,
-		welcomeScreen: boolean,
-	}[],
-	setBlogPostList: React.Dispatch<React.SetStateAction<{
-		blogID: string;
 		blogHTML: string;
-		blogCoverPhoto: string;
-		blogCoverPhotoName: string,
+		blogCoverPhoto?: string;
+		blogCoverPhotoName?: string,
 		blogTitle: string;
-		blogDate: number;
-		welcomeScreen: boolean;
-	}[]>>
+	}) => void
 }) {
-	const { blogid } = useParams()
+	const { routeid } = useParams()
 	const quillRef = useRef<ReactQuill>(null);
 	const navigate = useNavigate();
 	const blogContentFolderID = uuidv4();
@@ -65,18 +55,9 @@ function EditBlog({ blogPost, setBlogPost, blogPostList, setBlogPostList }: {
 	useEffect(() => {
 		document.title = "Edit Post | DeadMarket"
 
-		const index = blogPostList.findIndex(item => item.blogID === blogid);
-
 		//only set data if id does not match route blogid or it is blank
-		if (blogPost.id === "" || blogPost.id !== blogid) {
-			setBlogPost({
-				id: blogPostList[index].blogID,
-				title: blogPostList[index].blogTitle,
-				blogHTML: blogPostList[index].blogHTML,
-				blogCoverPhoto: blogPostList[index].blogCoverPhoto,
-				blogCoverPhotoName: blogPostList[index].blogCoverPhotoName,
-				welcomeScreen: false,
-			})
+		if ((routeid && blogPost.id !== routeid) || (routeid && blogPost.id === "")) {
+			resetCurrentPost(routeid)
 		}
 
 		return () => {
@@ -89,22 +70,30 @@ function EditBlog({ blogPost, setBlogPost, blogPostList, setBlogPostList }: {
 			const coverFile = e.target.files[0]
 			console.log("Cover File:", coverFile)
 
-			setBlogPost(prevState => ({
-				...prevState,
+			editCurrentPost({
+				...blogPost,
 				blogCoverPhoto: URL.createObjectURL(coverFile),
 				blogCoverPhotoName: coverFile.name
-			}))
+			})
+			// setBlogPost(prevState => ({
+			// 	...prevState,
+			// 	blogCoverPhoto: URL.createObjectURL(coverFile),
+			// 	blogCoverPhotoName: coverFile.name
+			// }))
 			setCoverFileChanged(true)
 		}
 	}
 
 	const inputHander = (targetValue: string) => {
 		console.log(blogPost)
-
-		setBlogPost(prevState => ({
-			...prevState,
+		editCurrentPost({
+			...blogPost,
 			blogHTML: targetValue
-		}))
+		})
+		// setBlogPost(prevState => ({
+		// 	...prevState,
+		// 	blogHTML: targetValue
+		// }))
 	}
 
 	const imageHandler = async () => {
@@ -187,11 +176,11 @@ function EditBlog({ blogPost, setBlogPost, blogPostList, setBlogPostList }: {
 		// }
 
 		setisLoading(true);
-		if (!blogid) {
+		if (!routeid) {
 			console.log("invalid Id");
 			return
 		}
-		const docRef = doc(db, "blogPosts", blogid)
+		const docRef = doc(db, "blogPosts", routeid)
 
 		if (coverFileChanged) {
 			const uniqueId = uuidv4()
@@ -215,18 +204,13 @@ function EditBlog({ blogPost, setBlogPost, blogPostList, setBlogPostList }: {
 			})
 
 			//aligns front end with backend without rerender
-			const index = blogPostList.findIndex(item => item.blogID === blogid);
-			const newBlogPostsList = blogPostList.slice() 
-			newBlogPostsList[index] = {
-				blogID: newBlogPostsList[index].blogID,
+			editPostAlignment({
+				blogID: routeid,
 				blogHTML: blogPost.blogHTML,
 				blogCoverPhoto: downloadURL,
 				blogCoverPhotoName: storageRef.name,
 				blogTitle: blogPost.title,
-				blogDate: newBlogPostsList[index].blogDate,
-				welcomeScreen: false
-			} 
-			setBlogPostList(newBlogPostsList)
+			})
 		} else {
 			await updateDoc(docRef, {
 				blogTitle: blogPost.title,
@@ -234,22 +218,15 @@ function EditBlog({ blogPost, setBlogPost, blogPostList, setBlogPostList }: {
 			})
 
 			//aligns front end with backend without rerender
-			const index = blogPostList.findIndex(item => item.blogID === blogid);
-			const newBlogPostsList = blogPostList.slice() 
-			newBlogPostsList[index] = {
-				blogID: newBlogPostsList[index].blogID,
+			editPostAlignment({
+				blogID: routeid,
 				blogHTML: blogPost.blogHTML,
-				blogCoverPhoto: newBlogPostsList[index].blogCoverPhoto,
-				blogCoverPhotoName: newBlogPostsList[index].blogCoverPhotoName,
 				blogTitle: blogPost.title,
-				blogDate: newBlogPostsList[index].blogDate,
-				welcomeScreen: false
-			} 
-			setBlogPostList(newBlogPostsList)
+			})
 		}
 
 		setisLoading(false);
-		setBlogPost({
+		editCurrentPost({
 			id: "",
 			title: "",
 			blogHTML: "",
@@ -314,10 +291,16 @@ function EditBlog({ blogPost, setBlogPost, blogPostList, setBlogPostList }: {
 				</div>
 				<div className="blog-info">
 					<input type="text" value={blogPost.title} placeholder="Enter Blog Title"
-						onChange={e => setBlogPost(prevState => ({
-							...prevState,
-							title: e.target.value
-						}))}
+						onChange={e => 
+							editCurrentPost({
+								...blogPost,
+								title: e.target.value
+							})
+							// setBlogPost(prevState => ({
+							// 	...prevState,
+							// 	title: e.target.value
+							// }))
+						}
 					/>
 					<div className="upload-file">
 						<label htmlFor="blog-photo">Upload Cover Photo</label>

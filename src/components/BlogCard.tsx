@@ -10,23 +10,15 @@ import { db } from '../firebase/firebase-config';
 import { doc, deleteDoc } from 'firebase/firestore';
 
 
-function BlogCard({ editPostEnabled, cards, setBlogPostList}: { 
-	editPostEnabled: boolean
+function BlogCard({ editPostEnabled, cards, deletePostAlignment }: { 
+	editPostEnabled: boolean,
 	cards: { 
 		blogID: string; 
 		blogTitle: string; 
 		blogDate: number; 
 		blogCoverPhoto: string; 
 	}[],
-	setBlogPostList: React.Dispatch<React.SetStateAction<{
-		blogID: string;
-		blogHTML: string;
-		blogCoverPhoto: string;
-		blogCoverPhotoName: string,
-		blogTitle: string;
-		blogDate: number;
-		welcomeScreen: boolean;
-	}[]>>
+	deletePostAlignment: (id: string) => void,
 }) {
 
 	const navigate = useNavigate()
@@ -36,9 +28,7 @@ function BlogCard({ editPostEnabled, cards, setBlogPostList}: {
 		await deleteDoc(postDoc)
 
 		//aligns front end with backend without rerender
-		setBlogPostList(current =>
-      		current.filter((x) => x.blogID !== id)
-		)
+		deletePostAlignment(id)
 	}
 
 	const editPost = async (id: string) => {

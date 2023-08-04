@@ -15,7 +15,7 @@ import { ImageResize } from "quill-image-resize-module-ts";
 import 'react-quill/dist/quill.snow.css';
 Quill.register("modules/imageResize", ImageResize)
 
-function CreatePost({ profileId, blogPost, setBlogPost, setBlogPostList }: {
+function CreatePost({ profileId, blogPost, editCurrentPost, createPostAlignment }: {
 	profileId: string,
 	blogPost: {
 		id: string,
@@ -25,23 +25,22 @@ function CreatePost({ profileId, blogPost, setBlogPost, setBlogPostList }: {
 		blogCoverPhotoName: string;
 		welcomeScreen: boolean;
 	},
-	setBlogPost: React.Dispatch<React.SetStateAction<{
+	editCurrentPost: (currentPost: {
 		id: string;
 		title: string;
 		blogHTML: string;
 		blogCoverPhoto: string;
 		blogCoverPhotoName: string;
 		welcomeScreen: boolean;
-	}>>,
-	setBlogPostList: React.Dispatch<React.SetStateAction<{
+	}) => void,
+	createPostAlignment: (currentPost: {
 		blogID: string;
 		blogHTML: string;
 		blogCoverPhoto: string;
-		blogCoverPhotoName: string,
+		blogCoverPhotoName: string;
 		blogTitle: string;
 		blogDate: number;
-		welcomeScreen: boolean;
-	}[]>>
+	}) => void
 }) {
 	const quillRef = useRef<ReactQuill>(null);
 	const navigate = useNavigate();
@@ -65,21 +64,31 @@ function CreatePost({ profileId, blogPost, setBlogPost, setBlogPostList }: {
 			const coverFile = e.target.files[0]
 			console.log("Cover File:", coverFile)
 
-			setBlogPost(prevState => ({
-				...prevState,
+			editCurrentPost({
+				...blogPost,
 				blogCoverPhoto: URL.createObjectURL(coverFile),
 				blogCoverPhotoName: coverFile.name
-			}))
+			})
+			// setBlogPost(prevState => ({
+			// 	...prevState,
+			// 	blogCoverPhoto: URL.createObjectURL(coverFile),
+			// 	blogCoverPhotoName: coverFile.name
+			// }))
+			
 		}
 	}
 
 	const inputHander = (targetValue: string) => {
 		console.log(blogPost)
 
-		setBlogPost(prevState => ({
-			...prevState,
+		editCurrentPost({
+			...blogPost,
 			blogHTML: targetValue
-		}))
+		})
+		// setBlogPost(prevState => ({
+		// 	...prevState,
+		// 	blogHTML: targetValue
+		// }))
 	}
 
 	const imageHandler = async () => {
@@ -189,21 +198,18 @@ function CreatePost({ profileId, blogPost, setBlogPost, setBlogPostList }: {
 		})
 
 		//aligns front end with backend without rerender
-		setBlogPostList(current => [
-			{
-				blogID: docRef.id,
-				blogHTML: blogPost.blogHTML,
-				blogCoverPhoto: downloadURL,
-				blogCoverPhotoName: storageRef.name,
-				blogTitle: blogPost.title,
-				blogDate: timestamp,
-				welcomeScreen: false
-			},
-			...current
-		])
+		createPostAlignment({
+			blogID: docRef.id,
+			blogHTML: blogPost.blogHTML,
+			blogCoverPhoto: downloadURL,
+			blogCoverPhotoName: storageRef.name,
+			blogTitle: blogPost.title,
+			blogDate: timestamp
+		})
 
 		setisLoading(false);
-		setBlogPost({
+
+		editCurrentPost({
 			id: "",
 			title: "",
 			blogHTML: "",
@@ -211,7 +217,7 @@ function CreatePost({ profileId, blogPost, setBlogPost, setBlogPostList }: {
 			blogCoverPhotoName: "",
 			welcomeScreen: false
 		})
-		//navigate("/")
+
 		navigate(`/view-blog/${docRef.id}`)
 
 	}
@@ -267,10 +273,16 @@ function CreatePost({ profileId, blogPost, setBlogPost, setBlogPostList }: {
 				</div>
 				<div className="blog-info">
 					<input type="text" value={blogPost.title} placeholder="Enter Blog Title"
-						onChange={e => setBlogPost(prevState => ({
-							...prevState,
-							title: e.target.value
-						}))}
+						onChange={e => 
+							editCurrentPost({
+								...blogPost,
+								title:  e.target.value
+							})
+							// setBlogPost(prevState => ({
+							// 	...prevState,
+							// 	title: e.target.value
+							// }))
+						}
 					/>
 					<div className="upload-file">
 						<label htmlFor="blog-photo">Upload Cover Photo</label>

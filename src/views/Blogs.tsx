@@ -2,9 +2,9 @@ import '../styles/Blogs.css'
 import { useEffect } from 'react'
 
 function Blogs(
-    { isAdmin, setEditPostEnabled, children}: {
+    { isAdmin, toggleEditPost, children}: {
         isAdmin: boolean,
-        setEditPostEnabled: (active: boolean) => void,
+        toggleEditPost: (id: boolean) => void,
         children: React.ReactNode
 
     }
@@ -22,7 +22,7 @@ function Blogs(
                 { isAdmin &&
                     <div className="toggle-edit">
                         <span>Toggle Editing Post</span>
-                        <input type="checkbox" onChange={e => setEditPostEnabled(e.target.checked)} />
+                        <input type="checkbox" onChange={e => toggleEditPost(e.target.checked)} />
                     </div>
                 }
                 { children }

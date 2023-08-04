@@ -9,10 +9,10 @@ import { ReactComponent as SignOutIcon } from '../assets/Icons/sign-out-alt-regu
 import { signOut } from 'firebase/auth';
 import { auth} from '../firebase/firebase-config';
 
-function Navigation({ isAuth, setIsAuth, isAdmin, profileInfo }: {
+function Navigation({ isAuth, isAdmin, changeAuth, profileInfo }: {
     isAuth: boolean,
-    setIsAuth: React.Dispatch<React.SetStateAction<boolean | undefined>>,
     isAdmin: boolean,
+    changeAuth: (auth: boolean) => void,
     profileInfo: {
         id: null | string, 
         email: null | string, 
@@ -63,7 +63,7 @@ function Navigation({ isAuth, setIsAuth, isAdmin, profileInfo }: {
     const signUserOut = () => {
 		signOut(auth).then(() => {
 			localStorage.clear();
-			setIsAuth(false);
+			changeAuth(false)
 		})
 	}
     

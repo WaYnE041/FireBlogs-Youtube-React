@@ -6,8 +6,8 @@ import {ReactComponent as Password } from '../assets/Icons/lock-alt-solid.svg'
 import { signInWithEmailAndPassword } from 'firebase/auth'
 import { auth } from '../firebase/firebase-config'
 
-function Login({ setIsAuth }: {
-	setIsAuth: React.Dispatch<React.SetStateAction<boolean | undefined>>
+function Login({ changeAuth }: {
+	changeAuth: (auth: boolean) => void,
 }) 
 {
 	const [loginDetails, setLoginDetails] = useState<{
@@ -44,7 +44,7 @@ function Login({ setIsAuth }: {
             await signInWithEmailAndPassword(auth, loginDetails.email!, loginDetails.password!)
             .then(() => {
 				console.log(auth.currentUser?.uid)
-				setIsAuth(true);
+				changeAuth(true)
                 navigate("/");
             })
             .catch((error) => {
