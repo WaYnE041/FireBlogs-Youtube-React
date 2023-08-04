@@ -61,7 +61,6 @@ function App(
 		}[]>>
 	}
 ) {
-	const disabledRoutes = ["/login", "/register", "/forgot-password"]
 
 	const [editPostEnabled, setEditPostEnabled] = useState<boolean>(false);
 	const [blogPost, setBlogPost] = useState<{
@@ -73,7 +72,16 @@ function App(
         welcomeScreen: boolean,
 	}>({ id: "", title: "", blogHTML: "", blogCoverPhoto: "", blogCoverPhotoName: "", welcomeScreen: false});
 
-	//Set State Functions ---------------
+	//fix for strictmode double render
+
+	useEffect(() => {
+		console.log("isAuth is " + isAuth)
+		console.log("isAdmin is " + isAdmin)
+		console.log("isSignOut is " + (!isAuth && !isAdmin))
+
+    }, [auth.currentUser]);
+
+	//Set State Functions ---------------------------------
 	const changeAuth = (value: boolean) => {
 		setIsAuth(value);
 	};
@@ -159,7 +167,7 @@ function App(
 			current.filter((x) => x.blogID !== id)
 	  	)
 	};
-	// ----------------------------
+	// -------------------------------------------------------
 
 	const blogPostsFeed = () => {
 		return blogPostList.slice(0,2)
@@ -168,14 +176,7 @@ function App(
 		return blogPostList.slice(2,6)
 	}
 
-	//fix for strictmode double render
-
-	useEffect(() => {
-		console.log("isAuth is " + isAuth)
-		console.log("isAdmin is " + isAdmin)
-		console.log("isSignOut is " + (!isAuth && !isAdmin))
-
-    }, [auth.currentUser]);
+	const disabledRoutes = ["/login", "/register", "/forgot-password"]
 
 	return (
 		<> 
