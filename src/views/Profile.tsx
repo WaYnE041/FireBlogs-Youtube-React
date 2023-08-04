@@ -19,6 +19,17 @@ function Profile({ profileInfo }: {
 	const [modalActive, setModalActive] = useState<boolean>(false);
 	const [modalMessage, setModalMessage] = useState<string | null>(null);
 
+	useEffect(() => {
+        document.title = "Profile | DeadMarket"
+        return () => {
+            document.title = "DeadMarket"
+        };
+    }, []);
+
+	const toggleModal = (value: boolean) => {
+		setModalActive(value)
+	}
+
 	const updateProfile = async (e: any) => {
 		e.preventDefault();
 		const profileVal = {
@@ -51,16 +62,10 @@ function Profile({ profileInfo }: {
 		}
 	}
 
-	useEffect(() => {
-        document.title = "Profile | DeadMarket"
-        return () => {
-            document.title = "DeadMarket"
-        };
-    }, []);
 
 	return (
 		<div className="profile">
-			{modalActive && <Modal modalMessage={modalMessage} setModalActive={setModalActive} />}
+			{modalActive && <Modal modalMessage={modalMessage} toggleModal={toggleModal} />}
 			<div className="container">
 				<h2>Account Settings</h2>
 				<div className="profile-info">

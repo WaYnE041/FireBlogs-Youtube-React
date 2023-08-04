@@ -58,6 +58,10 @@ function CreatePost({ profileId, blogPost, editCurrentPost, createPostAlignment 
 			document.title = "DeadMarket"
 		};
 	}, []);
+	
+	const toggleModal = (value: boolean) => {
+		setModalActive(value)
+	}
 
 	const coverHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
 		if (e.target.files) {
@@ -265,7 +269,7 @@ function CreatePost({ profileId, blogPost, editCurrentPost, createPostAlignment 
 
 	return (
 		<div className="create-post">
-			{modalActive && <BlogCoverPreview blogPhotoFileURL={blogPost.blogCoverPhoto} setModalActive={setModalActive} />}
+			{modalActive && <BlogCoverPreview blogPhotoFileURL={blogPost.blogCoverPhoto} toggleModal={toggleModal} />}
 			{isLoading && <Loading />}
 			<div className="container">
 				<div className={!error ? "err-message invisible" : "err-message"}>

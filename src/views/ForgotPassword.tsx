@@ -20,6 +20,10 @@ function ForgotPassword() {
             document.title = "DeadMarket"
         };
     }, []);
+    
+    const toggleModal = (value: boolean) => {
+		setModalActive(value)
+	}
 
     const resetPassword = (e: any) => {
         e.preventDefault();
@@ -50,7 +54,7 @@ function ForgotPassword() {
 
     return (
         <div className="reset-password">
-            { modalActive && <Modal modalMessage={modalMessage} setModalActive={setModalActive}/> }
+            { modalActive && <Modal modalMessage={modalMessage} toggleModal={toggleModal}/> }
             { isLoading && <Loading /> }
             <div className="form-wrap">
                 <form id="reset-form" className="reset" onSubmit={resetPassword}>

@@ -1,14 +1,14 @@
 import '../styles/BlogCoverPreview.css'
 import { ReactComponent as Close } from '../assets/Icons/times-circle-light.svg'
 
-function BlogCoverPreview({ blogPhotoFileURL, setModalActive }: { 
+function BlogCoverPreview({ blogPhotoFileURL, toggleModal }: { 
     blogPhotoFileURL: string, 
-    setModalActive: (active: boolean) => void, 
+    toggleModal: (value: boolean) => void, 
 }) {
   return (
     <div className="modal">
         <div className="modal-content">
-            <Close className="icon" onClick={() => setModalActive(false)} />
+            <Close className="icon" onClick={() => toggleModal(false)} />
             <img src={blogPhotoFileURL} alt="Cover Photo Preview" />
         </div>
     </div>

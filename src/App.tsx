@@ -73,7 +73,6 @@ function App(
 	}>({ id: "", title: "", blogHTML: "", blogCoverPhoto: "", blogCoverPhotoName: "", welcomeScreen: false});
 
 	//fix for strictmode double render
-
 	useEffect(() => {
 		console.log("isAuth is " + isAuth)
 		console.log("isAdmin is " + isAdmin)
@@ -169,9 +168,11 @@ function App(
 	};
 	// -------------------------------------------------------
 
+	//Return first 2 entries to display as homepage feed
 	const blogPostsFeed = () => {
 		return blogPostList.slice(0,2)
 	}
+	//Return next 4 entries to display on homepage as cards
 	const blogCardsFeed = () => {
 		return blogPostList.slice(2,6)
 	}
@@ -182,7 +183,7 @@ function App(
 		<> 
 			<div className="app-wrapper">
 				<div className="app">
-						{ !disabledRoutes.includes(useLocation().pathname) && <Navigation isAuth={isAuth} isAdmin={isAdmin} changeAuth={changeAuth}  profileInfo={profileInfo} />}
+						{ !disabledRoutes.includes(useLocation().pathname) && <Navigation isAuth={isAuth} isAdmin={isAdmin} changeAuth={changeAuth} profileInfo={profileInfo} />}
 						<Routes>
 							{/* Unguarded Routes */}
 							<Route path="/" 

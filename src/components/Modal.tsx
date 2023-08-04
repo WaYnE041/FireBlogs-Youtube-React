@@ -1,14 +1,14 @@
 import '../styles/Modal.css'
 
-function Modal({ modalMessage, setModalActive }: { 
+function Modal({ modalMessage, toggleModal }: { 
     modalMessage: string | null, 
-    setModalActive: (active: boolean) => void, 
+    toggleModal: (value: boolean) => void, 
 }) {
   return (
     <div className="modal">
         <div className="modal-content">
             <p>{modalMessage}</p>
-            <button onClick={() => setModalActive(false)}>Close</button>
+            <button onClick={() => toggleModal(false)}>Close</button>
         </div>
     </div>
   )
