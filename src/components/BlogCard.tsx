@@ -40,7 +40,7 @@ function BlogCard({ editPostEnabled, cards, deletePostAlignment }: {
 		<>
 			{cards.map((card) => {
 				return (
-					<div className='blog-card'>
+					<div key={card.blogID} className='blog-card'>
 						{ editPostEnabled && 
 							<div className="icons">
 								<div className="icon" onClick={() => editPost(card.blogID)}>

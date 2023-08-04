@@ -25,7 +25,7 @@ function BlogPost({ isAuth, posts }: {
 		<>
 			{posts.map((post) => {
 				return (
-					<div className={!isAuth ? "blog-wrapper no-user" : "blog-wrapper"}>
+					<div key={post.blogID} className={!isAuth ? "blog-wrapper no-user" : "blog-wrapper"}>
 						<div className="blog-content">
 							<div>
 								<h2>{post.blogTitle}</h2>
