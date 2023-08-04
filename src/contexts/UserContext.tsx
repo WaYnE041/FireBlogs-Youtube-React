@@ -31,7 +31,6 @@ export function UserContext({ children }: { children: React.ReactNode }) {
 
     const [authUser, setAuthUser] = useState<boolean>()
     const [adminUser, setAdminUser] = useState<boolean>();
-    const [loading, setLoading] = useState(true)
     const [profile, setProfile] = useState<{
         id: string,
         email: string | null;
@@ -49,15 +48,17 @@ export function UserContext({ children }: { children: React.ReactNode }) {
             } else {
                 resetProfileInfo()
             }
-            setLoading(false)
         })
 
         return unsubscribe
     }, [auth.currentUser])
 
-    // const getUser = () => {
-    //     return auth.currentUser
-    // }
+    const isLoading = () => {
+        if(authUser === undefined || adminUser === undefined){
+            return true
+        }
+        return false
+    }
 
     const isAuth = useCallback(() => {
         // console.log("isAuth ran")
@@ -155,7 +156,7 @@ export function UserContext({ children }: { children: React.ReactNode }) {
 
     return (
         <AuthContext.Provider value={value}>
-            {adminUser !== undefined ? children: <Loading/>}
+            {isLoading() ?  <Loading/> : children }
         </AuthContext.Provider>
     )
 }
