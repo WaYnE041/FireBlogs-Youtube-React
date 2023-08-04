@@ -1,27 +1,24 @@
 import './App.css'
-import Home from './views/Home';
-import BlogPost from './components/BlogPost';
 import BlogCard from './components/BlogCard';
-
-import Blogs from './views/Blogs';
-import Navigation from './components/Navigation'
+import BlogPost from './components/BlogPost';
 import Footer from './components/Footer';
-
-import CreatePost from './views/CreatePost';
-import Login from './views/Login';
-import Register from './views/Register';
-import ForgotPassword from './views/ForgotPassword';
-
-import Profile from './views/Profile';
+import Navigation from './components/Navigation'
 import Admin from './views/Admin';
 import BlogPreview from './views/BlogPreview';
+import Blogs from './views/Blogs';
+import CreatePost from './views/CreatePost';
 import EditPost from './views/EditPost';
+import ForgotPassword from './views/ForgotPassword';
+import Home from './views/Home';
+import Login from './views/Login';
+import Profile from './views/Profile';
+import Register from './views/Register';
 import ViewBlog from './views/ViewBlog';
 import GuardedRoutes from './GuardedRoutes';
+
 import { useState, useEffect } from 'react'
 import { auth } from './firebase/firebase-config';
 import { Routes, Route, useLocation } from "react-router-dom";
-
 
 function App(
 	{ 
