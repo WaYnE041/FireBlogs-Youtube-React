@@ -50,7 +50,6 @@ export function UserContext({ children }: { children: React.ReactNode }) {
                 resetProfileInfo()
             }
             setLoading(false)
-            console.log(loading)
         })
 
         return unsubscribe
@@ -61,17 +60,17 @@ export function UserContext({ children }: { children: React.ReactNode }) {
     // }
 
     const isAuth = useCallback(() => {
-        console.log("isAuth ran")
+        // console.log("isAuth ran")
         return authUser ? authUser : false
     }, [authUser])
 
     const isAdmin = useCallback(() => {
-        console.log("isAdmin ran")
+        // console.log("isAdmin ran")
         return adminUser ? adminUser : false
     }, [adminUser])
     
     const getProfileInfo = useCallback(() => {
-        console.log("getProfileInfo ran")
+        // console.log("getProfileInfo ran")
         return profile
     }, [profile])
 
@@ -114,7 +113,7 @@ export function UserContext({ children }: { children: React.ReactNode }) {
                 })
                 setAuthUser(true)
                 await setAdmin(user).then((value)=> {setAdminUser(value)})
-                console.log(`isAdmin ${user.email} is ${isAdmin}`)
+                //console.log(`isAdmin ${user.email} is ${isAdmin()}`)
             } else {
                 console.log("Document does not exist")
             }
@@ -156,7 +155,7 @@ export function UserContext({ children }: { children: React.ReactNode }) {
 
     return (
         <AuthContext.Provider value={value}>
-            {isAdmin !== undefined ? children: <Loading/>}
+            {adminUser !== undefined ? children: <Loading/>}
         </AuthContext.Provider>
     )
 }

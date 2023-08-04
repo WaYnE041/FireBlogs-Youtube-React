@@ -8,7 +8,7 @@ import { db } from '../firebase/firebase-config';
 
 function Profile() {
 
-	const { getProfileInfo } = useAuth()
+	const { isAdmin, getProfileInfo } = useAuth()
 	const [modalActive, setModalActive] = useState<boolean>(false);
 	const [modalMessage, setModalMessage] = useState<string | null>(null);
 
@@ -63,10 +63,12 @@ function Profile() {
 				<h2>Account Settings</h2>
 				<div className="profile-info">
 					<div className="initials">{getProfileInfo().initials}</div>
-					<div className="admin-badge">
-						<AdminIcon className="icon" />
-						<span>admin</span>
-					</div>
+					{ isAdmin() && 
+						<div className="admin-badge">
+							<AdminIcon className="icon" />
+							<span>admin</span>
+						</div>
+					}
 					<form onSubmit={updateProfile}>
 						<div className="input">
 							<label htmlFor="firstName">First Name:</label>
