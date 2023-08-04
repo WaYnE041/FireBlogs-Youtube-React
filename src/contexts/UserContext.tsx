@@ -1,4 +1,4 @@
-import React, { useState, useEffect, createContext, useContext } from "react";
+import React, { useState, useEffect, createContext, useContext, useCallback } from "react";
 import { auth, db } from '../firebase/firebase-config';
 import { doc, getDoc } from 'firebase/firestore';
 import { User, onAuthStateChanged, signInWithEmailAndPassword, signOut, createUserWithEmailAndPassword, UserCredential } from "firebase/auth";
@@ -7,7 +7,7 @@ import Loading from "../components/Loading";
 //figure out how to deal with promises
 interface IContextProps {
     isAuth: () => boolean;
-    isAdmin: boolean | undefined;
+    isAdmin: () => boolean;
     getProfileInfo: () => {
         id: string;
         email: string | null;
@@ -29,7 +29,8 @@ export function useAuth() {
 
 export function UserContext({ children }: { children: React.ReactNode }) {
 
-    const [isAdmin, setIsAdmin] = useState<boolean>();
+    const [authUser, setAuthUser] = useState<boolean>()
+    const [adminUser, setAdminUser] = useState<boolean>();
     const [loading, setLoading] = useState(true)
     const [profile, setProfile] = useState<{
         id: string,
@@ -59,13 +60,20 @@ export function UserContext({ children }: { children: React.ReactNode }) {
     //     return auth.currentUser
     // }
 
-    const isAuth = () => {
-        return auth.currentUser ? true : false
-    }
+    const isAuth = useCallback(() => {
+        console.log("isAuth ran")
+        return authUser ? authUser : false
+    }, [authUser])
+
+    const isAdmin = useCallback(() => {
+        console.log("isAdmin ran")
+        return adminUser ? adminUser : false
+    }, [adminUser])
     
-    const getProfileInfo = () => {
+    const getProfileInfo = useCallback(() => {
+        console.log("getProfileInfo ran")
         return profile
-    }
+    }, [profile])
 
     const resetProfileInfo = () => {
         console.log("user is signed out")
@@ -77,7 +85,8 @@ export function UserContext({ children }: { children: React.ReactNode }) {
             userName: null,
             initials: null
         })
-        setIsAdmin(false)
+        setAuthUser(false)
+        setAdminUser(false)
     }
 
     const setAdmin = async (user: User | null) => {
@@ -103,7 +112,8 @@ export function UserContext({ children }: { children: React.ReactNode }) {
                     userName: docSnap.data().userName,
                     initials: docSnap.data().firstName.match(/(\b\S)?/g).join("") + docSnap.data().lastName.match(/(\b\S)?/g).join("")
                 })
-                await setAdmin(user).then((value)=> {setIsAdmin(value)})
+                setAuthUser(true)
+                await setAdmin(user).then((value)=> {setAdminUser(value)})
                 console.log(`isAdmin ${user.email} is ${isAdmin}`)
             } else {
                 console.log("Document does not exist")

@@ -222,7 +222,7 @@ function App() {
 							</Route>
 
 							{/* Authenticated & Admin Routes */}
-							<Route element={<GuardedRoutes isRouteAccessible={isAuth() && isAdmin} redirectRoute={"/"}/>}>
+							<Route element={<GuardedRoutes isRouteAccessible={isAuth() && isAdmin()} redirectRoute={"/"}/>}>
 								<Route path="/admin" element={<Admin />} />
 								<Route path="/blog-preview" element={<BlogPreview blogPost={blogPost} />} />
 								<Route path="/create-post" element={

@@ -38,7 +38,7 @@ function Footer()
                     <ul>
                     <Link className="link" to="/">Home</Link>
                     <Link className="link" to="/blogs">Blogs</Link>
-                    { isAdmin && isAuth() && <Link v-if="admin" className="link" to="/create-post">Create Post</Link>}
+                    { isAdmin() && isAuth() && <Link v-if="admin" className="link" to="/create-post">Create Post</Link>}
                     { !isAuth() && (<Link className="link" to="/login">Login In / Register</Link>)}
                     </ul>
                 </div> 

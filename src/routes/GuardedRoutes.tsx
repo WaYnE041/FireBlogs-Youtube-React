@@ -3,12 +3,12 @@ import { useAuth } from '../contexts/UserContext'
 
 function GuardedRoutes( { isRouteAccessible, redirectRoute = "/" }: { isRouteAccessible: boolean | undefined, redirectRoute: string }) {
 
-  // const { isAuth, isAdmin } = useAuth()
-  // if(isAuth() !== undefined && isAdmin !== undefined){
-  //   console.log("isAuth is " + isAuth())
-  //   console.log("isAdmin is " + isAdmin)
-  //   console.log("isSignOut is " + (!isAuth() && !isAdmin))
-  // }
+  const { isAuth, isAdmin } = useAuth()
+  if(isAuth() !== undefined && isAdmin() !== undefined){
+    console.log("isAuth is " + isAuth())
+    console.log("isAdmin is " + isAdmin())
+    console.log("isSignOut is " + (!isAuth() && !isAdmin()))
+  }
 
   console.log("isroute accessible: " + isRouteAccessible)
   return (

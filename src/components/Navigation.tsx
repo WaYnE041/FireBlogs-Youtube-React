@@ -69,7 +69,7 @@ function Navigation()
                     <ul>
                         <Link className="link" to="/">Home</Link>
                         <Link className="link" to="/blogs">Blogs</Link>
-                        { isAdmin && isAuth() && <Link className="link" to="/create-post">Create Post</Link>}
+                        { isAdmin() && isAuth() && <Link className="link" to="/create-post">Create Post</Link>}
                         { !isAuth() && (<Link className="link" to="/login">Login/Register</Link>)}
                     </ul>
                 )}
@@ -93,7 +93,7 @@ function Navigation()
                                     <p>Profile</p>
                                 </div> 
                             </Link>   
-                            {isAdmin && 
+                            {isAdmin() && 
                                 <Link className="option" to="/admin">  
                                     <div className="option">
                                         <AdminIcon className="icon"/>
@@ -117,7 +117,7 @@ function Navigation()
         <ul className={mobileNav ? "show-mobile-nav mobile-nav" : "mobile-nav"}>
             <Link className="link" to="/">Home</Link>
             <Link className="link" to="/blogs">Blogs</Link>
-            { isAdmin && isAuth() && <Link className="link" to="/create-post">Create Post</Link>}
+            { isAdmin() && isAuth() && <Link className="link" to="/create-post">Create Post</Link>}
             { !isAuth() && (<Link className="link" to="/login">Login/Register</Link>)}
         </ul>   
     </header>
