@@ -15,7 +15,6 @@ function ViewBlog({ blogPostList }: {
 ) {
 	const { blogid } = useParams()
 	const index = blogPostList.findIndex(item => item.blogID === blogid);
-	console.log(index)
 
 	return (
 		<div className="post-view">

@@ -5,7 +5,6 @@ import { User, onAuthStateChanged, signInWithEmailAndPassword, signOut, createUs
 import Loading from "../components/Loading";
 
 //figure out how to deal with promises
-//might need to revert isAuth and isAdmin back to variables
 interface IContextProps {
     isAuth: boolean | undefined;
     isAdmin: boolean | undefined;

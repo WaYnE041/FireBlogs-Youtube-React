@@ -54,7 +54,7 @@ function Profile() {
 				email: getProfileInfo().email
 			})
 			
-			console.log("successfully saved to backend")
+			console.log("successfully saved to backend!")
 			setProfileInfo(user)
 			setModalMessage("Saved Changes")
 			
