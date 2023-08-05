@@ -8,7 +8,7 @@ import { db } from '../firebase/firebase-config';
 
 function Profile() {
 
-	const { isAdmin, getProfileInfo } = useAuth()
+	const { isAdmin, getUser, getProfileInfo, setProfileInfo } = useAuth()
 	const [modalActive, setModalActive] = useState<boolean>(false);
 	const [modalMessage, setModalMessage] = useState<string | null>(null);
 
@@ -37,21 +37,28 @@ function Profile() {
 			setModalMessage("Please Fill Out All The Fields")
 			setModalActive(true)
 		} else {
-			const docRef = doc(db, "users", getProfileInfo().id!)
-			await setDoc(docRef, {
-				firstName: profileVal.firstName,
-				lastName: profileVal.lastName,
-				userName: profileVal.userName,
-				email: getProfileInfo().email
-			})
-			.then(() => {
-				window.location.reload();
-			})
-			.catch((error) => {
-				console.log(`${error.code}: ${error.message}`)
-				setModalMessage(`${error.code}: ${error.message}`)
+			try {
+				const docRef = doc(db, "users", getProfileInfo().id!)
+				await setDoc(docRef, {
+					firstName: profileVal.firstName,
+					lastName: profileVal.lastName,
+					userName: profileVal.userName,
+					email: getProfileInfo().email
+				})
+
+				const user = getUser()
+				if(user === null) {
+					throw new Error('Error: User is not logged in!');
+				} 
+				
+				setProfileInfo(user)
+
+			} catch (error: any) {
+				console.log(`${error.message}`)
+				setModalMessage(`${error.message}`)
 				setModalActive(true)
-			});
+			}
+			
 		}
 	}
 

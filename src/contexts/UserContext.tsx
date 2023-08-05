@@ -9,6 +9,7 @@ import Loading from "../components/Loading";
 interface IContextProps {
     isAuth: boolean | undefined;
     isAdmin: boolean | undefined;
+    getUser: () => User | null;
     getProfileInfo: () => {
         id: string;
         email: string | null;
@@ -16,7 +17,8 @@ interface IContextProps {
         lastName: string | null;
         userName: string | null;
         initials: string | null;
-    },
+    };
+    setProfileInfo: (user: User) => Promise<void>;
     login: (email: string, password: string) => Promise<void>;
     logout: () => Promise<void>;
     register: (email: string, password: string) => Promise<UserCredential>;
@@ -29,7 +31,6 @@ export function useAuth() {
 }
 
 export function UserContext({ children }: { children: React.ReactNode }) {
-
     const [authUser, setAuthUser] = useState<boolean>()
     const [adminUser, setAdminUser] = useState<boolean>();
     const [profile, setProfile] = useState<{
@@ -70,6 +71,10 @@ export function UserContext({ children }: { children: React.ReactNode }) {
     //     // console.log("isAdmin ran")
     //     return adminUser ? adminUser : false
     // }, [adminUser])
+
+    const getUser = () => {
+        return auth.currentUser
+    }
     
     const getProfileInfo = useCallback(() => {
         // console.log("getProfileInfo ran")
@@ -148,7 +153,9 @@ export function UserContext({ children }: { children: React.ReactNode }) {
     const value = {
         isAuth: authUser,
         isAdmin: adminUser,
+        getUser,
         getProfileInfo,
+        setProfileInfo,
         login,
         logout,
         register
