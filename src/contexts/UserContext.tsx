@@ -83,13 +83,18 @@ export function UserContext({ children }: { children: React.ReactNode }) {
     }
 
     const setAdmin = async (user: User | null) => {
-        if (user) {
-            const token = await user.getIdTokenResult();
-            if (!!token.claims.admin) {
-                return true;
+        try {
+            if (user) {
+                const token = await user.getIdTokenResult();
+                if (!!token.claims.admin) {
+                    return true;
+                }
             }
+            return false;
+        } catch (error:any) {
+            console.log(error);
+            throw new Error(error);
         }
-        return false;
     }
 
     const setProfileInfo = async (user: User) => {
@@ -106,34 +111,44 @@ export function UserContext({ children }: { children: React.ReactNode }) {
                     initials: docSnap.data().firstName.match(/(\b\S)?/g).join("") + docSnap.data().lastName.match(/(\b\S)?/g).join("")
                 });
                 setAuthUser(true);
-                await setAdmin(user).then((value) => { setAdminUser(value) });
+                const newAdminUser = await setAdmin(user)
+                setAdminUser(newAdminUser);
             } else {
                 console.log("Document does not exist");
             }
-        } catch (error) {
+        } catch (error:any) {
             console.log(error);
+            throw new Error(error);
         }
     }
 
-    const login = (email: string, password: string) => {
-        return signInWithEmailAndPassword(auth, email, password)
-            .then(() => {
-                console.log(auth.currentUser?.uid)
-            })
-            .catch((error) => {
-                console.log(`${error.code}: ${error.message}`)
-            });
+    const login = async (email: string, password: string) => {
+        try {
+            await signInWithEmailAndPassword(auth, email, password);
+            console.log(auth.currentUser?.uid) 
+        } catch (error:any) {
+            console.log(error);
+            throw new Error(error);
+        }            
     }
 
-    const logout = () => {
-        return signOut(auth)
-            .catch((error) => {
-                console.log(`${error.code}: ${error.message}`)
-            });
+    const logout = async () => {
+        try {
+            await signOut(auth)
+        } catch (error:any) {
+            console.log(error);
+            throw new Error(error);
+        } 
     }
 
-    const register = (email: string, password: string) => {
-        return createUserWithEmailAndPassword(auth, email, password);
+    const register = async (email: string, password: string) => {
+        try {
+            const userCred = await createUserWithEmailAndPassword(auth, email, password);
+            return userCred;
+        } catch (error:any) {
+            console.log(error);
+            throw new Error(error);
+        } 
     }
 
     const value = {

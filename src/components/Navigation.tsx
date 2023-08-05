@@ -49,8 +49,8 @@ function Navigation() {
         }
     }
 
-    const signUserOut = () => {
-        logout();
+    const signUserOut = async () => {
+        await logout();
     }
 
     return (

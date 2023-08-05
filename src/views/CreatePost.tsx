@@ -162,7 +162,8 @@ function CreatePost({ blogPost, editCurrentPost, createPostAlignment }: {
 			setisLoading(true);
 
 			const uniqueId = uuidv4();
-			const blob = await fetch(blogPost.blogCoverPhoto).then(r => r.blob());
+			const response = await fetch(blogPost.blogCoverPhoto);
+			const blob = await response.blob();
 			const storageRef = ref(storage, `blogCoverPhotos/${uniqueId}-${blogPost.blogCoverPhotoName}`);
 
 			await uploadBytes(storageRef, blob);

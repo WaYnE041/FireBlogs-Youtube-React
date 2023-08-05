@@ -55,7 +55,7 @@ function Profile() {
 			})
 			console.log("successfully saved to backend!");
 
-			setProfileInfo(user);
+			await setProfileInfo(user);
 			setModalMessage("Saved Changes");
 			
 		} catch (error: any) {
