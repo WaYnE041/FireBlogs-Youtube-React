@@ -36,30 +36,34 @@ function Profile() {
 		if (isEmpty) {
 			setModalMessage("Please Fill Out All The Fields")
 			setModalActive(true)
-		} else {
-			try {
-				const docRef = doc(db, "users", getProfileInfo().id!)
-				await setDoc(docRef, {
-					firstName: profileVal.firstName,
-					lastName: profileVal.lastName,
-					userName: profileVal.userName,
-					email: getProfileInfo().email
-				})
-
-				const user = getUser()
-				if(user === null) {
-					throw new Error('Error: User is not logged in!');
-				} 
-				
-				setProfileInfo(user)
-
-			} catch (error: any) {
-				console.log(`${error.message}`)
-				setModalMessage(`${error.message}`)
-				setModalActive(true)
-			}
+			return
+		} 
+		const user = getUser()
+		if(user === null) {
+			setModalMessage("Error: User is not logged in!");
+			setModalActive(true)
+			return
+		} 
+		
+		try {
+			const docRef = doc(db, "users", getProfileInfo().id!)
+			await setDoc(docRef, {
+				firstName: profileVal.firstName,
+				lastName: profileVal.lastName,
+				userName: profileVal.userName,
+				email: getProfileInfo().email
+			})
 			
+			console.log("successfully saved to backend")
+			setProfileInfo(user)
+			setModalMessage("Saved Changes")
+			
+		} catch (error: any) {
+			console.log(`${error.message}`)
+			setModalMessage(`${error.message}`)
 		}
+
+		setModalActive(true)
 	}
 
 
