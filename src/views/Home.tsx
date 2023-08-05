@@ -1,14 +1,11 @@
-import '../styles/Home.css'
-import BlogPost from '../components/BlogPost'
+import '../styles/Home.css';
+import { ReactComponent as Arrow } from '../assets/Icons/arrow-right-light.svg';
+import BlogPost from '../components/BlogPost';
 import { useAuth } from '../contexts/UserContext';
-import { ReactComponent as Arrow } from '../assets/Icons/arrow-right-light.svg'
-import { useEffect } from 'react'
+import { useEffect } from 'react';
 import { Link } from "react-router-dom";
-//import { NavLink } from "react-router-dom";
 
-function Home( { children }: { children: React.JSX.Element[]}) {
-	const { isAuth } = useAuth()
-
+function Home( { children }: { children: React.JSX.Element[] }) {
 	const welcomeScreen = [{
 		blogID: "",
 		blogTitle: "Welcome!",
@@ -16,29 +13,32 @@ function Home( { children }: { children: React.JSX.Element[]}) {
 			"Weekly blog articles with all things programming including HTML, CSS, JavaScript and more. Register today to never miss a post!",
 		blogCoverPhoto: "coding",
 		welcomeScreen: true,
-	}]
+	}];
 
 	useEffect(() => {
-		document.title = "Home | DeadMarket"
+		document.title = "Home | DeadMarket";
 		return () => {
-			document.title = "DeadMarket"
+			document.title = "DeadMarket";
 		};
 	}, []);
 
+	const { isAuth } = useAuth();
+
 	return (
 		<div className='home'>
-			{!isAuth && (<BlogPost posts={welcomeScreen} />)}
-			{children[0]}
+			{ !isAuth && (<BlogPost posts={welcomeScreen} />) }
+			{ children[0] }
 
 			<div className="blog-card-wrap">
 				<div className="container">
 					<h3>View More Recent Blogs</h3>
 					<div className="blog-cards">
-						{children[1]}
+						{ children[1] }
 					</div>
 				</div>
 			</div>
-			{!isAuth && (
+
+			{ !isAuth && (
 				<div className="updates">
 					<div className="container">
 						<h2>Never Miss A Post. Register For Your Free Account Today!</h2>
@@ -52,4 +52,4 @@ function Home( { children }: { children: React.JSX.Element[]}) {
 	)
 }
 
-export default Home
+export default Home;

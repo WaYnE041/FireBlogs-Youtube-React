@@ -1,26 +1,26 @@
-import '../styles/Profile.css'
-import Modal from '../components/Modal'
-import { useAuth } from '../contexts/UserContext'
+import '../styles/Profile.css';
+import { ReactComponent as AdminIcon } from '../assets/Icons/user-crown-light.svg';
+import Modal from '../components/Modal';
+import { useAuth } from '../contexts/UserContext';
 import { useState, useEffect } from 'react'
-import { ReactComponent as AdminIcon } from '../assets/Icons/user-crown-light.svg'
 import {  doc, setDoc } from "firebase/firestore";
 import { db } from '../firebase/firebase-config';
 
 function Profile() {
-
-	const { isAdmin, getUser, getProfileInfo, setProfileInfo } = useAuth()
 	const [modalActive, setModalActive] = useState<boolean>(false);
 	const [modalMessage, setModalMessage] = useState<string | null>(null);
 
 	useEffect(() => {
-        document.title = "Profile | DeadMarket"
+        document.title = "Profile | DeadMarket";
         return () => {
-            document.title = "DeadMarket"
+            document.title = "DeadMarket";
         };
     }, []);
 
+	const { isAdmin, getUser, getProfileInfo, setProfileInfo } = useAuth();
+
 	const toggleModal = (value: boolean) => {
-		setModalActive(value)
+		setModalActive(value);
 	}
 
 	const updateProfile = async (e: any) => {
@@ -30,46 +30,46 @@ function Profile() {
 			lastName: e.target.elements.lastName.value,
 			userName: e.target.elements.userName.value
 		}
-		console.log(profileVal)
 
 		const isEmpty = Object.values(profileVal).some(x => x === null || x === '');
 		if (isEmpty) {
-			setModalMessage("Please Fill Out All The Fields")
-			setModalActive(true)
-			return
+			setModalMessage("Please Fill Out All The Fields");
+			setModalActive(true);
+			return;
 		} 
-		const user = getUser()
+
+		const user = getUser();
 		if(user === null) {
 			setModalMessage("Error: User is not logged in!");
-			setModalActive(true)
-			return
+			setModalActive(true);
+			return;
 		} 
 		
 		try {
-			const docRef = doc(db, "users", getProfileInfo().id!)
+			const docRef = doc(db, "users", getProfileInfo().id!);
 			await setDoc(docRef, {
 				firstName: profileVal.firstName,
 				lastName: profileVal.lastName,
 				userName: profileVal.userName,
 				email: getProfileInfo().email
 			})
-			
-			console.log("successfully saved to backend!")
-			setProfileInfo(user)
-			setModalMessage("Saved Changes")
+			console.log("successfully saved to backend!");
+
+			setProfileInfo(user);
+			setModalMessage("Saved Changes");
 			
 		} catch (error: any) {
-			console.log(`${error.message}`)
-			setModalMessage(`${error.message}`)
+			console.log(`${error.message}`);
+			setModalMessage(`${error.message}`);
 		}
 
-		setModalActive(true)
+		setModalActive(true);
 	}
 
 
 	return (
 		<div className="profile">
-			{modalActive && <Modal modalMessage={modalMessage} toggleModal={toggleModal} />}
+			{ modalActive && <Modal modalMessage={modalMessage} toggleModal={toggleModal} /> }
 			<div className="container">
 				<h2>Account Settings</h2>
 				<div className="profile-info">
@@ -105,4 +105,4 @@ function Profile() {
 	)
 }
 
-export default Profile
+export default Profile;

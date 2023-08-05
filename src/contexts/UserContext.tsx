@@ -1,8 +1,8 @@
+import Loading from "../components/Loading";
 import React, { useState, useEffect, createContext, useContext, useCallback } from "react";
 import { auth, db } from '../firebase/firebase-config';
 import { doc, getDoc } from 'firebase/firestore';
 import { User, onAuthStateChanged, signInWithEmailAndPassword, signOut, createUserWithEmailAndPassword, UserCredential } from "firebase/auth";
-import Loading from "../components/Loading";
 
 //figure out how to deal with promises
 interface IContextProps {
@@ -23,17 +23,17 @@ interface IContextProps {
     register: (email: string, password: string) => Promise<UserCredential>;
 }
 
-const AuthContext = createContext({} as IContextProps)
+const AuthContext = createContext({} as IContextProps);
 
 export function useAuth() {
-    return useContext(AuthContext)
+    return useContext(AuthContext);
 }
 
 export function UserContext({ children }: { children: React.ReactNode }) {
-    const [authUser, setAuthUser] = useState<boolean>()
+    const [authUser, setAuthUser] = useState<boolean>();
     const [adminUser, setAdminUser] = useState<boolean>();
     const [profile, setProfile] = useState<{
-        id: string,
+        id: string;
         email: string | null;
         firstName: string | null;
         lastName: string | null;
@@ -42,46 +42,34 @@ export function UserContext({ children }: { children: React.ReactNode }) {
     }>({ id: "null", email: null, firstName: null, lastName: null, userName: null, initials: null });
 
     useEffect(() => {
-
         const unsubscribe = onAuthStateChanged(auth, user => {
             if (user) {
-                setProfileInfo(user)
+                setProfileInfo(user);
             } else {
-                resetProfileInfo()
+                resetProfileInfo();
             }
         })
 
-        return unsubscribe
-    }, [auth.currentUser])
+        return unsubscribe;
+    }, [auth.currentUser]);
 
     const isLoading = () => {
-        if(authUser === undefined || adminUser === undefined){
-            return true
+        if (authUser === undefined || adminUser === undefined) {
+            return true;
         }
-        return false
+        return false;
     }
-
-    // const isAuth = useCallback(() => {
-    //     // console.log("isAuth ran")
-    //     return authUser ? authUser : false
-    // }, [authUser])
-
-    // const isAdmin = useCallback(() => {
-    //     // console.log("isAdmin ran")
-    //     return adminUser ? adminUser : false
-    // }, [adminUser])
 
     const getUser = () => {
-        return auth.currentUser
+        return auth.currentUser;
     }
-    
+
     const getProfileInfo = useCallback(() => {
-        // console.log("getProfileInfo ran")
-        return profile
+        return profile;
     }, [profile])
 
     const resetProfileInfo = () => {
-        console.log("user is signed out")
+        console.log("user is signed out");
         setProfile({
             id: "",
             email: null,
@@ -90,18 +78,18 @@ export function UserContext({ children }: { children: React.ReactNode }) {
             userName: null,
             initials: null
         })
-        setAuthUser(false)
-        setAdminUser(false)
+        setAuthUser(false);
+        setAdminUser(false);
     }
 
     const setAdmin = async (user: User | null) => {
-        if(user) {
-            const token = await user.getIdTokenResult()
+        if (user) {
+            const token = await user.getIdTokenResult();
             if (!!token.claims.admin) {
-                return true
-            } 
+                return true;
+            }
         }
-        return false
+        return false;
     }
 
     const setProfileInfo = async (user: User) => {
@@ -116,15 +104,14 @@ export function UserContext({ children }: { children: React.ReactNode }) {
                     lastName: docSnap.data().lastName,
                     userName: docSnap.data().userName,
                     initials: docSnap.data().firstName.match(/(\b\S)?/g).join("") + docSnap.data().lastName.match(/(\b\S)?/g).join("")
-                })
-                setAuthUser(true)
-                await setAdmin(user).then((value)=> {setAdminUser(value)})
+                });
+                setAuthUser(true);
+                await setAdmin(user).then((value) => { setAdminUser(value) });
             } else {
-                console.log("Document does not exist")
+                console.log("Document does not exist");
             }
-
         } catch (error) {
-            console.log(error)
+            console.log(error);
         }
     }
 
@@ -146,7 +133,7 @@ export function UserContext({ children }: { children: React.ReactNode }) {
     }
 
     const register = (email: string, password: string) => {
-        return createUserWithEmailAndPassword(auth, email, password)
+        return createUserWithEmailAndPassword(auth, email, password);
     }
 
     const value = {
@@ -158,11 +145,11 @@ export function UserContext({ children }: { children: React.ReactNode }) {
         login,
         logout,
         register
-    }
+    };
 
     return (
         <AuthContext.Provider value={value}>
-            {isLoading() ?  <Loading/> : children }
+            {isLoading() ? <Loading /> : children}
         </AuthContext.Provider>
     )
 }

@@ -1,39 +1,35 @@
-import '../styles/BlogCard.css'
-import '../assets/blogCards/stock-1.jpg'
+import '../styles/BlogCard.css';
+import '../assets/blogCards/stock-1.jpg';
+import { ReactComponent as Arrow } from '../assets/Icons/arrow-right-light.svg';
+import { ReactComponent as Edit } from '../assets/Icons/edit-regular.svg';
+import { ReactComponent as Delete } from '../assets/Icons/trash-regular.svg';
 import { Link, useNavigate } from "react-router-dom";
-//import { NavLink } from "react-router-dom";
-
-import { ReactComponent as Arrow } from '../assets/Icons/arrow-right-light.svg'
-import { ReactComponent as Edit } from '../assets/Icons/edit-regular.svg'
-import { ReactComponent as Delete } from '../assets/Icons/trash-regular.svg'
 import { db } from '../firebase/firebase-config';
 import { doc, deleteDoc } from 'firebase/firestore';
 
-
-function BlogCard({ editPostEnabled, cards, deletePostAlignment }: { 
-	editPostEnabled: boolean,
-	cards: { 
-		blogID: string; 
-		blogTitle: string; 
-		blogDate: number; 
-		blogCoverPhoto: string; 
-	}[],
-	deletePostAlignment: (id: string) => void,
+function BlogCard({ editPostEnabled, cards, deletePostAlignment }: {
+	editPostEnabled: boolean;
+	cards: {
+		blogID: string;
+		blogTitle: string;
+		blogDate: number;
+		blogCoverPhoto: string;
+	}[];
+	deletePostAlignment: (id: string) => void;
 }) {
 
-	const navigate = useNavigate()
+	const navigate = useNavigate();
 
 	const deletePost = async (id: string) => {
-		const postDoc = doc(db, "blogPosts", id)
-		await deleteDoc(postDoc)
+		const postDoc = doc(db, "blogPosts", id);
+		await deleteDoc(postDoc);
 
 		//aligns front end with backend without rerender
-		deletePostAlignment(id)
+		deletePostAlignment(id);
 	}
 
 	const editPost = async (id: string) => {
-		console.log("edit")
-		navigate(`/edit-blog/${id}`)
+		navigate(`/edit-blog/${id}`);
 	}
 
 	return (
@@ -41,7 +37,7 @@ function BlogCard({ editPostEnabled, cards, deletePostAlignment }: {
 			{cards.map((card) => {
 				return (
 					<div key={card.blogID} className='blog-card'>
-						{ editPostEnabled && 
+						{editPostEnabled &&
 							<div className="icons">
 								<div className="icon" onClick={() => editPost(card.blogID)}>
 									<Edit className="edit" />
@@ -56,7 +52,7 @@ function BlogCard({ editPostEnabled, cards, deletePostAlignment }: {
 							<h4>
 								{card.blogTitle}
 							</h4>
-							<h6>Posted on: {new Date(card.blogDate).toLocaleString("en-us", {dateStyle: "long"})}</h6>
+							<h6>Posted on: {new Date(card.blogDate).toLocaleString("en-us", { dateStyle: "long" })}</h6>
 							<Link className="link" to={`/view-blog/${card.blogID}`}>
 								View The Post<Arrow className="arrow" />
 							</Link>
@@ -64,8 +60,8 @@ function BlogCard({ editPostEnabled, cards, deletePostAlignment }: {
 					</div>
 				)
 			})}
-		</>	
+		</>
 	)
 }
 
-export default BlogCard
+export default BlogCard;

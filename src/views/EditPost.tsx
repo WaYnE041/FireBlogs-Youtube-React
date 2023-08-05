@@ -1,19 +1,20 @@
-import '../styles/EditBlog.css'
+import '../styles/EditBlog.css';
 import BlogCoverPreview from '../components/BlogCoverPreview';
 import Loading from '../components/Loading';
 
 import { useState, useEffect, useMemo, useRef } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom'
-import { v4 as uuidv4 } from 'uuid'
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
 
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { doc, updateDoc } from 'firebase/firestore'
-import { db, storage } from '../firebase/firebase-config'
+import { doc, updateDoc } from 'firebase/firestore';
+import { db, storage } from '../firebase/firebase-config';
 
 import ReactQuill, { Quill } from 'react-quill';
 import { ImageResize } from "quill-image-resize-module-ts";
 import 'react-quill/dist/quill.snow.css';
-Quill.register("modules/imageResize", ImageResize)
+
+Quill.register("modules/imageResize", ImageResize);
 
 function EditBlog({ blogPost, resetCurrentPost, editCurrentPost, editPostAlignment }: {
 	blogPost: {
@@ -23,8 +24,8 @@ function EditBlog({ blogPost, resetCurrentPost, editCurrentPost, editPostAlignme
 		blogCoverPhotoName: string;
 		blogTitle: string;
 		welcomeScreen: boolean;
-	},
-	resetCurrentPost: (id: string) => void,
+	};
+	resetCurrentPost: (id: string) => void;
 	editCurrentPost: (currentPost: {
 		blogId: string;
 		blogHTML: string;
@@ -32,20 +33,15 @@ function EditBlog({ blogPost, resetCurrentPost, editCurrentPost, editPostAlignme
 		blogCoverPhotoName: string;
 		blogTitle: string;
 		welcomeScreen: boolean;
-	}) => void,
+	}) => void;
 	editPostAlignment:  (currentPost: {
-		blogID: string,
+		blogID: string;
 		blogHTML: string;
 		blogCoverPhoto?: string;
-		blogCoverPhotoName?: string,
+		blogCoverPhotoName?: string;
 		blogTitle: string;
-	}) => void
+	}) => void;
 }) {
-	const { routeid } = useParams()
-	const quillRef = useRef<ReactQuill>(null);
-	const navigate = useNavigate();
-	const blogContentFolderID = uuidv4();
-
 	const [isLoading, setisLoading] = useState<boolean>(false);
 	const [error, setError] = useState<boolean>(false);
 	const [errorMsg, setErrorMsg] = useState<string>('');
@@ -53,51 +49,45 @@ function EditBlog({ blogPost, resetCurrentPost, editCurrentPost, editPostAlignme
 	const [coverFileChanged, setCoverFileChanged] = useState<boolean>(false);
 
 	useEffect(() => {
-		document.title = "Edit Post | DeadMarket"
+		document.title = "Edit Post | DeadMarket";
 
 		//only set data if id does not match route blogid or it is blank
 		if ((routeid && blogPost.blogId !== routeid) || (routeid && blogPost.blogId === "")) {
-			resetCurrentPost(routeid)
+			resetCurrentPost(routeid);
 		}
 
 		return () => {
-			document.title = "DeadMarket"
+			document.title = "DeadMarket";
 		};
 	}, []);
 
+	const { routeid } = useParams();
+	const quillRef = useRef<ReactQuill>(null);
+	const navigate = useNavigate();
+	const blogContentFolderID = uuidv4();
+
 	const toggleModal = (value: boolean) => {
-		setModalActive(value)
+		setModalActive(value);
 	}
 
 	const coverHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
 		if (e.target.files) {
-			const coverFile = e.target.files[0]
-			console.log("Cover File:", coverFile)
+			const coverFile = e.target.files[0];
 
 			editCurrentPost({
 				...blogPost,
 				blogCoverPhoto: URL.createObjectURL(coverFile),
 				blogCoverPhotoName: coverFile.name
-			})
-			// setBlogPost(prevState => ({
-			// 	...prevState,
-			// 	blogCoverPhoto: URL.createObjectURL(coverFile),
-			// 	blogCoverPhotoName: coverFile.name
-			// }))
-			setCoverFileChanged(true)
+			});
+			setCoverFileChanged(true);
 		}
 	}
 
 	const inputHander = (targetValue: string) => {
-		console.log(blogPost)
 		editCurrentPost({
 			...blogPost,
 			blogHTML: targetValue
-		})
-		// setBlogPost(prevState => ({
-		// 	...prevState,
-		// 	blogHTML: targetValue
-		// }))
+		});
 	}
 
 	const imageHandler = async () => {
@@ -109,139 +99,135 @@ function EditBlog({ blogPost, resetCurrentPost, editCurrentPost, editPostAlignme
 
 		input.onchange = async () => {
 			if (!input.files || !input?.files?.length || !input?.files?.[0]) {
-				return
+				return;
 			}
 			if (!quillRef.current) {
-				return
+				return;
 			}
 
 			try {
 				const editor = quillRef.current.getEditor();
 				const contentFile = input.files[0];
-				console.log("Content File:", contentFile)
-				const uniqueId = uuidv4()
-
+				const uniqueId = uuidv4();
 				const storageRef = ref(storage, `blogContentPhotos/${blogContentFolderID}/${uniqueId}-${contentFile.name}`);
 
-				await uploadBytes(storageRef, contentFile)
-					.then(() => {
-						console.log('Uploaded a blob or file!');
-					})
-					.catch((err) => {
-						console.log(err);
-					});
+				await uploadBytes(storageRef, contentFile);
+				console.log('Uploaded a blob or file!');
 
-				const downloadURL = await getDownloadURL(storageRef)
+				const downloadURL = await getDownloadURL(storageRef);
 
 				const range = editor.getSelection(true);
 				editor.insertEmbed(range.index, "image", downloadURL);
 
-				const cursor = { index: range.index + 1, length: 0 }
+				const cursor = { index: range.index + 1, length: 0 };
 				editor.setSelection(cursor);
 
-			} catch (err) {
-				console.log("upload err:", err);
+			} catch (error:any) {
+				console.log("upload err:", error);
 			}
-		};
-
+		}
 	}
 
 	const uploadHandler = async () => {
-		console.log("Handling Upload")
+		console.log("Handling Upload!");
 
 		if (blogPost.blogTitle.length === 0 ||
 			blogPost.blogHTML === "<p><br></p>" ||
 			blogPost.blogHTML.trim().length === 0) {
-			setError(true)
-			setErrorMsg("Please ensure Blog Title & Blog Post has been filled!")
+			setErrorMsg("Please ensure Blog Title & Blog Post has been filled!");
+			setError(true);
+
 			setTimeout(() => {
-				setError(false)
-			}, 3000)
-			return
+				setError(false);
+			}, 3000);
+			return;
 		}
 
 		if (blogPost.blogTitle.trim().length === 0 ||
 			blogPost.blogHTML.replace(/\s/g, '') === "<p></p>") {
-			setError(true)
-			setErrorMsg("Please ensure Blog Title & Blog Post is not comprised of whitespaces")
+			setErrorMsg("Please ensure Blog Title & Blog Post is not comprised of whitespaces");
+			setError(true);
+
 			setTimeout(() => {
-				setError(false)
-			}, 3000)
-			return
+				setError(false);
+			}, 3000);
+			return;
 		}
 
-		// if(blogPost.blogCoverPhoto.trim().length === 0) {
-		// 	setError(true)
-		// 	setErrorMsg("Please ensure you uploaded a Cover Photo")
-		// 	setTimeout(() => {
-		// 		setError(false)
-		// 	}, 3000)
-		// 	return
-		// }
+		if(blogPost.blogCoverPhoto.trim().length === 0) {
+			setErrorMsg("Please ensure you uploaded a Cover Photo");
+			setError(true);
 
-		setisLoading(true);
+			setTimeout(() => {
+				setError(false);
+			}, 3000);
+			return;
+		}
+
 		if (!routeid) {
 			console.log("invalid Id");
-			return
+			return;
 		}
-		const docRef = doc(db, "blogPosts", routeid)
 
-		if (coverFileChanged) {
-			const uniqueId = uuidv4()
-			const blob = await fetch(blogPost.blogCoverPhoto).then(r => r.blob());
-			const storageRef = ref(storage, `blogCoverPhotos/${uniqueId}-${blogPost.blogCoverPhotoName}`);
+		try {
+			setisLoading(true);
+			const docRef = doc(db, "blogPosts", routeid);
 
-			await uploadBytes(storageRef, blob).then(() => {
+			if (coverFileChanged) {
+				const uniqueId = uuidv4();
+				const blob = await fetch(blogPost.blogCoverPhoto).then(r => r.blob());
+				const storageRef = ref(storage, `blogCoverPhotos/${uniqueId}-${blogPost.blogCoverPhotoName}`);
+
+				await uploadBytes(storageRef, blob);
 				console.log('Uploaded a blob or file!');
-			}, (err) => {
-				console.log(err);
-				setisLoading(false);
+
+				const downloadURL = await getDownloadURL(storageRef);
+				await updateDoc(docRef, {
+					blogTitle: blogPost.blogTitle,
+					blogHTML: blogPost.blogHTML,
+					blogCoverPhoto: downloadURL,
+					blogCoverPhotoName: storageRef.name,
+				});
+
+				//aligns front end with backend without rerender
+				editPostAlignment({
+					blogID: routeid,
+					blogHTML: blogPost.blogHTML,
+					blogCoverPhoto: downloadURL,
+					blogCoverPhotoName: storageRef.name,
+					blogTitle: blogPost.blogTitle,
+				});
+			} else {
+				await updateDoc(docRef, {
+					blogTitle: blogPost.blogTitle,
+					blogHTML: blogPost.blogHTML
+				});
+
+				//aligns front end with backend without rerender
+				editPostAlignment({
+					blogID: routeid,
+					blogHTML: blogPost.blogHTML,
+					blogTitle: blogPost.blogTitle,
+				});
+			}
+
+			setisLoading(false);
+			editCurrentPost({
+				blogId: "",
+				blogHTML: "",
+				blogCoverPhoto: "",
+				blogCoverPhotoName: "",
+				blogTitle: "",
+				welcomeScreen: false
 			});
 
-			const downloadURL = await getDownloadURL(storageRef)
-
-			await updateDoc(docRef, {
-				blogTitle: blogPost.blogTitle,
-				blogHTML: blogPost.blogHTML,
-				blogCoverPhoto: downloadURL,
-				blogCoverPhotoName: storageRef.name,
-			})
-
-			//aligns front end with backend without rerender
-			editPostAlignment({
-				blogID: routeid,
-				blogHTML: blogPost.blogHTML,
-				blogCoverPhoto: downloadURL,
-				blogCoverPhotoName: storageRef.name,
-				blogTitle: blogPost.blogTitle,
-			})
-		} else {
-			await updateDoc(docRef, {
-				blogTitle: blogPost.blogTitle,
-				blogHTML: blogPost.blogHTML
-			})
-
-			//aligns front end with backend without rerender
-			editPostAlignment({
-				blogID: routeid,
-				blogHTML: blogPost.blogHTML,
-				blogTitle: blogPost.blogTitle,
-			})
+			navigate(`/view-blog/${docRef.id}`);
+			
+		} catch (error:any) {
+			setErrorMsg(error);
+			setisLoading(false);
+			setError(true);
 		}
-
-		setisLoading(false);
-		editCurrentPost({
-			blogId: "",
-			blogHTML: "",
-			blogCoverPhoto: "",
-			blogCoverPhotoName: "",
-			blogTitle: "",
-			welcomeScreen: false
-		})
-
-		navigate(`/view-blog/${docRef.id}`)
-		//catch for invalid id
-
 	}
 
 	const modules = useMemo(() => ({
@@ -267,7 +253,7 @@ function EditBlog({ blogPost, resetCurrentPost, editCurrentPost, editPostAlignme
 			},
 			modules: ["Resize", "DisplaySize"]
 		}
-	}), [])
+	}), []);
 
 	const formats = [
 		"header",
@@ -300,10 +286,6 @@ function EditBlog({ blogPost, resetCurrentPost, editCurrentPost, editPostAlignme
 								...blogPost,
 								blogTitle: e.target.value
 							})
-							// setBlogPost(prevState => ({
-							// 	...prevState,
-							// 	title: e.target.value
-							// }))
 						}
 					/>
 					<div className="upload-file">
@@ -333,4 +315,4 @@ function EditBlog({ blogPost, resetCurrentPost, editCurrentPost, editPostAlignme
 	)
 }
 
-export default EditBlog
+export default EditBlog;

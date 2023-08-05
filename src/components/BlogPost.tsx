@@ -1,25 +1,22 @@
-import '../styles/BlogPost.css'
+import '../styles/BlogPost.css';
+import { ReactComponent as Arrow } from '../assets/Icons/arrow-right-light.svg';
 import { useAuth } from '../contexts/UserContext';
-import { ReactComponent as Arrow } from '../assets/Icons/arrow-right-light.svg'
 import { Link } from "react-router-dom";
-//import { NavLink } from "react-router-dom";
 import parse from 'html-react-parser';
 
+function BlogPost({ posts }: {
+	posts: {
+		blogID: string;
+		blogTitle: string;
+		blogHTML: string;
+		blogCoverPhoto: string;
+		welcomeScreen: boolean;
+	}[];
+}) {
+	const { isAuth } = useAuth();
 
-function BlogPost({  posts }: { 
-	posts: { 
-		blogID: string
-		blogTitle: string; 
-		blogHTML: string; 
-		blogCoverPhoto: string; 
-		welcomeScreen: boolean; 
-	}[] 
-}) 
-{
-	const { isAuth } = useAuth()
-	
 	const getImageUrl = (name: string) => {
-		return new URL(`../assets/blogPhotos/${name}.jpg`, import.meta.url).href
+		return new URL(`../assets/blogPhotos/${name}.jpg`, import.meta.url).href;
 	}
 
 	return (
@@ -37,7 +34,6 @@ function BlogPost({  posts }: {
 										{parse(post.blogHTML)}
 									</div>
 								}
-
 								{post.welcomeScreen ?
 									<Link className="link link-light" to="/login">
 										Login/Register<Arrow className="arrow arrow-light" />
@@ -50,18 +46,18 @@ function BlogPost({  posts }: {
 							</div>
 						</div>
 						<div className="blog-photo">
-						{	
-						post.welcomeScreen ?
-							<img src={getImageUrl(post.blogCoverPhoto)} alt="Blog Cover Photo" /> 
-							:
-							<img src={post.blogCoverPhoto} alt="Blog Cover Photo" /> 
-						}
+							{
+								post.welcomeScreen ?
+									<img src={getImageUrl(post.blogCoverPhoto)} alt="Blog Cover Photo" />
+									:
+									<img src={post.blogCoverPhoto} alt="Blog Cover Photo" />
+							}
 						</div>
 					</div>
 				)
 			})}
-		</>	
+		</>
 	)
 }
 
-export default BlogPost
+export default BlogPost;
