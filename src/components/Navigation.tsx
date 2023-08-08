@@ -42,11 +42,9 @@ function Navigation() {
         setMobileNav(!mobileNav);
     }
 
-    const toggleProfileMenu = (e: any) => {
-        const element = document.getElementById('profile');
-        if (element && e.target.id === element.id) {
-            setProfileMenu(!profileMenu);
-        }
+    const toggleProfileMenu = () => {
+        setMobileNav(false);
+        setProfileMenu(!profileMenu);
     }
 
     const signUserOut = async () => {
