@@ -36,6 +36,12 @@ function ForgotPassword() {
                 await sendPasswordResetEmail(auth, email);
                 setModalMessage("Password reset email sent!");
                 setisLoading(false);
+
+                const element = (document.getElementById("email") as HTMLInputElement | null)
+                if(element){
+                    element.value = ""
+                    setEmail("")
+                }
             } catch (error: any) {
                 setModalMessage(`${error.message}`);
                 setisLoading(false);
