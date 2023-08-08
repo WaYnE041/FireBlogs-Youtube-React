@@ -1,4 +1,4 @@
-import '../styles/EditPost.css';
+import '../styles/CreatePost.css';
 import BlogCoverPreview from '../components/BlogCoverPreview';
 import Loading from '../components/Loading';
 
