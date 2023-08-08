@@ -14,34 +14,35 @@ function ViewBlog({ blogPostList }: {
 	}[];
 }) {
 	useEffect(() => {
-        document.title = "View Blog | DeadMarket";
-        return () => {
-            document.title = "DeadMarket";
-        };
-    }, []);
-	
+		document.title = "View Blog | DeadMarket";
+		return () => {
+			document.title = "DeadMarket";
+		};
+	}, []);
+
 	const { blogid } = useParams();
 	const index = blogPostList.findIndex(item => item.blogID === blogid);
 
 	return (
 		<>
-			{blogPostList.length === 0 ? <Loading /> : 
-			<div className="post-view">
-				<div className="container quillWrapper">
-					<h2>{blogPostList[index].blogTitle}</h2>
-					<h4>
-						Posted on: {
-							new Date(blogPostList[index].blogDate)
-							.toLocaleString("en-us", {dateStyle: "long"})
-						}
-					</h4>
-					<img src={blogPostList[index].blogCoverPhoto} alt="Blog Cover Photo" />
-					<div className="post-content ql-editor">
-						{parse(blogPostList[index].blogHTML)}
+			{
+				blogPostList.length === 0 ? <Loading /> :
+					<div className="post-view">
+						<div className="container quillWrapper">
+							<h2>{blogPostList[index].blogTitle}</h2>
+							<h4>
+								Posted on: {
+									new Date(blogPostList[index].blogDate)
+										.toLocaleString("en-us", { dateStyle: "long" })
+								}
+							</h4>
+							<img src={blogPostList[index].blogCoverPhoto} alt="Blog Cover Photo" />
+							<div className="post-content ql-editor">
+								{parse(blogPostList[index].blogHTML)}
+							</div>
+						</div>
 					</div>
-				</div>
-			</div>
-		}
+			}
 		</>
 	)
 }
