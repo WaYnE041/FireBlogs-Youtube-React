@@ -1,4 +1,3 @@
-import Loading from "../components/Loading";
 import React, { useState, useEffect, createContext, useContext, useCallback } from "react";
 import { auth, db } from '../firebase/firebase-config';
 import { doc, getDoc } from 'firebase/firestore';
@@ -53,13 +52,6 @@ export function UserContext({ children }: { children: React.ReactNode }) {
         return unsubscribe;
     }, [auth.currentUser]);
 
-    const isLoading = () => {
-        if (authUser === undefined || adminUser === undefined) {
-            return true;
-        }
-        return false;
-    }
-
     const getUser = () => {
         return auth.currentUser;
     }
@@ -91,7 +83,7 @@ export function UserContext({ children }: { children: React.ReactNode }) {
                 }
             }
             return false;
-        } catch (error:any) {
+        } catch (error: any) {
             console.log(error);
             throw new Error(error);
         }
@@ -116,7 +108,7 @@ export function UserContext({ children }: { children: React.ReactNode }) {
             } else {
                 console.log("Document does not exist");
             }
-        } catch (error:any) {
+        } catch (error: any) {
             console.log(error);
             throw new Error(error);
         }
@@ -125,30 +117,30 @@ export function UserContext({ children }: { children: React.ReactNode }) {
     const login = async (email: string, password: string) => {
         try {
             await signInWithEmailAndPassword(auth, email, password);
-            console.log(auth.currentUser?.uid) 
-        } catch (error:any) {
+            console.log(auth.currentUser?.uid)
+        } catch (error: any) {
             console.log(error);
             throw new Error(error);
-        }            
+        }
     }
 
     const logout = async () => {
         try {
             await signOut(auth)
-        } catch (error:any) {
+        } catch (error: any) {
             console.log(error);
             throw new Error(error);
-        } 
+        }
     }
 
     const register = async (email: string, password: string) => {
         try {
             const userCred = await createUserWithEmailAndPassword(auth, email, password);
             return userCred;
-        } catch (error:any) {
+        } catch (error: any) {
             console.log(error);
             throw new Error(error);
-        } 
+        }
     }
 
     const value = {
@@ -164,7 +156,7 @@ export function UserContext({ children }: { children: React.ReactNode }) {
 
     return (
         <AuthContext.Provider value={value}>
-            {isLoading() ? <Loading /> : children}
+            {children}
         </AuthContext.Provider>
     )
 }

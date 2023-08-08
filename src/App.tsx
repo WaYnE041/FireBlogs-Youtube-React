@@ -1,6 +1,7 @@
 import './App.css';
 import BlogCard from './components/BlogCard';
 import BlogPost from './components/BlogPost';
+import Loading from "./components/Loading";
 import Footer from './components/Footer';
 import Navigation from './components/Navigation';
 import { useAuth } from './contexts/UserContext';
@@ -30,10 +31,10 @@ function App() {
 		blogCoverPhotoName: string;
 		blogTitle: string;
 	}>({
-		blogId: "", 
-		blogHTML: "", 
-		blogCoverPhoto: "", 
-		blogCoverPhotoName: "", 
+		blogId: "",
+		blogHTML: "",
+		blogCoverPhoto: "",
+		blogCoverPhotoName: "",
 		blogTitle: ""
 	});
 	const [blogPostList, setBlogPostList] = useState<{
@@ -47,27 +48,27 @@ function App() {
 
 	useEffect(() => {
 		getPosts();
-    }, []);
+	}, []);
 
 	//Scroll To Top when Route Changes
 	const { pathname } = useLocation();
 	useEffect(() => {
 		window.scrollTo(0, 0);
 		setEditPostEnabled(false)
-	  }, [pathname]);
+	}, [pathname]);
 
 	const getPosts = async () => {
 		const postCollectionRef = collection(db, "blogPosts");
 		const dataQuery = query(postCollectionRef, orderBy("unixTimestamp", "desc"));
-		
+
 		try {
 			const dbResult = await getDocs(dataQuery);
-			const currentList = dbResult.docs.map((doc) =>{
+			const currentList = dbResult.docs.map((doc) => {
 				return {
 					blogID: doc.data().blogID,
 					blogHTML: doc.data().blogHTML,
 					blogCoverPhoto: doc.data().blogCoverPhoto,
-					blogCoverPhotoName: doc.data().blogCoverPhotoName,					
+					blogCoverPhotoName: doc.data().blogCoverPhotoName,
 					blogTitle: doc.data().blogTitle,
 					blogDate: doc.data().unixTimestamp
 				}
@@ -75,8 +76,8 @@ function App() {
 
 			setBlogPostList(currentList);
 		} catch (error) {
-            console.log(error);
-        }
+			console.log(error);
+		}
 	}
 
 	//Set State Functions
@@ -85,25 +86,25 @@ function App() {
 	}
 
 	const resetCurrentPost = (id: string) => {
-		const index = blogPostList.findIndex(item => item.blogID === id);
-		setBlogPost({
-			blogId: blogPostList[index].blogID,
-			blogHTML: blogPostList[index].blogHTML,
-			blogCoverPhoto: blogPostList[index].blogCoverPhoto,
-			blogCoverPhotoName: blogPostList[index].blogCoverPhotoName,
-			blogTitle: blogPostList[index].blogTitle,
-		});
+			const index = blogPostList.findIndex(item => item.blogID === id);
+			setBlogPost({
+				blogId: blogPostList[index].blogID,
+				blogHTML: blogPostList[index].blogHTML,
+				blogCoverPhoto: blogPostList[index].blogCoverPhoto,
+				blogCoverPhotoName: blogPostList[index].blogCoverPhotoName,
+				blogTitle: blogPostList[index].blogTitle,
+			});
 	}
 
 	const editCurrentPost = (
-		currentPost: { 
+		currentPost: {
 			blogId: string;
 			blogHTML: string;
 			blogCoverPhoto: string;
 			blogCoverPhotoName: string;
 			blogTitle: string;
 		}) => {
-			setBlogPost(currentPost);
+		setBlogPost(currentPost);
 	}
 
 	// Realigns Front-End List with Back-End List after 
@@ -138,93 +139,104 @@ function App() {
 			blogCoverPhotoName?: string;
 			blogTitle: string;
 		}) => {
-			const index = blogPostList.findIndex(item => item.blogID === currentPost.blogID);
-			const newBlogPostsList = blogPostList.slice();
+		const index = blogPostList.findIndex(item => item.blogID === currentPost.blogID);
+		const newBlogPostsList = blogPostList.slice();
 
-			newBlogPostsList[index] = {
-				blogID: newBlogPostsList[index].blogID,
-				blogHTML: currentPost.blogHTML,
-				blogCoverPhoto: currentPost.blogCoverPhoto ? currentPost.blogCoverPhoto : newBlogPostsList[index].blogCoverPhoto,
-				blogCoverPhotoName: currentPost.blogCoverPhotoName ? currentPost.blogCoverPhotoName : newBlogPostsList[index].blogCoverPhotoName,
-				blogTitle: currentPost.blogTitle,
-				blogDate: newBlogPostsList[index].blogDate,
-			} 
+		newBlogPostsList[index] = {
+			blogID: newBlogPostsList[index].blogID,
+			blogHTML: currentPost.blogHTML,
+			blogCoverPhoto: currentPost.blogCoverPhoto ? currentPost.blogCoverPhoto : newBlogPostsList[index].blogCoverPhoto,
+			blogCoverPhotoName: currentPost.blogCoverPhotoName ? currentPost.blogCoverPhotoName : newBlogPostsList[index].blogCoverPhotoName,
+			blogTitle: currentPost.blogTitle,
+			blogDate: newBlogPostsList[index].blogDate,
+		}
 
-			setBlogPostList(newBlogPostsList);
+		setBlogPostList(newBlogPostsList);
 	}
 
 	const deletePostAlignment = (id: string) => {
 		setBlogPostList(current =>
 			current.filter((x) => x.blogID !== id)
-	  	);
+		);
 	}
 
 	//Return first 2 entries to display as homepage feed
 	const blogPostsFeed = () => {
-		return blogPostList.slice(0,2);
-	} 
+		return blogPostList.slice(0, 2);
+	}
 	//Return next 4 entries to display on homepage as cards
 	const blogCardsFeed = () => {
-		return blogPostList.slice(2,6);
+		return blogPostList.slice(2, 6);
 	}
 
 	const { isAuth, isAdmin } = useAuth();
 	const disabledRoutes = ["/login", "/register", "/forgot-password"]
-	
+
+	const isPageLoading = () => {
+		if (isAuth === undefined || isAdmin === undefined) {
+			return true;
+		}
+		return false;
+	}
+
 	return (
-		<div className="app-wrapper">
-			<div className="app">
-					{ !disabledRoutes.includes(pathname) && <Navigation /> }
-					<Routes>
-						{/* Unguarded Routes */}
-						<Route path="/" 
-							element={
-								<Home>
-									<BlogPost posts={blogPostsFeed()} welcomeScreen={false} />
-									<BlogCard editPostEnabled={editPostEnabled} cards={blogCardsFeed()} deletePostAlignment={deletePostAlignment}/>
-								</Home>
-							} 
-						/>
-						<Route path="/blogs" 
-							element={
-								<Blogs toggleEditPost={toggleEditPost}>
-									<BlogCard editPostEnabled={editPostEnabled} cards={blogPostList} deletePostAlignment={deletePostAlignment} />
-								</Blogs>
-							} 
-						/>
-						<Route path="/view-blog/:blogid" element={<ViewBlog blogPostList={blogPostList} />} />
+		<>
+			{isPageLoading() ? <Loading /> :
+				<div className="app-wrapper">
+					<div className="app">
+						{!disabledRoutes.includes(pathname) && <Navigation />}
+						<Routes>
+							{/* Unguarded Routes */}
+							<Route path="/"
+								element={
+									<Home>
+										<BlogPost posts={blogPostsFeed()} welcomeScreen={false} />
+										<BlogCard editPostEnabled={editPostEnabled} cards={blogCardsFeed()} deletePostAlignment={deletePostAlignment} />
+									</Home>
+								}
+							/>
+							<Route path="/blogs"
+								element={
+									<Blogs toggleEditPost={toggleEditPost}>
+										<BlogCard editPostEnabled={editPostEnabled} cards={blogPostList} deletePostAlignment={deletePostAlignment} />
+									</Blogs>
+								}
+							/>
+							<Route path="/view-blog/:blogid" element={<ViewBlog blogPostList={blogPostList} />} />
 
-						{/* Non-Authenticated Routes: accessible only if user in not authenticated */}
-						<Route element={<GuardedRoutes isRouteAccessible={!isAuth} redirectRoute={"/"}/>}>
-							<Route path="/forgot-password" element={<ForgotPassword />} />
-							<Route path="/login" element={<Login />} />
-							<Route path="/register" element={<Register />} />
-						</Route>
+							{/* Non-Authenticated Routes: accessible only if user in not authenticated */}
+							<Route element={<GuardedRoutes isRouteAccessible={!isAuth} redirectRoute={"/"} />}>
+								<Route path="/forgot-password" element={<ForgotPassword />} />
+								<Route path="/login" element={<Login />} />
+								<Route path="/register" element={<Register />} />
+							</Route>
 
-						{/* Authenticated Routes */}
-						<Route element={<GuardedRoutes isRouteAccessible={isAuth} redirectRoute={"/"}/>}>
-							<Route path="/profile" element={<Profile />} />
-						</Route>
+							{/* Authenticated Routes */}
+							<Route element={<GuardedRoutes isRouteAccessible={isAuth} redirectRoute={"/"} />}>
+								<Route path="/profile" element={<Profile />} />
+							</Route>
 
-						{/* Authenticated & Admin Routes */}
-						<Route element={<GuardedRoutes isRouteAccessible={isAuth && isAdmin} redirectRoute={"/"}/>}>
-							<Route path="/admin" element={<Admin />} />
-							<Route path="/blog-preview" element={<BlogPreview blogPost={blogPost} />} />
-							<Route path="/create-post" element={
-								<CreatePost blogPost={blogPost} editCurrentPost={editCurrentPost} createPostAlignment={createPostAlignment} />
-							} />
-							<Route path="/edit-blog/:routeid" element={
-								<EditPost blogPost={blogPost} resetCurrentPost={resetCurrentPost} editCurrentPost={editCurrentPost} editPostAlignment={editPostAlignment} />
-							} />
-						</Route>
+							{/* Authenticated & Admin Routes */}
+							<Route element={<GuardedRoutes isRouteAccessible={isAuth && isAdmin} redirectRoute={"/"} />}>
+								<Route path="/admin" element={<Admin />} />
+								<Route path="/blog-preview" element={<BlogPreview blogPost={blogPost} />} />
+								<Route path="/create-post" element={
+									<CreatePost blogPost={blogPost} editCurrentPost={editCurrentPost} createPostAlignment={createPostAlignment} />
+								} />
+								<Route path="/edit-blog/:routeid" element={
+									<EditPost blogPost={blogPost} resetCurrentPost={resetCurrentPost} editCurrentPost={editCurrentPost} editPostAlignment={editPostAlignment} />
+								} />
+							</Route>
 
-						{/* Not found Route */}
-						<Route path="*" element={<p>Page Not Found</p>} />
-					
-					</Routes>
-					{ !disabledRoutes.includes(pathname) && <Footer /> }
-			</div>
-		</div>
+							{/* Not found Route */}
+							<Route path="*" element={<p>Page Not Found</p>} />
+
+						</Routes>
+						{!disabledRoutes.includes(pathname) && <Footer />}
+					</div>
+				</div>
+			}
+		</>
 	)
 }
 
