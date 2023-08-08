@@ -169,9 +169,10 @@ function App() {
 		return blogPostList.slice(2, 6);
 	}
 
-	const { isAuth, isAdmin } = useAuth();
 	const disabledRoutes = ["/login", "/register", "/forgot-password"]
-
+	
+	const { isAuth, isAdmin } = useAuth();
+	
 	const isPageLoading = () => {
 		if (isAuth === undefined || isAdmin === undefined) {
 			return true;
