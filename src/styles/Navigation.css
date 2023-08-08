@@ -12,6 +12,9 @@ header {
         &:hover {
             color: #1eb8b8;
         }
+        &:active {
+            color: #1eb8b8;
+        }
     }
 
     & nav {
@@ -170,6 +173,12 @@ header {
         & .link {
             padding: 15px 0;
             color: #fff;
+            &:hover {
+                color: #1eb8b8;
+            }
+            &:active {
+                color: #1eb8b8;
+            }
         }
     }
 
