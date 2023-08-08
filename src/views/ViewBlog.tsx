@@ -10,7 +10,6 @@ function ViewBlog({ blogPostList }: {
 		blogCoverPhoto: string;
 		blogTitle: string;
 		blogDate: number;
-		welcomeScreen: boolean;
 	}[];
 }) {
 	useEffect(() => {

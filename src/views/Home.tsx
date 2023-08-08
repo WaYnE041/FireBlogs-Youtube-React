@@ -6,13 +6,12 @@ import { useEffect } from 'react';
 import { Link } from "react-router-dom";
 
 function Home( { children }: { children: React.JSX.Element[] }) {
-	const welcomeScreen = [{
-		blogID: "",
+	const welcomeScreenPost = [{
+		blogID: "-1",
 		blogTitle: "Welcome!",
 		blogHTML:
 			"Weekly blog articles with all things programming including HTML, CSS, JavaScript and more. Register today to never miss a post!",
-		blogCoverPhoto: "coding",
-		welcomeScreen: true,
+		blogCoverPhoto: "coding"
 	}];
 
 	useEffect(() => {
@@ -26,7 +25,7 @@ function Home( { children }: { children: React.JSX.Element[] }) {
 
 	return (
 		<div className='home'>
-			{ !isAuth && (<BlogPost posts={welcomeScreen} />) }
+			{ !isAuth && (<BlogPost posts={welcomeScreenPost} welcomeScreen={true} />) }
 			{ children[0] }
 
 			<div className="blog-card-wrap">

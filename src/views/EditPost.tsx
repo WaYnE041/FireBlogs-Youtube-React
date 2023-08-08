@@ -23,7 +23,6 @@ function EditBlog({ blogPost, resetCurrentPost, editCurrentPost, editPostAlignme
 		blogCoverPhoto: string;
 		blogCoverPhotoName: string;
 		blogTitle: string;
-		welcomeScreen: boolean;
 	};
 	resetCurrentPost: (id: string) => void;
 	editCurrentPost: (currentPost: {
@@ -32,7 +31,6 @@ function EditBlog({ blogPost, resetCurrentPost, editCurrentPost, editPostAlignme
 		blogCoverPhoto: string;
 		blogCoverPhotoName: string;
 		blogTitle: string;
-		welcomeScreen: boolean;
 	}) => void;
 	editPostAlignment:  (currentPost: {
 		blogID: string;
@@ -219,7 +217,6 @@ function EditBlog({ blogPost, resetCurrentPost, editCurrentPost, editPostAlignme
 				blogCoverPhoto: "",
 				blogCoverPhotoName: "",
 				blogTitle: "",
-				welcomeScreen: false
 			});
 
 			navigate(`/view-blog/${docRef.id}`);

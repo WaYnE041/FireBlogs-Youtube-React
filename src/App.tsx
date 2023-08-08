@@ -29,14 +29,12 @@ function App() {
 		blogCoverPhoto: string;
 		blogCoverPhotoName: string;
 		blogTitle: string;
-        welcomeScreen: boolean;
 	}>({
 		blogId: "", 
 		blogHTML: "", 
 		blogCoverPhoto: "", 
 		blogCoverPhotoName: "", 
-		blogTitle: "", 
-		welcomeScreen: false
+		blogTitle: ""
 	});
 	const [blogPostList, setBlogPostList] = useState<{
 		blogID: string;
@@ -45,7 +43,6 @@ function App() {
 		blogCoverPhotoName: string;
 		blogTitle: string;
 		blogDate: number;
-        welcomeScreen: boolean;
 	}[]>([]);
 
 	useEffect(() => {
@@ -71,8 +68,7 @@ function App() {
 					blogCoverPhoto: doc.data().blogCoverPhoto,
 					blogCoverPhotoName: doc.data().blogCoverPhotoName,					
 					blogTitle: doc.data().blogTitle,
-					blogDate: doc.data().unixTimestamp,
-					welcomeScreen: false
+					blogDate: doc.data().unixTimestamp
 				}
 			})
 
@@ -95,7 +91,6 @@ function App() {
 			blogCoverPhoto: blogPostList[index].blogCoverPhoto,
 			blogCoverPhotoName: blogPostList[index].blogCoverPhotoName,
 			blogTitle: blogPostList[index].blogTitle,
-			welcomeScreen: false,
 		});
 	}
 
@@ -106,7 +101,6 @@ function App() {
 			blogCoverPhoto: string;
 			blogCoverPhotoName: string;
 			blogTitle: string;
-			welcomeScreen: boolean;
 		}) => {
 			setBlogPost(currentPost);
 	}
@@ -129,8 +123,7 @@ function App() {
 				blogCoverPhoto: currentPost.blogCoverPhoto,
 				blogCoverPhotoName: currentPost.blogCoverPhotoName,
 				blogTitle: currentPost.blogTitle,
-				blogDate: currentPost.blogDate,
-				welcomeScreen: false
+				blogDate: currentPost.blogDate
 			},
 			...current
 		]);
@@ -154,7 +147,6 @@ function App() {
 				blogCoverPhotoName: currentPost.blogCoverPhotoName ? currentPost.blogCoverPhotoName : newBlogPostsList[index].blogCoverPhotoName,
 				blogTitle: currentPost.blogTitle,
 				blogDate: newBlogPostsList[index].blogDate,
-				welcomeScreen: false
 			} 
 
 			setBlogPostList(newBlogPostsList);
@@ -187,7 +179,7 @@ function App() {
 						<Route path="/" 
 							element={
 								<Home>
-									<BlogPost posts={blogPostsFeed()} />
+									<BlogPost posts={blogPostsFeed()} welcomeScreen={false} />
 									<BlogCard editPostEnabled={editPostEnabled} cards={blogCardsFeed()} deletePostAlignment={deletePostAlignment}/>
 								</Home>
 							} 

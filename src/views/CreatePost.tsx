@@ -24,7 +24,6 @@ function CreatePost({ blogPost, editCurrentPost, createPostAlignment }: {
 		blogCoverPhoto: string;
 		blogCoverPhotoName: string;
 		blogTitle: string;
-		welcomeScreen: boolean;
 	};
 	editCurrentPost: (currentPost: {
 		blogId: string;
@@ -32,7 +31,6 @@ function CreatePost({ blogPost, editCurrentPost, createPostAlignment }: {
 		blogCoverPhoto: string;
 		blogCoverPhotoName: string;
 		blogTitle: string;
-		welcomeScreen: boolean;
 	}) => void;
 	createPostAlignment: (currentPost: {
 		blogID: string;
@@ -199,8 +197,7 @@ function CreatePost({ blogPost, editCurrentPost, createPostAlignment }: {
 				blogHTML: "",
 				blogCoverPhoto: "",
 				blogCoverPhotoName: "",
-				blogTitle: "",
-				welcomeScreen: false
+				blogTitle: ""
 			});
 
 			navigate(`/view-blog/${docRef.id}`);

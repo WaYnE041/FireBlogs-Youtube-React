@@ -4,14 +4,14 @@ import { useAuth } from '../contexts/UserContext';
 import { Link } from "react-router-dom";
 import parse from 'html-react-parser';
 
-function BlogPost({ posts }: {
+function BlogPost({ posts, welcomeScreen }: {
 	posts: {
 		blogID: string;
 		blogTitle: string;
 		blogHTML: string;
 		blogCoverPhoto: string;
-		welcomeScreen: boolean;
 	}[];
+	welcomeScreen: boolean;
 }) {
 	const { isAuth } = useAuth();
 
@@ -27,14 +27,14 @@ function BlogPost({ posts }: {
 						<div className="blog-content">
 							<div>
 								<h2>{post.blogTitle}</h2>
-								{post.welcomeScreen ?
+								{welcomeScreen ?
 									<p>{post.blogHTML}</p>
 									:
 									<div className="content-preview">
 										{parse(post.blogHTML)}
 									</div>
 								}
-								{post.welcomeScreen ?
+								{welcomeScreen ?
 									<Link className="link link-light" to="/login">
 										Login/Register<Arrow className="arrow arrow-light" />
 									</Link>
@@ -47,7 +47,7 @@ function BlogPost({ posts }: {
 						</div>
 						<div className="blog-photo">
 							{
-								post.welcomeScreen ?
+								welcomeScreen ?
 									<img src={getImageUrl(post.blogCoverPhoto)} alt="Blog Cover Photo" />
 									:
 									<img src={post.blogCoverPhoto} alt="Blog Cover Photo" />
