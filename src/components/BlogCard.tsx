@@ -29,7 +29,7 @@ function BlogCard({ editPostEnabled, cards, deletePostAlignment }: {
 	}
 
 	const editPost = async (id: string) => {
-		navigate(`/edit-blog/${id}`);
+		navigate(`/edit-post/${id}`);
 	}
 
 	return (

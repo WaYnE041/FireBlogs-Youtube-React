@@ -16,7 +16,7 @@ import 'react-quill/dist/quill.snow.css';
 
 Quill.register("modules/imageResize", ImageResize);
 
-function EditBlog({ blogPost, resetCurrentPost, editCurrentPost, editPostAlignment }: {
+function EditPost({ blogPost, resetCurrentPost, editCurrentPost, editPostAlignment }: {
 	blogPost: {
 		blogId: string;
 		blogHTML: string;
@@ -313,4 +313,4 @@ function EditBlog({ blogPost, resetCurrentPost, editCurrentPost, editPostAlignme
 	)
 }
 
-export default EditBlog;
+export default EditPost;

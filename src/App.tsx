@@ -224,7 +224,7 @@ function App() {
 								<Route path="/create-post" element={
 									<CreatePost blogPost={blogPost} editCurrentPost={editCurrentPost} createPostAlignment={createPostAlignment} />
 								} />
-								<Route path="/edit-blog/:routeid" element={
+								<Route path="/edit-post/:routeid" element={
 									<EditPost blogPost={blogPost} resetCurrentPost={resetCurrentPost} editCurrentPost={editCurrentPost} editPostAlignment={editPostAlignment} />
 								} />
 							</Route>
