@@ -1,4 +1,4 @@
-import '../styles/BlogPreview.css';
+import '../styles/ViewBlog.css';
 import { useEffect } from 'react';
 import parse from 'html-react-parser';
 
