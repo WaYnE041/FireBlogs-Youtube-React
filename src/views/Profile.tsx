@@ -68,9 +68,9 @@ function Profile() {
 
 
 	return (
-		<div className="profile">
+		<>
 			{ modalActive && <Modal modalMessage={modalMessage} toggleModal={toggleModal} /> }
-			<div className="container">
+			<div className="profile-container">
 				<h2>Account Settings</h2>
 				<div className="profile-info">
 					<div className="initials">{getProfileInfo().initials}</div>
@@ -101,7 +101,7 @@ function Profile() {
 					</form>
 				</div>
 			</div>
-		</div >
+		</>
 	)
 }
 

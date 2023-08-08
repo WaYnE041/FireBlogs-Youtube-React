@@ -1,4 +1,5 @@
 .blog-cards {
+    margin-top: 100px;
     position: relative;
 
     & .toggle-edit {
