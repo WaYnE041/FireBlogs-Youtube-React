@@ -16,7 +16,7 @@ import Login from './views/Login';
 import Profile from './views/Profile';
 import Register from './views/Register';
 import ViewBlog from './views/ViewBlog';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { Routes, Route, useLocation } from "react-router-dom";
 import { db } from './firebase/firebase-config';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
@@ -48,16 +48,15 @@ function App() {
         welcomeScreen: boolean;
 	}[]>([]);
 
-	//fix for strictmode double render
-	const effectRan = useRef(false);
 	useEffect(() => {
-		if(effectRan.current === false) {
-			getPosts();
-		}
-		return () => {
-			effectRan.current = true;
-		}
+		getPosts();
     }, []);
+
+	//Scroll To Top when Route Changes
+	const { pathname } = useLocation();
+	useEffect(() => {
+		window.scrollTo(0, 0);
+	  }, [pathname]);
 
 	const getPosts = async () => {
 		const postCollectionRef = collection(db, "blogPosts");
@@ -65,20 +64,19 @@ function App() {
 		
 		try {
 			const dbResult = await getDocs(dataQuery);
-			dbResult.docs.forEach((doc) => {
-				if (!blogPostList.some(post => post.blogID === doc.id)) {
-					const data = {
-						blogID: doc.data().blogID,
-						blogHTML: doc.data().blogHTML,
-						blogCoverPhoto: doc.data().blogCoverPhoto,
-						blogCoverPhotoName: doc.data().blogCoverPhotoName,					
-						blogTitle: doc.data().blogTitle,
-						blogDate: doc.data().unixTimestamp,
-						welcomeScreen: false
-					};
-					setBlogPostList(current => [...current, data]);
+			const currentList = dbResult.docs.map((doc) =>{
+				return {
+					blogID: doc.data().blogID,
+					blogHTML: doc.data().blogHTML,
+					blogCoverPhoto: doc.data().blogCoverPhoto,
+					blogCoverPhotoName: doc.data().blogCoverPhotoName,					
+					blogTitle: doc.data().blogTitle,
+					blogDate: doc.data().unixTimestamp,
+					welcomeScreen: false
 				}
-			});
+			})
+
+			setBlogPostList(currentList);
 		} catch (error) {
             console.log(error);
         }
@@ -183,7 +181,7 @@ function App() {
 	return (
 		<div className="app-wrapper">
 			<div className="app">
-					{ !disabledRoutes.includes(useLocation().pathname) && <Navigation /> }
+					{ !disabledRoutes.includes(pathname) && <Navigation /> }
 					<Routes>
 						{/* Unguarded Routes */}
 						<Route path="/" 
@@ -231,7 +229,7 @@ function App() {
 						<Route path="*" element={<p>Page Not Found</p>} />
 					
 					</Routes>
-					{ !disabledRoutes.includes(useLocation().pathname) && <Footer /> }
+					{ !disabledRoutes.includes(pathname) && <Footer /> }
 			</div>
 		</div>
 	)
