@@ -298,6 +298,9 @@ function EditPost({ getCurrentPost, editPostAlignment }: {
 					{!isPreview && <button onClick={() => setIsPreview(true)}>Preview Post</button>}
 					{isPreview && <button onClick={() => setIsPreview(false)}>Edit Post</button>}
 				</div>
+				<div className={!error ? "err-message invisible" : "err-message"}>
+					<p><span>Error: </span>{errorMsg}</p>
+				</div>
 
 				{isPreview ?
 					<div>
@@ -311,9 +314,6 @@ function EditPost({ getCurrentPost, editPostAlignment }: {
 					</div>
 					:
 					<>
-						<div className={!error ? "err-message invisible" : "err-message"}>
-							<p><span>Error: </span>{errorMsg}</p>
-						</div>
 						<div className="blog-info">
 							<input type="text" value={blogPost.blogTitle} placeholder="Enter Blog Title"
 								onChange={e =>

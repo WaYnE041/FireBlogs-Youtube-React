@@ -72,7 +72,7 @@ function App() {
 		setEditPostEnabled(value);
 	}
 
-	//gets post from id for edit
+	//gets post from id for edit post page
 	const getCurrentPost = (id: string) => {
 		const index = blogPostList.findIndex(item => item.blogID === id);
 		return {
