@@ -3,7 +3,6 @@ import { auth, db } from '../firebase/firebase-config';
 import { doc, getDoc } from 'firebase/firestore';
 import { User, onAuthStateChanged, signInWithEmailAndPassword, signOut, createUserWithEmailAndPassword, UserCredential } from "firebase/auth";
 
-//figure out how to deal with promises
 interface IContextProps {
     isAuth: boolean | undefined;
     isAdmin: boolean | undefined;
