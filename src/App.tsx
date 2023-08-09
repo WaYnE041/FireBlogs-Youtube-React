@@ -24,19 +24,6 @@ import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 
 function App() {
 	const [editPostEnabled, setEditPostEnabled] = useState<boolean>(false);
-	const [blogPost, setBlogPost] = useState<{
-		blogId: string;
-		blogHTML: string;
-		blogCoverPhoto: string;
-		blogCoverPhotoName: string;
-		blogTitle: string;
-	}>({
-		blogId: "",
-		blogHTML: "",
-		blogCoverPhoto: "",
-		blogCoverPhotoName: "",
-		blogTitle: ""
-	});
 	const [blogPostList, setBlogPostList] = useState<{
 		blogID: string;
 		blogHTML: string;
@@ -85,26 +72,16 @@ function App() {
 		setEditPostEnabled(value);
 	}
 
-	const resetCurrentPost = (id: string) => {
-			const index = blogPostList.findIndex(item => item.blogID === id);
-			setBlogPost({
-				blogId: blogPostList[index].blogID,
-				blogHTML: blogPostList[index].blogHTML,
-				blogCoverPhoto: blogPostList[index].blogCoverPhoto,
-				blogCoverPhotoName: blogPostList[index].blogCoverPhotoName,
-				blogTitle: blogPostList[index].blogTitle,
-			});
-	}
-
-	const editCurrentPost = (
-		currentPost: {
-			blogId: string;
-			blogHTML: string;
-			blogCoverPhoto: string;
-			blogCoverPhotoName: string;
-			blogTitle: string;
-		}) => {
-		setBlogPost(currentPost);
+	//gets post from id for edit
+	const getCurrentPost = (id: string) => {
+		const index = blogPostList.findIndex(item => item.blogID === id);
+		return {
+			blogId: blogPostList[index].blogID,
+			blogHTML: blogPostList[index].blogHTML,
+			blogCoverPhoto: blogPostList[index].blogCoverPhoto,
+			blogCoverPhotoName: blogPostList[index].blogCoverPhotoName,
+			blogTitle: blogPostList[index].blogTitle
+		}
 	}
 
 	// Realigns Front-End List with Back-End List after 
@@ -220,17 +197,17 @@ function App() {
 							{/* Authenticated & Admin Routes */}
 							<Route element={<GuardedRoutes isRouteAccessible={isAuth && isAdmin} redirectRoute={"/"} />}>
 								<Route path="/admin" element={<Admin />} />
-								<Route path="/blog-preview" element={<BlogPreview blogPost={blogPost} />} />
+								<Route path="/blog-preview" element={<BlogPreview />} />
 								<Route path="/create-post" element={
-									<CreatePost blogPost={blogPost} editCurrentPost={editCurrentPost} createPostAlignment={createPostAlignment} />
+									<CreatePost createPostAlignment={createPostAlignment} />
 								} />
 								<Route path="/edit-post/:routeid" element={
-									<EditPost blogPost={blogPost} resetCurrentPost={resetCurrentPost} editCurrentPost={editCurrentPost} editPostAlignment={editPostAlignment} />
+									<EditPost getCurrentPost={getCurrentPost} editPostAlignment={editPostAlignment} />
 								} />
 							</Route>
 
 							{/* Not found Route */}
-							<Route path="*" element={<p>Page Not Found</p>} />
+							<Route path="*" element={<p style={{marginTop: 100}}>Page Not Found</p>} />
 
 						</Routes>
 						{!disabledRoutes.includes(pathname) && <Footer />}

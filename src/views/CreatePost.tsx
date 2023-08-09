@@ -17,21 +17,7 @@ import 'react-quill/dist/quill.snow.css';
 
 Quill.register("modules/imageResize", ImageResize);
 
-function CreatePost({ blogPost, editCurrentPost, createPostAlignment }: {
-	blogPost: {
-		blogId: string;
-		blogHTML: string;
-		blogCoverPhoto: string;
-		blogCoverPhotoName: string;
-		blogTitle: string;
-	};
-	editCurrentPost: (currentPost: {
-		blogId: string;
-		blogHTML: string;
-		blogCoverPhoto: string;
-		blogCoverPhotoName: string;
-		blogTitle: string;
-	}) => void;
+function CreatePost({createPostAlignment }: {
 	createPostAlignment: (currentPost: {
 		blogID: string;
 		blogHTML: string;
@@ -45,12 +31,26 @@ function CreatePost({ blogPost, editCurrentPost, createPostAlignment }: {
 	const [error, setError] = useState<boolean>(false);
 	const [errorMsg, setErrorMsg] = useState<string>('');
 	const [modalActive, setModalActive] = useState<boolean>(false);
+	const [blogPost, setBlogPost] = useState<{
+		blogId: string;
+		blogHTML: string;
+		blogCoverPhoto: string;
+		blogCoverPhotoName: string;
+		blogTitle: string;
+	}>({
+		blogId: "",
+		blogHTML: "",
+		blogCoverPhoto: "",
+		blogCoverPhotoName: "",
+		blogTitle: ""
+	});
 
 	useEffect(() => {
 		document.title = "Create Post | DeadMarket";
 
 		return () => {
 			document.title = "DeadMarket";
+			//resetCurrentPost();
 		};
 	}, []);
 
@@ -61,6 +61,27 @@ function CreatePost({ blogPost, editCurrentPost, createPostAlignment }: {
 
 	const toggleModal = (value: boolean) => {
 		setModalActive(value);
+	}
+
+	const resetCurrentPost = () => {
+		setBlogPost({
+			blogId: "",
+			blogHTML: "",
+			blogCoverPhoto: "",
+			blogCoverPhotoName: "",
+			blogTitle: "",
+		});
+	}
+
+	const editCurrentPost = (
+		currentPost: {
+			blogId: string;
+			blogHTML: string;
+			blogCoverPhoto: string;
+			blogCoverPhotoName: string;
+			blogTitle: string;
+		}) => {
+		setBlogPost(currentPost);
 	}
 
 	const coverHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -290,7 +311,7 @@ function CreatePost({ blogPost, editCurrentPost, createPostAlignment }: {
 				</div>
 				<div className="blog-actions">
 					<button onClick={uploadHandler}>Publish Blog</button>
-					<Link className="router-button" to="/blog-preview">Post Preview</Link>
+					<Link className="router-button" to="/blog-preview" state={{ blogTitle: blogPost.blogTitle, blogCoverPhoto: blogPost.blogCoverPhoto, blogHTML: blogPost.blogHTML }}>Post Preview</Link>
 				</div>
 			</div>
 		</div>

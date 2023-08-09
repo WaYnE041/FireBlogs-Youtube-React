@@ -16,22 +16,14 @@ import 'react-quill/dist/quill.snow.css';
 
 Quill.register("modules/imageResize", ImageResize);
 
-function EditPost({ blogPost, resetCurrentPost, editCurrentPost, editPostAlignment }: {
-	blogPost: {
+function EditPost({ getCurrentPost, editPostAlignment }: {
+	getCurrentPost: (id: string) => {
 		blogId: string;
 		blogHTML: string;
 		blogCoverPhoto: string;
 		blogCoverPhotoName: string;
 		blogTitle: string;
 	};
-	resetCurrentPost: (id: string) => void;
-	editCurrentPost: (currentPost: {
-		blogId: string;
-		blogHTML: string;
-		blogCoverPhoto: string;
-		blogCoverPhotoName: string;
-		blogTitle: string;
-	}) => void;
 	editPostAlignment:  (currentPost: {
 		blogID: string;
 		blogHTML: string;
@@ -45,17 +37,33 @@ function EditPost({ blogPost, resetCurrentPost, editCurrentPost, editPostAlignme
 	const [errorMsg, setErrorMsg] = useState<string>('');
 	const [modalActive, setModalActive] = useState<boolean>(false);
 	const [coverFileChanged, setCoverFileChanged] = useState<boolean>(false);
+	const [blogPost, setBlogPost] = useState<{
+		blogId: string;
+		blogHTML: string;
+		blogCoverPhoto: string;
+		blogCoverPhotoName: string;
+		blogTitle: string;
+	}>({
+		blogId: "",
+		blogHTML: "",
+		blogCoverPhoto: "",
+		blogCoverPhotoName: "",
+		blogTitle: ""
+	});
 
 	useEffect(() => {
 		document.title = "Edit Post | DeadMarket";
 
 		//only set data if id does not match route blogid or it is blank
 		if ((routeid && blogPost.blogId !== routeid) || (routeid && blogPost.blogId === "")) {
-			resetCurrentPost(routeid);
+			const currentPost = getCurrentPost(routeid);
+			setBlogPost(currentPost);
 		}
 
 		return () => {
 			document.title = "DeadMarket";
+			// console.log(useLocation());
+			resetCurrentPost();
 		};
 	}, []);
 
@@ -66,6 +74,27 @@ function EditPost({ blogPost, resetCurrentPost, editCurrentPost, editPostAlignme
 
 	const toggleModal = (value: boolean) => {
 		setModalActive(value);
+	}
+
+	const resetCurrentPost = () => {
+		setBlogPost({
+			blogId: "",
+			blogHTML: "",
+			blogCoverPhoto: "",
+			blogCoverPhotoName: "",
+			blogTitle: "",
+		});
+	}
+
+	const editCurrentPost = (
+		currentPost: {
+			blogId: string;
+			blogHTML: string;
+			blogCoverPhoto: string;
+			blogCoverPhotoName: string;
+			blogTitle: string;
+		}) => {
+		setBlogPost(currentPost);
 	}
 
 	const coverHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
