@@ -6,10 +6,8 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 function Login() {
-    const [loginDetails, setLoginDetails] = useState<{
-        email: null | string;
-        password: null | string;
-    }>({ email: null, password: null });
+    const [email, setEmail] = useState<string>();
+    const [password, setPassword] = useState<string>();
     const [isError, setisError] = useState<boolean>(false);
     const [errorMessage, setErrorMessage] = useState<string>();
 
@@ -25,31 +23,22 @@ function Login() {
 
     const signIn = async (ev: any) => {
         ev.preventDefault();
-        const isEmpty = Object.values(loginDetails).some(x => x === null || x === '');
 
-        if (isEmpty) {
+        //turns empty string and undefined into boolean
+        if (!email || !password) {
             setErrorMessage("Please Fill Out All The Fields");
             setisError(true);
         } else {
             setisError(false);
 
             try {
-                await login(loginDetails.email!, loginDetails.password!);
+                await login(email, password);
                 navigate("/");
             } catch (error:any) {
                 setErrorMessage(`${error.code}: ${error.message}`);
                 setisError(true);
             }
         }
-    }
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const name = e.target.name;
-        const value = e.target.value;
-        setLoginDetails((prevState) => ({
-            ...prevState,
-            [name]: value
-        }));
     }
 
     return (
@@ -62,11 +51,11 @@ function Login() {
                 <h2>Login to Dead:Market</h2>
                 <div className="inputs">
                     <div className="input">
-                        <input type="text" name="email" placeholder="Email" onChange={handleChange} />
+                        <input type="text" name="email" placeholder="Email" onChange={(e) => {setEmail(e.target.value)}} />
                         <Email className="icon" />
                     </div>
                     <div className="input">
-                        <input type="password" name="password" placeholder="Password" onChange={handleChange} />
+                        <input type="password" name="password" placeholder="Password" onChange={(e) => {setPassword(e.target.value)}} />
                         <Password className="icon" />
                     </div>
                     { isError && <div className="error">{ errorMessage }</div> }

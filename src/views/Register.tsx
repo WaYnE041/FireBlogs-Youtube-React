@@ -11,14 +11,12 @@ import { db } from '../firebase/firebase-config';
 function Register() {
     const [isError, setisError] = useState<boolean>(false);
     const [errorMessage, setErrorMessage] = useState<string>();
-    const [authDetails, setAuthDetails] = useState<{
-        firstName: string | null;
-        lastName: string | null;
-        userName: string | null;
-        email: string | null;
-        password:string | null;
-    }>({ firstName: null, lastName: null, userName: null, email: null, password: null });
-    
+    const [firstName, setFirstName] = useState<string>();
+    const [lastName, setLastName] = useState<string>();
+    const [userName, setUserName] = useState<string>();
+    const [email, setEmail] = useState<string>();
+    const [password, setPassword] = useState<string>();
+
     useEffect(() => {
         document.title = "Register | DeadMarket";
         return () => {
@@ -31,22 +29,21 @@ function Register() {
 
     const signUp = async (ev: any) => {
         ev.preventDefault();
-        const isEmpty = Object.values(authDetails).some(x => x === null || x === '');
 
-        if (isEmpty) {
+        if (!firstName || !lastName || !userName || !email || !password) {
             setErrorMessage("Please Fill Out All The Fields");
             setisError(true);
         } else {
             setisError(false);
             
             try {
-                const userCred = await register(authDetails.email!, authDetails.password!);
+                const userCred = await register(email, password);
                 const userCollectionRef = doc(db, "users", userCred.user.uid);
                 await setDoc(userCollectionRef, {
-                    firstName: authDetails.firstName,
-                    lastName: authDetails.lastName,
-                    userName: authDetails.userName,
-                    email: authDetails.email
+                    firstName: firstName,
+                    lastName: lastName,
+                    userName: userName,
+                    email: email
                 });
                 navigate("/");
             } catch (error: any) {
@@ -54,15 +51,6 @@ function Register() {
                 setisError(true);
             }
         } 
-    }
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const name = e.target.name;
-        const value = e.target.value;
-        setAuthDetails((prevState) => ({
-            ...prevState,
-            [name]: value
-        }));
     }
 
     return (
@@ -75,23 +63,23 @@ function Register() {
 				<h2>Create Your Account</h2>
 				<div className="inputs">
 					<div className="input">
-						<input type="text" name="firstName" placeholder="First Name" onChange={handleChange} />
+						<input type="text" name="firstName" placeholder="First Name" onChange={(e) => {setFirstName(e.target.value)}} />
 						<User className="icon"/>
 					</div>
                     <div className="input">
-						<input type="text" name="lastName"placeholder="Last Name" onChange={handleChange} />
+						<input type="text" name="lastName"placeholder="Last Name" onChange={(e) => {setLastName(e.target.value)}} />
 						<User className="icon"/>
 					</div>
                     <div className="input">
-						<input type="text" name="userName" placeholder="User Name" onChange={handleChange} />
+						<input type="text" name="userName" placeholder="User Name" onChange={(e) => {setUserName(e.target.value)}} />
 						<User className="icon"/>
 					</div>
                     <div className="input">
-						<input type="text" name="email" placeholder="Email" onChange={handleChange} />
+						<input type="text" name="email" placeholder="Email" onChange={(e) => {setEmail(e.target.value)}} />
 						<Email className="icon"/>
 					</div>
 					<div className="input">
-						<input type="password" name="password" placeholder="Password" onChange={handleChange} />
+						<input type="password" name="password" placeholder="Password" onChange={(e) => {setPassword(e.target.value)}} />
 						<Password className="icon"/>
 					</div>
                     { isError && <div className="error">{ errorMessage }</div> }

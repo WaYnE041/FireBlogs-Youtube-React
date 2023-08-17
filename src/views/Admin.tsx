@@ -18,9 +18,9 @@ function Admin() {
 	const addAdmin = async () => {
 		try {
 			const functions = getFunctions(getApp(), 'us-central1');
-			if(adminEmail !== "" || adminEmail !== null) {
+			if(adminEmail !== "" && adminEmail !== null) {
 				const addAdminRole = httpsCallable<{ email: string }, Promise<{message: string}>>(functions, 'addAdminRole');
-				const p = await addAdminRole({ email: adminEmail! });
+				const p = await addAdminRole({ email: adminEmail });
 				const data = await p.data;
 				setMessage(data.message);
 			}

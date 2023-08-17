@@ -18,6 +18,7 @@ function Profile() {
     }, []);
 
 	const { isAdmin, getUser, getProfileInfo, setProfileInfo } = useAuth();
+	const profileInfo = getProfileInfo();
 
 	const toggleModal = (value: boolean) => {
 		setModalActive(value);
@@ -46,12 +47,15 @@ function Profile() {
 		} 
 		
 		try {
-			const docRef = doc(db, "users", getProfileInfo().id!);
+			if(!profileInfo.id) {
+				throw new Error("user is not logged in");
+			}
+			const docRef = doc(db, "users", profileInfo.id);
 			await setDoc(docRef, {
 				firstName: profileVal.firstName,
 				lastName: profileVal.lastName,
 				userName: profileVal.userName,
-				email: getProfileInfo().email
+				email: profileInfo.email
 			})
 			console.log("successfully saved to backend!");
 
@@ -83,19 +87,19 @@ function Profile() {
 					<form onSubmit={updateProfile}>
 						<div className="input">
 							<label htmlFor="firstName">First Name:</label>
-							<input type="text" id="firstName" name="firstName" placeholder={getProfileInfo().firstName!}/>
+							<input type="text" id="firstName" name="firstName" placeholder={profileInfo.firstName || ''}/>
 						</div>
 						<div className="input">
 							<label htmlFor="lastName">Last Name:</label>
-							<input type="text" id="lastName" name="lastName" placeholder={getProfileInfo().lastName!} />
+							<input type="text" id="lastName" name="lastName" placeholder={profileInfo.lastName || ''} />
 						</div>
 						<div className="input">
 							<label htmlFor="userName">Username:</label>
-							<input type="text" id="userName" name="userName" placeholder={getProfileInfo().userName!} />
+							<input type="text" id="userName" name="userName" placeholder={profileInfo.userName || ''} />
 						</div>
 						<div className="input">
 							<label htmlFor="email">Email:</label>
-							<input disabled type="text" id="email" placeholder={getProfileInfo().email!}/>
+							<input disabled type="text" id="email" placeholder={profileInfo.email || ''}/>
 						</div>
 						<button type='submit'>Save Changes</button>
 					</form>

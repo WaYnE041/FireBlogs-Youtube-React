@@ -8,7 +8,7 @@ interface IContextProps {
     isAdmin: boolean | undefined;
     getUser: () => User | null;
     getProfileInfo: () => {
-        id: string;
+        id: string | null;
         email: string | null;
         firstName: string | null;
         lastName: string | null;
@@ -31,7 +31,7 @@ export function UserContext({ children }: { children: React.ReactNode }) {
     const [authUser, setAuthUser] = useState<boolean>();
     const [adminUser, setAdminUser] = useState<boolean>();
     const [profile, setProfile] = useState<{
-        id: string;
+        id: string | null;
         email: string | null;
         firstName: string | null;
         lastName: string | null;
@@ -62,7 +62,7 @@ export function UserContext({ children }: { children: React.ReactNode }) {
     const resetProfileInfo = () => {
         console.log("user is signed out");
         setProfile({
-            id: "",
+            id: null,
             email: null,
             firstName: null,
             lastName: null,
@@ -77,6 +77,7 @@ export function UserContext({ children }: { children: React.ReactNode }) {
         try {
             if (user) {
                 const token = await user.getIdTokenResult();
+                //converts `truthy/falsy` value to `true/false`
                 if (!!token.claims.admin) {
                     return true;
                 }
