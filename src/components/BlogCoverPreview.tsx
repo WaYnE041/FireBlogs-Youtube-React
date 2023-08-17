@@ -1,19 +1,18 @@
-import '../styles/BlogCoverPreview.css'
-import { ReactComponent as Close } from '../assets/Icons/times-circle-light.svg'
+import '../styles/BlogCoverPreview.css';
+import { ReactComponent as Close } from '../assets/Icons/times-circle-light.svg';
 
-function BlogCoverPreview({ blogPhotoFileURL, setModalActive }: { 
-    blogPhotoFileURL: string, 
-    setModalActive: (active: boolean) => void, 
+function BlogCoverPreview({ blogPhotoFileURL, toggleModal }: {
+	blogPhotoFileURL: string;
+	toggleModal: (value: boolean) => void;
 }) {
-  return (
-    <div className="modal">
-        <div className="modal-content">
-            <Close className="icon" onClick={() => setModalActive(false)} />
-            
-            <img src={blogPhotoFileURL} alt="Cover Photo Preview" />
-        </div>
-    </div>
-  )
+	return (
+		<div className="modal">
+			<div className="modal-content">
+				<Close className="icon" onClick={() => toggleModal(false)} />
+				<img src={blogPhotoFileURL} alt="Cover Photo Preview" />
+			</div>
+		</div>
+	)
 }
 
-export default BlogCoverPreview
+export default BlogCoverPreview;

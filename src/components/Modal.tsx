@@ -1,17 +1,17 @@
-import '../styles/Modal.css'
+import '../styles/Modal.css';
 
-function Modal({ modalMessage, setModalActive }: { 
-    modalMessage: string | null, 
-    setModalActive: (active: boolean) => void, 
+function Modal({ modalMessage, toggleModal }: {
+	modalMessage: string;
+	toggleModal: (value: boolean) => void;
 }) {
-  return (
-    <div className="modal">
-        <div className="modal-content">
-            <p>{modalMessage}</p>
-            <button onClick={() => setModalActive(false)}>Close</button>
-        </div>
-    </div>
-  )
+	return (
+		<div className="modal">
+			<div className="modal-content">
+				<p>{modalMessage}</p>
+				<button onClick={() => toggleModal(false)}>Close</button>
+			</div>
+		</div>
+	)
 }
 
-export default Modal
+export default Modal;

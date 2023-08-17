@@ -1,86 +1,61 @@
-import '../styles/Login.css'
-import { Link, useNavigate } from 'react-router-dom'
-import { useState, useEffect } from 'react'
-import {ReactComponent as Email} from '../assets/Icons/envelope-regular.svg'
-import {ReactComponent as Password} from '../assets/Icons/lock-alt-solid.svg'
-import {ReactComponent as User} from '../assets/Icons/user-alt-light.svg'
-import { createUserWithEmailAndPassword } from "firebase/auth"
-import { doc, setDoc } from 'firebase/firestore'
-import { auth, db } from '../firebase/firebase-config'
+import '../styles/Login.css';
+import { useAuth } from '../contexts/UserContext';
+import { ReactComponent as Email } from '../assets/Icons/envelope-regular.svg';
+import { ReactComponent as Password } from '../assets/Icons/lock-alt-solid.svg';
+import { ReactComponent as User } from '../assets/Icons/user-alt-light.svg';
+import { Link, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { doc, setDoc } from 'firebase/firestore';
+import { db } from '../firebase/firebase-config';
 
 function Register() {
-    const [authDetails, setAuthDetails] = useState<{
-        firstName: null | string,
-        lastName: null | string,
-        userName: null | string,
-        email: null | string,
-        password: null | string
-    }>({ firstName: null, lastName: null, userName: null, email: null, password: null });
-
     const [isError, setisError] = useState<boolean>(false);
     const [errorMessage, setErrorMessage] = useState<string>();
-
-    const navigate = useNavigate();
+    const [firstName, setFirstName] = useState<string>();
+    const [lastName, setLastName] = useState<string>();
+    const [userName, setUserName] = useState<string>();
+    const [email, setEmail] = useState<string>();
+    const [password, setPassword] = useState<string>();
 
     useEffect(() => {
-        document.title = "Register | DeadMarket"
+        document.title = "Register | DeadMarket";
         return () => {
-            document.title = "DeadMarket"
+            document.title = "DeadMarket";
         };
     }, []);
 
-    const Register = async (ev: any) => {
-        ev.preventDefault();
-        const isEmpty = Object.values(authDetails).some(x => x === null || x === '');
-        if (isEmpty) {
-            setisError(true)
-            setErrorMessage("Please Fill Out All The Fields")
-                console.log(`error is ${isError}`)
-                console.log(authDetails)
-        } else {
-            setisError(false)
-                console.log(`error is ${isError}`)
-                console.log(authDetails)
+    const { register } = useAuth();
+    const navigate = useNavigate();
 
-            await createUserWithEmailAndPassword(auth, authDetails.email!, authDetails.password!)
-            .then(async (userCredential) => {
-                const userCollectionRef = doc(db, "users", userCredential.user.uid)
+    const signUp = async (ev: any) => {
+        ev.preventDefault();
+
+        if (!firstName || !lastName || !userName || !email || !password) {
+            setErrorMessage("Please Fill Out All The Fields");
+            setisError(true);
+        } else {
+            setisError(false);
+            
+            try {
+                const userCred = await register(email, password);
+                const userCollectionRef = doc(db, "users", userCred.user.uid);
                 await setDoc(userCollectionRef, {
-                    firstName: authDetails.firstName,
-                    lastName: authDetails.lastName,
-                    userName: authDetails.userName,
-                    email: authDetails.email
-                })
-                .catch((error) => {
-                    setisError(true)
-                    console.log(`adddoc ${error.code}: ${error.message}`)
-                    setErrorMessage(`adddoc${error.code}: ${error.message}`)
+                    firstName: firstName,
+                    lastName: lastName,
+                    userName: userName,
+                    email: email
                 });
                 navigate("/");
-            })
-            .catch((error) => {
-                setisError(true)
-                console.log(`${error.code}: ${error.message}`)
-                setErrorMessage(`${error.code}: ${error.message}`)
-            });
-
-            
-            
+            } catch (error: any) {
+                setErrorMessage(`${error.code}: ${error.message}`);
+                setisError(true);
+            }
         } 
-    }
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const name = e.target.name
-        const value = e.target.value
-        setAuthDetails((prevState) => ({
-            ...prevState,
-            [name]: value
-        }))
     }
 
     return (
         <div className="form-wrap">
-			<form className="register" onSubmit={Register}>
+			<form className="register" onSubmit={signUp}>
 				<p className="login-register">
 					Already have an account?
 					<Link className="router-link" to="/login">Login</Link>
@@ -88,26 +63,26 @@ function Register() {
 				<h2>Create Your Account</h2>
 				<div className="inputs">
 					<div className="input">
-						<input type="text" name="firstName" placeholder="First Name" onChange={handleChange} />
+						<input type="text" name="firstName" placeholder="First Name" onChange={(e) => {setFirstName(e.target.value)}} />
 						<User className="icon"/>
 					</div>
                     <div className="input">
-						<input type="text" name="lastName"placeholder="Last Name" onChange={handleChange} />
+						<input type="text" name="lastName"placeholder="Last Name" onChange={(e) => {setLastName(e.target.value)}} />
 						<User className="icon"/>
 					</div>
                     <div className="input">
-						<input type="text" name="userName" placeholder="User Name" onChange={handleChange} />
+						<input type="text" name="userName" placeholder="User Name" onChange={(e) => {setUserName(e.target.value)}} />
 						<User className="icon"/>
 					</div>
                     <div className="input">
-						<input type="text" name="email" placeholder="Email" onChange={handleChange} />
+						<input type="text" name="email" placeholder="Email" onChange={(e) => {setEmail(e.target.value)}} />
 						<Email className="icon"/>
 					</div>
 					<div className="input">
-						<input type="password" name="password" placeholder="Password" onChange={handleChange} />
+						<input type="password" name="password" placeholder="Password" onChange={(e) => {setPassword(e.target.value)}} />
 						<Password className="icon"/>
 					</div>
-                    { isError && <div className="error">{errorMessage}</div>}
+                    { isError && <div className="error">{ errorMessage }</div> }
 				</div>
 				<button type="submit">Sign Up</button>
 				<div className="angle"></div>
@@ -117,4 +92,4 @@ function Register() {
     )
 }
 
-export default Register
+export default Register;

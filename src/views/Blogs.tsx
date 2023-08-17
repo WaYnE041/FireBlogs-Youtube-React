@@ -1,57 +1,33 @@
-import '../styles/Blogs.css'
-import BlogCard from '../components/BlogCard'
-import { useEffect } from 'react'
+import '../styles/Blogs.css';
+import { useAuth } from '../contexts/UserContext';
+import { useEffect } from 'react';
 
-function Blogs(
-    { isAdmin, blogPostList, editPostEnabled, setEditPostEnabled, setBlogPostList }: {
-        isAdmin: boolean,
-        blogPostList: {
-            blogID: string,
-            blogHTML: string,
-            blogCoverPhoto: string,
-            blogTitle: string,
-            blogDate: number,
-            welcomeScreen: boolean,
-        }[],      
-        editPostEnabled: boolean,
-        setEditPostEnabled: (active: boolean) => void,
-        setBlogPostList: React.Dispatch<React.SetStateAction<{
-            blogID: string;
-            blogHTML: string;
-            blogCoverPhoto: string;
-            blogCoverPhotoName: string,
-            blogTitle: string;
-            blogDate: number;
-            welcomeScreen: boolean;
-        }[]>>
-    }
-) {
-
+function Blogs({ toggleEditPost, children }: {
+    toggleEditPost: (id: boolean) => void;
+    children: React.ReactNode;
+}) {
     useEffect(() => {
-        document.title = "Blogs | DeadMarket"
+        document.title = "Blogs | DeadMarket";
         return () => {
-          setEditPostEnabled(false)
-          document.title = "DeadMarket"
+            document.title = "DeadMarket";
         };
-      }, []);
+    }, []);
+
+    const { isAdmin } = useAuth();
 
     return (
         <div className="blog-card-wrap">
             <div className="blog-cards container">
-                { isAdmin &&
+                {isAdmin &&
                     <div className="toggle-edit">
                         <span>Toggle Editing Post</span>
-                        <input type="checkbox" onChange={e => setEditPostEnabled(e.target.checked)} />
+                        <input type="checkbox" onChange={e => toggleEditPost(e.target.checked)} />
                     </div>
                 }
-                {blogPostList.map((card) => {
-                    return (
-                        <BlogCard key={card.blogID} editPostEnabled={editPostEnabled} card={card} setBlogPostList={setBlogPostList} />
-                    );
-                })}
+                { children }
             </div>
         </div>
     )
 }
 
-export default Blogs
+export default Blogs;

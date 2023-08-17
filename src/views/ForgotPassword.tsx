@@ -1,57 +1,63 @@
-import '../styles/Login.css'
-import { Link } from 'react-router-dom'
-import { useState, useEffect } from 'react'
-import { ReactComponent as Email } from '../assets/Icons/envelope-regular.svg'
-import Modal from '../components/Modal'
-import Loading from '../components/Loading'
-import { auth } from '../firebase/firebase-config'
-import { sendPasswordResetEmail } from 'firebase/auth'
+import '../styles/Login.css';
+import { ReactComponent as Email } from '../assets/Icons/envelope-regular.svg';
+import Modal from '../components/Modal';
+import Loading from '../components/Loading';
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { auth } from '../firebase/firebase-config';
+import { sendPasswordResetEmail } from 'firebase/auth';
 
 function ForgotPassword() {
-
     const [isLoading, setisLoading] = useState<boolean>(false);
-    const [email, setEmail] = useState<string | null>(null);
+    const [email, setEmail] = useState<string>();
     const [modalActive, setModalActive] = useState<boolean>(false);
-    const [modalMessage, setModalMessage] = useState<string | null>(null);
+    const [modalMessage, setModalMessage] = useState<string>();
 
     useEffect(() => {
-        document.title = "Forgot Password | DeadMarket"
+        document.title = "Forgot Password | DeadMarket";
         return () => {
-            document.title = "DeadMarket"
+            document.title = "DeadMarket";
         };
     }, []);
 
-    const resetPassword = (e: any) => {
+    const toggleModal = (value: boolean) => {
+        setModalActive(value);
+    }
+
+    const resetPassword = async (e: any) => {
         e.preventDefault();
         setisLoading(true);
-        if (email === null || email === '') {
-            setModalMessage("Please Fill Out All The Fields")
-            setisLoading(false)  
-            setModalActive(true)          
+
+        if (!email) {
+            setModalMessage("Please Fill Out All The Fields");
+            setisLoading(false);
         } else {
-            sendPasswordResetEmail(auth, email)
-            .then(() => {
-                setModalMessage("Password reset email sent!")
-                setisLoading(false)
-                setModalActive(true)
-            })
-            .catch((error) => {
-                setModalMessage(`${error.message}`)
-                setisLoading(false)
-                setModalActive(true)
-                console.log(`${error.message}`)
-            });
+            try {
+                await sendPasswordResetEmail(auth, email);
+                setModalMessage("Password reset email sent!");
+                setisLoading(false);
+
+                const element = (document.getElementById("email") as HTMLInputElement | null)
+                if(element){
+                    element.value = ""
+                    setEmail("")
+                }
+            } catch (error: any) {
+                setModalMessage(`${error.message}`);
+                setisLoading(false);
+            }
+            setModalActive(true);
         }
-      }
+    }
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setEmail(e.target.value)
+        setEmail(e.target.value);
     }
 
     return (
         <div className="reset-password">
-            { modalActive && <Modal modalMessage={modalMessage} setModalActive={setModalActive}/> }
-            { isLoading && <Loading /> }
+            {modalActive && <Modal modalMessage={modalMessage || ""} toggleModal={toggleModal} />}
+            {isLoading && <Loading />}
             <div className="form-wrap">
                 <form id="reset-form" className="reset" onSubmit={resetPassword}>
                     <p className="login-register">
@@ -61,17 +67,17 @@ function ForgotPassword() {
                     <p>Forgot your password? Enter your email to reset it</p>
                     <div className="inputs">
                         <div className="input">
-                            <input type="text" id="email" placeholder="Email" onChange={handleChange}/>
+                            <input type="text" id="email" placeholder="Email" onChange={handleChange} />
                             <Email className="icon" />
                         </div>
                     </div>
                     <button type='submit'>Reset</button>
                     <div className="angle"></div>
-                </form> 
+                </form>
                 <div className="background"></div>
             </div>
         </div>
     )
 }
 
-export default ForgotPassword
+export default ForgotPassword;

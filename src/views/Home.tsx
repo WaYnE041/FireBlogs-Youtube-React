@@ -1,80 +1,43 @@
-import '../styles/Home.css'
-import BlogPost from '../components/BlogPost'
-import BlogCard from '../components/BlogCard'
-import { ReactComponent as Arrow } from '../assets/Icons/arrow-right-light.svg'
+import '../styles/Home.css';
+import { ReactComponent as Arrow } from '../assets/Icons/arrow-right-light.svg';
+import BlogPost from '../components/BlogPost';
+import { useAuth } from '../contexts/UserContext';
+import { useEffect } from 'react';
 import { Link } from "react-router-dom";
-//import { NavLink } from "react-router-dom";
-import { useEffect } from 'react'
 
-function Home(
-	{ isAuth, blogPostList, editPostEnabled, setBlogPostList }: {
-		isAuth: boolean,
-		blogPostList: {
-            blogID: string,
-            blogHTML: string,
-            blogCoverPhoto: string,
-            blogTitle: string,
-            blogDate: number,
-            welcomeScreen: boolean,
-        }[],
-		editPostEnabled: boolean,
-		setBlogPostList: React.Dispatch<React.SetStateAction<{
-			blogID: string;
-			blogHTML: string;
-			blogCoverPhoto: string;
-			blogCoverPhotoName: string,
-			blogTitle: string;
-			blogDate: number;
-			welcomeScreen: boolean;
-		}[]>>
-	}
-) {
-
-	const blogPostsFeed = () => {
-		return blogPostList.slice(0,2)
-	}
-	const blogCardsFeed = () => {
-		return blogPostList.slice(2,6)
-	}
-
-	const welcomeScreen = {
-		blogID: "",
+function Home( { children }: { children: React.JSX.Element[] }) {
+	const welcomeScreenPost = [{
+		blogID: "-1",
 		blogTitle: "Welcome!",
 		blogHTML:
 			"Weekly blog articles with all things programming including HTML, CSS, JavaScript and more. Register today to never miss a post!",
-		blogCoverPhoto: "coding",
-		welcomeScreen: true,
-	}
+		blogCoverPhoto: "coding"
+	}];
 
 	useEffect(() => {
-		document.title = "Home | DeadMarket"
+		document.title = "Home | DeadMarket";
 		return () => {
-			document.title = "DeadMarket"
+			document.title = "DeadMarket";
 		};
 	}, []);
 
+	const { isAuth } = useAuth();
+
 	return (
 		<div className='home'>
-			{!isAuth && (<BlogPost isAuth={isAuth} post={welcomeScreen} />)}
-			{blogPostsFeed().map((post) => {
-				return (
-					<BlogPost isAuth={isAuth} key={post.blogID} post={post} />
-				);
-			})}
+			{ !isAuth && (<BlogPost posts={welcomeScreenPost} welcomeScreen={true} />) }
+			{ children[0] }
 
 			<div className="blog-card-wrap">
 				<div className="container">
 					<h3>View More Recent Blogs</h3>
 					<div className="blog-cards">
-						{blogCardsFeed().map((card) => {
-							return (
-								<BlogCard key={card.blogID} editPostEnabled={editPostEnabled} card={card} setBlogPostList={setBlogPostList}/>
-							);
-						})}
+						{ children[1] }
 					</div>
 				</div>
 			</div>
-			{!isAuth && (
+
+			{ !isAuth && (
 				<div className="updates">
 					<div className="container">
 						<h2>Never Miss A Post. Register For Your Free Account Today!</h2>
@@ -88,4 +51,4 @@ function Home(
 	)
 }
 
-export default Home
+export default Home;

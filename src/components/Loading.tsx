@@ -1,11 +1,11 @@
-import '../styles/Loading.css'
+import '../styles/Loading.css';
 
 function Loading() {
-  return (
-    <div className="loading">
-      <span></span>
-    </div>
-  )
+	return (
+		<div className="loading">
+			<span></span>
+		</div>
+	)
 }
 
-export default Loading
+export default Loading;
