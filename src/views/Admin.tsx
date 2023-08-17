@@ -5,7 +5,7 @@ import { getApp } from 'firebase/app';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 
 function Admin() {
-	const [adminEmail, setAdminEmail] = useState<string | null>(null);
+	const [adminEmail, setAdminEmail] = useState<string>();
 	const [message, setMessage] = useState<string>("");
 
 	useEffect(() => {
@@ -18,7 +18,7 @@ function Admin() {
 	const addAdmin = async () => {
 		try {
 			const functions = getFunctions(getApp(), 'us-central1');
-			if(adminEmail !== "" && adminEmail !== null) {
+			if(!!adminEmail) {
 				const addAdminRole = httpsCallable<{ email: string }, Promise<{message: string}>>(functions, 'addAdminRole');
 				const p = await addAdminRole({ email: adminEmail });
 				const data = await p.data;
@@ -36,7 +36,7 @@ function Admin() {
 				<div className="admin-info">
 					<h2>Add Admin</h2>
 					<div className="input">
-					<input placeholder="Enter user email to make them an admin" type="text" id="addAdmins" onChange={e => setAdminEmail(e.target.value)} />
+						<input placeholder="Enter user email to make them an admin" type="text" id="addAdmins" onChange={e => setAdminEmail(e.target.value)} />
 					</div>
 					<span>{message}</span>
 					<button onClick={addAdmin} className="button">Submit</button>

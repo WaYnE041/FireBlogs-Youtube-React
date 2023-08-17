@@ -1,7 +1,7 @@
 import '../styles/Modal.css';
 
 function Modal({ modalMessage, toggleModal }: {
-	modalMessage: string | null;
+	modalMessage: string;
 	toggleModal: (value: boolean) => void;
 }) {
 	return (

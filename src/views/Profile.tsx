@@ -8,7 +8,7 @@ import { db } from '../firebase/firebase-config';
 
 function Profile() {
 	const [modalActive, setModalActive] = useState<boolean>(false);
-	const [modalMessage, setModalMessage] = useState<string | null>(null);
+	const [modalMessage, setModalMessage] = useState<string>();
 
 	useEffect(() => {
         document.title = "Profile | DeadMarket";
@@ -73,7 +73,7 @@ function Profile() {
 
 	return (
 		<>
-			{ modalActive && <Modal modalMessage={modalMessage} toggleModal={toggleModal} /> }
+			{ modalActive && <Modal modalMessage={modalMessage || ""} toggleModal={toggleModal} /> }
 			<div className="profile-container">
 				<h2>Account Settings</h2>
 				<div className="profile-info">

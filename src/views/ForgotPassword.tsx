@@ -9,9 +9,9 @@ import { sendPasswordResetEmail } from 'firebase/auth';
 
 function ForgotPassword() {
     const [isLoading, setisLoading] = useState<boolean>(false);
-    const [email, setEmail] = useState<string | null>(null);
+    const [email, setEmail] = useState<string>();
     const [modalActive, setModalActive] = useState<boolean>(false);
-    const [modalMessage, setModalMessage] = useState<string | null>(null);
+    const [modalMessage, setModalMessage] = useState<string>();
 
     useEffect(() => {
         document.title = "Forgot Password | DeadMarket";
@@ -28,7 +28,7 @@ function ForgotPassword() {
         e.preventDefault();
         setisLoading(true);
 
-        if (email === null || email === '') {
+        if (!email) {
             setModalMessage("Please Fill Out All The Fields");
             setisLoading(false);
         } else {
@@ -56,7 +56,7 @@ function ForgotPassword() {
 
     return (
         <div className="reset-password">
-            {modalActive && <Modal modalMessage={modalMessage} toggleModal={toggleModal} />}
+            {modalActive && <Modal modalMessage={modalMessage || ""} toggleModal={toggleModal} />}
             {isLoading && <Loading />}
             <div className="form-wrap">
                 <form id="reset-form" className="reset" onSubmit={resetPassword}>
