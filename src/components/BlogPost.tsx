@@ -16,7 +16,7 @@ function BlogPost({ posts, welcomeScreen }: {
 	const { isAuth } = useAuth();
 
 	const getImageUrl = (name: string) => {
-		return new URL(`../assets/blogPhotos/${name}.jpg`, import.meta.url).href;
+		return new URL(`../assets/blogPhotos/${name}.webp`, import.meta.url).href;
 	}
 
 	return (

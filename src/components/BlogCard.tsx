@@ -1,5 +1,4 @@
 import '../styles/BlogCard.css';
-import '../assets/blogCards/stock-1.jpg';
 import { ReactComponent as Arrow } from '../assets/Icons/arrow-right-light.svg';
 import { ReactComponent as Edit } from '../assets/Icons/edit-regular.svg';
 import { ReactComponent as Delete } from '../assets/Icons/trash-regular.svg';

@@ -14,10 +14,10 @@ function Admin() {
 	
 	const addAdmin = async () => {
 		try {
-			const { getApp } = await import("firebase/app");
+			const { app } = await import("../firebase/firebase-config");
 			const { getFunctions, httpsCallable } = await import("firebase/functions");
 
-			const functions = getFunctions(getApp(), 'us-central1');
+			const functions = getFunctions(app, 'us-central1');
 			if(!!adminEmail) {
 				const addAdminRole = httpsCallable<{ email: string }, Promise<{message: string}>>(functions, 'addAdminRole');
 				const p = await addAdminRole({ email: adminEmail });
