@@ -7,10 +7,6 @@ import { useState, useEffect, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { collection, doc, setDoc } from 'firebase/firestore';
-import { db, storage } from '../firebase/firebase-config';
-
 import ReactQuill, { Quill } from 'react-quill';
 import { ImageResize } from "quill-image-resize-module-ts";
 import 'react-quill/dist/quill.snow.css';
@@ -110,6 +106,9 @@ function CreatePost({ createPostAlignment }: {
 			}
 
 			try {
+				const { storage } = await import('../firebase/firebase-config');
+				const { getDownloadURL, ref, uploadBytes } = await import('firebase/storage');
+
 				const editor = quillRef.current.getEditor();
 				const contentFile = input.files[0];
 				const uniqueId = uuidv4();
@@ -169,6 +168,9 @@ function CreatePost({ createPostAlignment }: {
 		}
 
 		try {
+			const { db, storage } = await import('../firebase/firebase-config');
+			const { collection, doc, setDoc } = await import('firebase/firestore');
+			const { getDownloadURL, ref, uploadBytes } = await import('firebase/storage');
 			setisLoading(true);
 
 			const uniqueId = uuidv4();

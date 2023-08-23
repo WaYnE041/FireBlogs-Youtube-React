@@ -1,9 +1,6 @@
 import '../styles/Admin.css';
 import { useState, useEffect } from 'react';
 
-import { getApp } from 'firebase/app'; 
-import { getFunctions, httpsCallable } from 'firebase/functions';
-
 function Admin() {
 	const [adminEmail, setAdminEmail] = useState<string>();
 	const [message, setMessage] = useState<string>("");
@@ -17,6 +14,9 @@ function Admin() {
 	
 	const addAdmin = async () => {
 		try {
+			const { getApp } = await import("firebase/app");
+			const { getFunctions, httpsCallable } = await import("firebase/functions");
+
 			const functions = getFunctions(getApp(), 'us-central1');
 			if(!!adminEmail) {
 				const addAdminRole = httpsCallable<{ email: string }, Promise<{message: string}>>(functions, 'addAdminRole');

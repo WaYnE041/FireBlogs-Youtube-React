@@ -5,8 +5,6 @@ import { ReactComponent as Password } from '../assets/Icons/lock-alt-solid.svg';
 import { ReactComponent as User } from '../assets/Icons/user-alt-light.svg';
 import { Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { doc, setDoc } from 'firebase/firestore';
-import { db } from '../firebase/firebase-config';
 
 function Register() {
     const [isError, setisError] = useState<boolean>(false);
@@ -37,6 +35,9 @@ function Register() {
             setisError(false);
             
             try {
+                const { doc, setDoc } = await import('firebase/firestore');
+			    const { db } = await import('../firebase/firebase-config');
+
                 const userCred = await register(email, password);
                 const userCollectionRef = doc(db, "users", userCred.user.uid);
                 await setDoc(userCollectionRef, {

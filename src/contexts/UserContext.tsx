@@ -1,7 +1,6 @@
 import React, { useState, useEffect, createContext, useContext, useCallback } from "react";
-import { auth, db } from '../firebase/firebase-config';
-import { doc, getDoc } from 'firebase/firestore';
-import { User, onAuthStateChanged, signInWithEmailAndPassword, signOut, createUserWithEmailAndPassword, UserCredential } from "firebase/auth";
+import { auth } from '../firebase/firebase-config';
+import { User, onAuthStateChanged, UserCredential } from "firebase/auth";
 
 interface IContextProps {
     isAuth: boolean | undefined;
@@ -90,9 +89,13 @@ export function UserContext({ children }: { children: React.ReactNode }) {
     }
 
     const setProfileInfo = async (user: User) => {
-        const docRef = doc(db, "users", user.uid);
         try {
+            const { doc, getDoc } = await import('firebase/firestore');
+            const { db } = await import('../firebase/firebase-config');
+
+            const docRef = doc(db, "users", user.uid);
             const docSnap = await getDoc(docRef);
+
             if (docSnap.exists()) {
                 setProfile({
                     id: docSnap.id,
@@ -116,6 +119,7 @@ export function UserContext({ children }: { children: React.ReactNode }) {
 
     const login = async (email: string, password: string) => {
         try {
+            const { signInWithEmailAndPassword } = await import("firebase/auth");
             await signInWithEmailAndPassword(auth, email, password);
             console.log(auth.currentUser?.uid)
         } catch (error: any) {
@@ -126,6 +130,7 @@ export function UserContext({ children }: { children: React.ReactNode }) {
 
     const logout = async () => {
         try {
+            const { signOut } = await import("firebase/auth");
             await signOut(auth)
         } catch (error: any) {
             console.log(error);
@@ -135,6 +140,7 @@ export function UserContext({ children }: { children: React.ReactNode }) {
 
     const register = async (email: string, password: string) => {
         try {
+            const { createUserWithEmailAndPassword } = await import("firebase/auth");
             const userCred = await createUserWithEmailAndPassword(auth, email, password);
             return userCred;
         } catch (error: any) {

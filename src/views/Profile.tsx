@@ -3,8 +3,6 @@ import { ReactComponent as AdminIcon } from '../assets/Icons/user-crown-light.sv
 import Modal from '../components/Modal';
 import { useAuth } from '../contexts/UserContext';
 import { useState, useEffect } from 'react'
-import {  doc, setDoc } from "firebase/firestore";
-import { db } from '../firebase/firebase-config';
 
 function Profile() {
 	const [modalActive, setModalActive] = useState<boolean>(false);
@@ -50,6 +48,10 @@ function Profile() {
 			if(!profileInfo.id) {
 				throw new Error("user is not logged in");
 			}
+
+			const { doc, setDoc } = await import('firebase/firestore');
+			const { db } = await import('../firebase/firebase-config');
+
 			const docRef = doc(db, "users", profileInfo.id);
 			await setDoc(docRef, {
 				firstName: profileVal.firstName,

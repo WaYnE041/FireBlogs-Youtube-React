@@ -4,8 +4,6 @@ import { ReactComponent as Arrow } from '../assets/Icons/arrow-right-light.svg';
 import { ReactComponent as Edit } from '../assets/Icons/edit-regular.svg';
 import { ReactComponent as Delete } from '../assets/Icons/trash-regular.svg';
 import { Link, useNavigate } from "react-router-dom";
-import { db } from '../firebase/firebase-config';
-import { doc, deleteDoc } from 'firebase/firestore';
 
 function BlogCard({ editPostEnabled, cards, deletePostAlignment }: {
 	editPostEnabled: boolean;
@@ -21,11 +19,19 @@ function BlogCard({ editPostEnabled, cards, deletePostAlignment }: {
 	const navigate = useNavigate();
 
 	const deletePost = async (id: string) => {
-		const postDoc = doc(db, "blogPosts", id);
-		await deleteDoc(postDoc);
+		try {
+			const { db } = await import('../firebase/firebase-config');
+			const { doc, deleteDoc } = await import('firebase/firestore');
 
-		//aligns front end with backend without rerender
-		deletePostAlignment(id);
+			const postDoc = doc(db, "blogPosts", id);
+			await deleteDoc(postDoc);
+
+			//aligns front end with backend without rerender
+			deletePostAlignment(id);
+			
+		} catch (error) {
+			console.log(error);
+		}
 	}
 
 	const editPost = async (id: string) => {

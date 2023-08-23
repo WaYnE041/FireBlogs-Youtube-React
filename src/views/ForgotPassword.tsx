@@ -4,8 +4,6 @@ import Modal from '../components/Modal';
 import Loading from '../components/Loading';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { auth } from '../firebase/firebase-config';
-import { sendPasswordResetEmail } from 'firebase/auth';
 
 function ForgotPassword() {
     const [isLoading, setisLoading] = useState<boolean>(false);
@@ -33,6 +31,9 @@ function ForgotPassword() {
             setisLoading(false);
         } else {
             try {
+                const { auth } = await import('../firebase/firebase-config');
+                const { sendPasswordResetEmail } = await import('firebase/auth');
+
                 await sendPasswordResetEmail(auth, email);
                 setModalMessage("Password reset email sent!");
                 setisLoading(false);

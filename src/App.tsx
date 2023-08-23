@@ -19,8 +19,6 @@ import Register from './views/Register';
 import ViewBlog from './views/ViewBlog';
 import { useState, useEffect } from 'react';
 import { Routes, Route, useLocation } from "react-router-dom";
-import { db } from './firebase/firebase-config';
-import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 
 function App() {
 	const [editPostEnabled, setEditPostEnabled] = useState<boolean>(false);
@@ -45,10 +43,13 @@ function App() {
 	}, [pathname]);
 
 	const getPosts = async () => {
-		const postCollectionRef = collection(db, "blogPosts");
-		const dataQuery = query(postCollectionRef, orderBy("unixTimestamp", "desc"));
-
 		try {
+			const { db } = await import('./firebase/firebase-config');
+			const { collection, getDocs, query, orderBy } = await import('firebase/firestore');
+
+			const postCollectionRef = collection(db, "blogPosts");
+			const dataQuery = query(postCollectionRef, orderBy("unixTimestamp", "desc"));
+
 			const dbResult = await getDocs(dataQuery);
 			const currentList = dbResult.docs.map((doc) => {
 				return {
