@@ -6,21 +6,38 @@ import Footer from './components/Footer';
 import Navigation from './components/Navigation';
 import { useAuth } from './contexts/UserContext';
 import GuardedRoutes from './routes/GuardedRoutes';
-import Admin from './views/Admin';
-import BlogPreview from './views/BlogPreview';
-import Blogs from './views/Blogs';
-import CreatePost from './views/CreatePost';
-import EditPost from './views/EditPost';
-import ForgotPassword from './views/ForgotPassword';
 import Home from './views/Home';
-import Login from './views/Login';
-import Profile from './views/Profile';
-import Register from './views/Register';
-import ViewBlog from './views/ViewBlog';
-import { useState, useEffect } from 'react';
+import Blogs from './views/Blogs';
+import { lazy, useState, useEffect, Suspense } from 'react';
 import { Routes, Route, useLocation } from "react-router-dom";
 
+
 function App() {
+
+	// const lazyDelayed = (path: string, delay = 1000) => {
+	// 	return lazy(() => Promise.all([
+	// 		import(path),
+	// 		new Promise((resolve) => setTimeout(resolve, delay)) // ensures minimal delay
+	// 	]).then(([module]) => module));
+	//   }
+
+	const Admin = lazy(() => import('./views/Admin'));
+	const BlogPreview  = lazy(() => import('./views/BlogPreview'));
+	//const Blogs = lazy(() => import('./views/Blogs'));
+	const CreatePost = lazy(() => import('./views/CreatePost'));
+	const EditPost = lazy(() => import('./views/EditPost'));
+	const ForgotPassword = lazy(() => import('./views/ForgotPassword'));
+	//const Home = lazy(() => import('./views/Home'));
+	const Login = lazy(() => import('./views/Login'));
+	const Profile = lazy(() => import('./views/Profile'));
+	const Register = lazy(() => import('./views/Register'));
+	const ViewBlog = lazy(() => import('./views/ViewBlog'));
+
+	const { pathname } = useLocation();
+
+	const [displayLocation, setDisplayLocation] = useState(pathname);
+ 	const [transitionStage, setTransistionStage] = useState("fadeIn");
+
 	const [editPostEnabled, setEditPostEnabled] = useState<boolean>(false);
 	const [blogPostList, setBlogPostList] = useState<{
 		blogID: string;
@@ -36,11 +53,17 @@ function App() {
 	}, []);
 
 	//Scroll To Top when Route Changes
-	const { pathname } = useLocation();
+	
 	useEffect(() => {
 		window.scrollTo(0, 0);
 		setEditPostEnabled(false)
 	}, [pathname]);
+
+	//fade route transitions
+	useEffect(() => {
+		if (pathname !== displayLocation) setTransistionStage("fadeOut");
+	  }, [pathname]);
+
 
 	const getPosts = async () => {
 		try {
@@ -152,7 +175,7 @@ function App() {
 	const { isAuth, isAdmin } = useAuth();
 	
 	const isPageLoading = () => {
-		if (isAuth === undefined || isAdmin === undefined) {
+		if (isAuth === undefined || isAdmin === undefined || blogPostList.length === 0) {
 			return true;
 		}
 		return false;
@@ -160,24 +183,33 @@ function App() {
 
 	return (
 		<>
-			{isPageLoading() ? <Loading /> :
-				<div className="app-wrapper">
+			{ isPageLoading() ? <Loading /> :
+				<div 
+					className={`app-wrapper ${transitionStage}`}
+					onAnimationEnd={() => {
+						if (transitionStage === "fadeOut") {
+							setTransistionStage("fadeIn");
+							setDisplayLocation(pathname);
+						}
+					}}
+				>
 					<div className="app">
 						{!disabledRoutes.includes(pathname) && <Navigation />}
-						<Routes>
+						<Suspense fallback={<Loading />}>
+						<Routes location={displayLocation}>
 							{/* Unguarded Routes */}
 							<Route path="/"
 								element={
-									<Home>
-										<BlogPost posts={blogPostsFeed()} welcomeScreen={false} />
-										<BlogCard editPostEnabled={editPostEnabled} cards={blogCardsFeed()} deletePostAlignment={deletePostAlignment} />
-									</Home>
+										<Home>
+											<BlogPost posts={blogPostsFeed()} welcomeScreen={false} />
+											<BlogCard editPostEnabled={editPostEnabled} cards={blogCardsFeed()} deletePostAlignment={deletePostAlignment} />
+										</Home>
 								}
 							/>
 							<Route path="/blogs"
 								element={
 									<Blogs toggleEditPost={toggleEditPost}>
-										<BlogCard editPostEnabled={editPostEnabled} cards={blogPostList} deletePostAlignment={deletePostAlignment} />
+											<BlogCard editPostEnabled={editPostEnabled} cards={blogPostList} deletePostAlignment={deletePostAlignment} />
 									</Blogs>
 								}
 							/>
@@ -200,10 +232,10 @@ function App() {
 								<Route path="/admin" element={<Admin />} />
 								<Route path="/blog-preview" element={<BlogPreview />} />
 								<Route path="/create-post" element={
-									<CreatePost createPostAlignment={createPostAlignment} />
+										<CreatePost createPostAlignment={createPostAlignment} />
 								} />
 								<Route path="/edit-post/:routeid" element={
-									<EditPost getCurrentPost={getCurrentPost} editPostAlignment={editPostAlignment} />
+										<EditPost getCurrentPost={getCurrentPost} editPostAlignment={editPostAlignment} />
 								} />
 							</Route>
 
@@ -211,7 +243,8 @@ function App() {
 							<Route path="*" element={<p style={{marginTop: 100}}>Page Not Found</p>} />
 
 						</Routes>
-						{!disabledRoutes.includes(pathname) && <Footer />}
+						</Suspense>
+						{!disabledRoutes.includes(pathname) && pathname === displayLocation &&  <Footer />}
 					</div>
 				</div>
 			}
