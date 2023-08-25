@@ -41,12 +41,6 @@ function App() {
 		getPosts();
 	}, []);
 
-	//Scroll To Top when Route Changes
-	useEffect(() => {
-		window.scrollTo(0, 0);
-		setEditPostEnabled(false)
-	}, [displayLocation]);
-
 	//fade route transitions
 	useEffect(() => {
 		if (location !== displayLocation) setTransistionStage("fadeOut");
@@ -175,8 +169,13 @@ function App() {
 					className={`app-wrapper ${transitionStage}`}
 					onAnimationEnd={() => {
 						if (transitionStage === "fadeOut") {
+							//Scroll To Top when Route Changes and fadeout ends
+							window.scrollTo(0, 0);
+							setEditPostEnabled(false)
+
 							setTransistionStage("fadeIn");
 							setDisplayLocation(location);	
+							
 						}
 					}}
 				>
