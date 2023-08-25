@@ -8,9 +8,8 @@ import { useAuth } from './contexts/UserContext';
 import GuardedRoutes from './routes/GuardedRoutes';
 import Home from './views/Home';
 import Blogs from './views/Blogs';
-import { useState, useEffect, Suspense, startTransition } from 'react';
+import { useState, useEffect, Suspense, lazy } from 'react';
 import { Routes, Route, useLocation } from "react-router-dom";
-import lazy from "@loadable/component"
 
 function App() {
 
@@ -50,10 +49,7 @@ function App() {
 
 	//fade route transitions
 	useEffect(() => {
-		if (location !== displayLocation) {
-			setTransistionStage("fadeOut");
-		}
-		
+		if (location !== displayLocation) setTransistionStage("fadeOut");
 	}, [location]);
 
 	const getPosts = async () => {
