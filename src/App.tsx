@@ -8,36 +8,26 @@ import { useAuth } from './contexts/UserContext';
 import GuardedRoutes from './routes/GuardedRoutes';
 import Home from './views/Home';
 import Blogs from './views/Blogs';
-import { lazy, useState, useEffect, Suspense } from 'react';
+import { useState, useEffect, Suspense, startTransition } from 'react';
 import { Routes, Route, useLocation } from "react-router-dom";
-
+import lazy from "@loadable/component"
 
 function App() {
 
-	// const lazyDelayed = (path: string, delay = 1000) => {
-	// 	return lazy(() => Promise.all([
-	// 		import(path),
-	// 		new Promise((resolve) => setTimeout(resolve, delay)) // ensures minimal delay
-	// 	]).then(([module]) => module));
-	//   }
-
 	const Admin = lazy(() => import('./views/Admin'));
-	const BlogPreview  = lazy(() => import('./views/BlogPreview'));
-	//const Blogs = lazy(() => import('./views/Blogs'));
+	const BlogPreview = lazy(() => import('./views/BlogPreview'));
 	const CreatePost = lazy(() => import('./views/CreatePost'));
 	const EditPost = lazy(() => import('./views/EditPost'));
 	const ForgotPassword = lazy(() => import('./views/ForgotPassword'));
-	//const Home = lazy(() => import('./views/Home'));
 	const Login = lazy(() => import('./views/Login'));
 	const Profile = lazy(() => import('./views/Profile'));
 	const Register = lazy(() => import('./views/Register'));
 	const ViewBlog = lazy(() => import('./views/ViewBlog'));
 
-	const { pathname } = useLocation();
+	const location = useLocation();
 
-	const [displayLocation, setDisplayLocation] = useState(pathname);
- 	const [transitionStage, setTransistionStage] = useState("fadeIn");
-
+	const [displayLocation, setDisplayLocation] = useState(location);
+	const [transitionStage, setTransistionStage] = useState("fadeIn");
 	const [editPostEnabled, setEditPostEnabled] = useState<boolean>(false);
 	const [blogPostList, setBlogPostList] = useState<{
 		blogID: string;
@@ -53,17 +43,18 @@ function App() {
 	}, []);
 
 	//Scroll To Top when Route Changes
-	
 	useEffect(() => {
 		window.scrollTo(0, 0);
 		setEditPostEnabled(false)
-	}, [pathname]);
+	}, [displayLocation]);
 
 	//fade route transitions
 	useEffect(() => {
-		if (pathname !== displayLocation) setTransistionStage("fadeOut");
-	  }, [pathname]);
-
+		if (location !== displayLocation) {
+			setTransistionStage("fadeOut");
+		}
+		
+	}, [location]);
 
 	const getPosts = async () => {
 		try {
@@ -171,80 +162,80 @@ function App() {
 	}
 
 	const disabledRoutes = ["/login", "/register", "/forgot-password"]
-	
+
 	const { isAuth, isAdmin } = useAuth();
-	
+
 	const isPageLoading = () => {
 		if (isAuth === undefined || isAdmin === undefined || blogPostList.length === 0) {
 			return true;
 		}
 		return false;
 	}
-
+	
 	return (
 		<>
-			{ isPageLoading() ? <Loading /> :
-				<div 
+			{isPageLoading() ? <Loading /> :
+				<div
 					className={`app-wrapper ${transitionStage}`}
 					onAnimationEnd={() => {
 						if (transitionStage === "fadeOut") {
 							setTransistionStage("fadeIn");
-							setDisplayLocation(pathname);
+							setDisplayLocation(location);	
 						}
 					}}
 				>
 					<div className="app">
-						{!disabledRoutes.includes(pathname) && <Navigation />}
+						{!disabledRoutes.includes(location.pathname) && <Navigation />}
 						<Suspense fallback={<Loading />}>
-						<Routes location={displayLocation}>
-							{/* Unguarded Routes */}
-							<Route path="/"
-								element={
+							<Routes location={displayLocation}>
+								{/* Unguarded Routes */}
+								<Route path="/"
+									element={
 										<Home>
 											<BlogPost posts={blogPostsFeed()} welcomeScreen={false} />
 											<BlogCard editPostEnabled={editPostEnabled} cards={blogCardsFeed()} deletePostAlignment={deletePostAlignment} />
 										</Home>
-								}
-							/>
-							<Route path="/blogs"
-								element={
-									<Blogs toggleEditPost={toggleEditPost}>
+									}
+								/>
+								<Route path="/blogs"
+									element={
+										<Blogs toggleEditPost={toggleEditPost}>
 											<BlogCard editPostEnabled={editPostEnabled} cards={blogPostList} deletePostAlignment={deletePostAlignment} />
-									</Blogs>
-								}
-							/>
-							<Route path="/view-blog/:blogid" element={<ViewBlog blogPostList={blogPostList} />} />
+										</Blogs>
+									}
+								/>
+								<Route path="/view-blog/:blogid" element={<ViewBlog blogPostList={blogPostList} />} />
 
-							{/* Non-Authenticated Routes: accessible only if user in not authenticated */}
-							<Route element={<GuardedRoutes isRouteAccessible={!isAuth} redirectRoute={"/"} />}>
-								<Route path="/forgot-password" element={<ForgotPassword />} />
-								<Route path="/login" element={<Login />} />
-								<Route path="/register" element={<Register />} />
-							</Route>
+								{/* Non-Authenticated Routes: accessible only if user in not authenticated */}
+								<Route element={<GuardedRoutes isRouteAccessible={!isAuth} redirectRoute={"/"} />}>
+									<Route path="/forgot-password" element={<ForgotPassword />} />
+									<Route path="/login" element={<Login />} />
+									<Route path="/register" element={<Register />} />
+								</Route>
 
-							{/* Authenticated Routes */}
-							<Route element={<GuardedRoutes isRouteAccessible={isAuth} redirectRoute={"/"} />}>
-								<Route path="/profile" element={<Profile />} />
-							</Route>
+								{/* Authenticated Routes */}
+								<Route element={<GuardedRoutes isRouteAccessible={isAuth} redirectRoute={"/"} />}>
+									<Route path="/profile" element={<Profile />} />
+								</Route>
 
-							{/* Authenticated & Admin Routes */}
-							<Route element={<GuardedRoutes isRouteAccessible={isAuth && isAdmin} redirectRoute={"/"} />}>
-								<Route path="/admin" element={<Admin />} />
-								<Route path="/blog-preview" element={<BlogPreview />} />
-								<Route path="/create-post" element={
+								{/* Authenticated & Admin Routes */}
+								<Route element={<GuardedRoutes isRouteAccessible={isAuth && isAdmin} redirectRoute={"/"} />}>
+									<Route path="/admin" element={<Admin />} />
+									<Route path="/blog-preview" element={<BlogPreview />} />
+									<Route path="/create-post" element={
 										<CreatePost createPostAlignment={createPostAlignment} />
-								} />
-								<Route path="/edit-post/:routeid" element={
+									} />
+									<Route path="/edit-post/:routeid" element={
 										<EditPost getCurrentPost={getCurrentPost} editPostAlignment={editPostAlignment} />
-								} />
-							</Route>
+									} />
+								</Route>
 
-							{/* Not found Route */}
-							<Route path="*" element={<p style={{marginTop: 100}}>Page Not Found</p>} />
+								{/* Not found Route */}
+								<Route path="*" element={<p style={{ marginTop: 100 }}>Page Not Found</p>} />
 
-						</Routes>
+							</Routes>
 						</Suspense>
-						{!disabledRoutes.includes(pathname) && pathname === displayLocation &&  <Footer />}
+						{!disabledRoutes.includes(location.pathname) && <Footer />}
 					</div>
 				</div>
 			}
