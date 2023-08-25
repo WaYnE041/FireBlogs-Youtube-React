@@ -20,16 +20,16 @@ function Footer() {
                         <Link className="header" to="/">Dead:Market</Link>
                         <ul>
                             <li>
-                                <a href="#"><Youtube className="svg-icon" /></a>
+                                <a href="https://www.youtube.com/"><Youtube className="svg-icon" /></a>
                             </li>
                             <li>
-                                <a href="#"><Twitter className="svg-icon" /></a>
+                                <a href="https://twitter.com/"><Twitter className="svg-icon" /></a>
                             </li>
                             <li>
-                                <a href="#"><Instagram className="svg-icon" /></a>
+                                <a href="https://www.instagram.com/"><Instagram className="svg-icon" /></a>
                             </li>
                             <li>
-                                <a href="#"><LinkedIn className="svg-icon" /></a>
+                                <a href="https://www.linkedin.com/"><LinkedIn className="svg-icon" /></a>
                             </li>
                         </ul>
                     </div>
