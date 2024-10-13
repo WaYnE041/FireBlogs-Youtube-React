@@ -8,7 +8,9 @@ import { useAuth } from '../contexts/UserContext';
 import { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
 
-function Navigation() {
+function Navigation({ size }: {
+        size: number;
+    }) {
     const [mobileView, setMobileView] = useState<boolean>(false);
     const [mobileNav, setMobileNav] = useState<boolean>(false);
     const [profileMenu, setProfileMenu] = useState<boolean>(false);
@@ -61,7 +63,12 @@ function Navigation() {
                 <div className="nav-links">
                     {!mobileView && (
                         <ul>
-                            <Link className="link" to="/cart"><CartIcon/></Link>
+                            <Link className="link" to="/cart">
+                                <div>
+                                    <CartIcon/>
+                                    <div className="badge">{size}</div>
+                                </div>
+                            </Link>
                             <Link className="link" to="/">Home</Link>
                             <Link className="link" to="/blogs">Blogs</Link>
                             {isAdmin && isAuth && <Link className="link" to="/create-post">Create Post</Link>}
