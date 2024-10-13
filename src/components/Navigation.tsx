@@ -1,6 +1,6 @@
 import '../styles/Navigation.css';
 import { ReactComponent as MenuIcon } from '../assets/Icons/bars-regular.svg';
-import { ReactComponent as CartIcon } from '../assets/Icons/shopping-cart.svg';
+import { ReactComponent as CartIcon } from '../assets/Icons/shopping-bag.svg';
 import { ReactComponent as UserIcon } from '../assets/Icons/user-alt-light.svg';
 import { ReactComponent as AdminIcon } from '../assets/Icons/user-crown-light.svg';
 import { ReactComponent as SignOutIcon } from '../assets/Icons/sign-out-alt-regular.svg';
