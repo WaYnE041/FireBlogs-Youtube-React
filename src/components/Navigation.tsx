@@ -1,5 +1,6 @@
 import '../styles/Navigation.css';
 import { ReactComponent as MenuIcon } from '../assets/Icons/bars-regular.svg';
+import { ReactComponent as CartIcon } from '../assets/Icons/shopping-cart.svg';
 import { ReactComponent as UserIcon } from '../assets/Icons/user-alt-light.svg';
 import { ReactComponent as AdminIcon } from '../assets/Icons/user-crown-light.svg';
 import { ReactComponent as SignOutIcon } from '../assets/Icons/sign-out-alt-regular.svg';
@@ -60,6 +61,7 @@ function Navigation() {
                 <div className="nav-links">
                     {!mobileView && (
                         <ul>
+                            <Link className="link" to="/cart"><CartIcon/></Link>
                             <Link className="link" to="/">Home</Link>
                             <Link className="link" to="/blogs">Blogs</Link>
                             {isAdmin && isAuth && <Link className="link" to="/create-post">Create Post</Link>}
@@ -105,7 +107,7 @@ function Navigation() {
                     )}
                 </div>
             </nav>
-
+            
             {mobileView && <MenuIcon onClick={toggleMobileNav} className='menu-icon' />}
             <ul className={mobileNav ? "show-mobile-nav mobile-nav" : "mobile-nav"} onClick={toggleMobileNav}>
                 <Link className="link" to="/">Home</Link>
