@@ -1,6 +1,7 @@
 import './App.css';
 import BlogCard from './components/BlogCard';
 import BlogPost from './components/BlogPost';
+import BlogCarousel from './components/BlogCarousel';
 import Loading from "./components/Loading";
 import Footer from './components/Footer';
 import Navigation from './components/Navigation';
@@ -145,7 +146,7 @@ function App() {
 
 	//Return first 2 entries to display as homepage feed
 	const blogPostsFeed = () => {
-		return blogPostList.slice(0, 2);
+		return blogPostList.slice(0, 5);
 	}
 	//Return next 4 entries to display on homepage as cards
 	const blogCardsFeed = () => {
@@ -188,7 +189,7 @@ function App() {
 								<Route path="/"
 									element={
 										<Home>
-											<BlogPost posts={blogPostsFeed()} welcomeScreen={false} />
+											<BlogCarousel posts={blogPostsFeed()} welcomeScreen={false} />
 											<BlogCard editPostEnabled={editPostEnabled} cards={blogCardsFeed()} deletePostAlignment={deletePostAlignment} />
 										</Home>
 									}
