@@ -1,6 +1,6 @@
 import './App.css';
 import BlogCard from './components/BlogCard';
-import BlogPost from './components/BlogPost';
+// import BlogPost from './components/BlogPost';
 import BlogCarousel from './components/BlogCarousel';
 import Loading from "./components/Loading";
 import Footer from './components/Footer';
