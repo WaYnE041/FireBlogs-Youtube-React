@@ -14,6 +14,17 @@
 	perspective: 1000px;
 	transform-style: preserve-3d;
 }
+#slider h2 {
+	display: none;
+}
+
+#s1:checked ~ #title1, 
+#s2:checked ~ #title2,
+#s3:checked ~ #title3,
+#s4:checked ~ #title4,
+#s5:checked ~ #title5 {
+  display:contents;
+}
 
 #slider label {
 	margin: auto;
