@@ -24,21 +24,20 @@ function BlogPost({ posts, welcomeScreen }: {
 			<div id="slider">
 				{posts.map((_post, index) => {
 					return (
+						<input key={index} type="radio" name="slider" id={"s" + (index + 1)}></input>
+					)
+				})}
+				{posts.map((post, index) => {
+					return (
+						// key props needed
 						<>
-							<input type="radio" name="slider" id={"s" + (index + 1)}></input>
+							{welcomeScreen ? <h2 key={index} id={"title" + (index+1)}>{post.blogTitle}</h2> : <h2 key={index} id={"title" + (index+1)}>{post.blogTitle}</h2>}
 						</>
 					)
 				})}
 				{posts.map((post, index) => {
 					return (
-						<>
-							{welcomeScreen ? <h2 id={"title" + (index+1)}>{post.blogTitle}</h2> : <h2 id={"title" + (index+1)}>{post.blogTitle}</h2>}
-						</>
-					)
-				})}
-				{posts.map((post, index) => {
-					return (
-						<label htmlFor={"s" + (index+1)} id={"slide" + (index+1)}>
+						<label key={index} htmlFor={"s" + (index+1)} id={"slide" + (index+1)}>
 							<img src={post.blogCoverPhoto} alt="Blog Cover Photo" />
 							<Link className="btn" to={`/view-blog/${post.blogID}`} >
 								View The Post<Arrow className="arrow" />
