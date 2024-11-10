@@ -1,4 +1,4 @@
-import '../styles/ViewBlog.css';
+import '../styles/ShoppingCart.css';
 import { useState, useEffect } from 'react';
 
 function ShoppingCart() {
@@ -6,11 +6,11 @@ function ShoppingCart() {
     const [prodList, setProdList] = useState<{
 		// id: string,
         // object: string,
-        // active: boolean,
+        active: boolean,
         // created: number,
         // default_price: string,
-        // description: string,
-        // images: [],
+        description: string,
+        image: string,
         // marketing_features: [],
         // livemode: boolean,
         // metadata: {},
@@ -55,13 +55,15 @@ function ShoppingCart() {
 
 				return {
 					name: doc.data().name,
+                    image: doc.data().images[0],
+                    description: doc.data().description,
+                    active: doc.data().active,
                     price: priceDoc.data().unit_amount,
                     price_id: priceDoc.id
 				}
 			})
 
             const currentList = await Promise.all(currentListPromise);
-            //console.log(currentList);
             setProdList(currentList);
 			
 		} catch (error) {
@@ -108,21 +110,29 @@ function ShoppingCart() {
         }
     }
 
-
     return (
-        <div className="post-view">
-			<div className="container quillWrapper">
+        <div className="blog-card-wrap">
+        <div className="container blog-cards">
             {prodList.map((item, index) => {
-				return (
-                    <div key={index}>
-                        <p>Item: {item.name} <br/>Price: ${(item.price / 100).toFixed(2)} </p>
-                        <button onClick={() => startCheckout(item.price_id)} disabled={isLoading}>
-                            {isLoading ? "Loading": "Checkout"}
-                        </button>
-                    </div>   
-				)
-			})}
-			</div>
+                return (
+                    <div key={index} className='blog-card'>
+                        <img src={item.image} alt="Blog Cover Photo" />
+                        <div className="info">
+                            <h3>{item.name}</h3>
+                            <p>Price: ${(item.price / 100).toFixed(2)} </p>
+                            <p>Description: {item.description}</p>
+                            {item.active ? <p>This Item Is Currently Available</p> : <p>This Item Is Not Available</p>}
+                            <button className="checkout" onClick={() => startCheckout(item.price_id)} disabled={isLoading}>
+                                {isLoading ? "Loading": "Checkout"}
+                            </button>
+                            {/* <Link className="link" to={`/view-blog/${card.blogID}`}>
+                                View The Post<Arrow className="arrow" />
+                            </Link> */}
+                        </div>
+                    </div>
+                )
+            })}
+        </div>
 		</div>
     )
 }

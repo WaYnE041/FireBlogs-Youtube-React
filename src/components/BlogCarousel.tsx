@@ -24,7 +24,8 @@ function BlogPost({ posts, welcomeScreen }: {
 			<div id="slider">
 				{posts.map((_post, index) => {
 					return (
-						<><input type="radio" name="slider" id={"s" + (index + 1)}></input>
+						<>
+							<input type="radio" name="slider" id={"s" + (index + 1)}></input>
 						</>
 					)
 				})}
@@ -40,13 +41,12 @@ function BlogPost({ posts, welcomeScreen }: {
 						<label htmlFor={"s" + (index+1)} id={"slide" + (index+1)}>
 							<img src={post.blogCoverPhoto} alt="Blog Cover Photo" />
 							<Link className="btn" to={`/view-blog/${post.blogID}`} >
-											View The Post<Arrow className="arrow" />
-										</Link>
-							</label>
+								View The Post<Arrow className="arrow" />
+							</Link>
+						</label>
 					)
 				})}
 			</div>
-
 		</div>
 	)
 }
