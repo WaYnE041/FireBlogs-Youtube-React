@@ -75,12 +75,15 @@ function ShoppingCart() {
 	}
 
     const addToCart = async (ev: any) => {
-    ev.preventDefault();
-    const formData = new FormData(ev.target);
-    const id = formData.get('priceId') as string;
-    const quantity = formData.get('quantity') as string;
-    id && quantity ? setCartInfo(id, parseInt(quantity)) : console.log("null or empty");
-    // console.log(getCartInfo());
+        ev.preventDefault();
+        setisLoading(true);
+        const formData = new FormData(ev.target);
+        const id = formData.get('priceId') as string;
+        const quantity = formData.get('quantity') as string;
+        id && quantity ? setCartInfo(id, parseInt(quantity)) : console.log("null or empty");
+        setTimeout(function(){
+            setisLoading(false);
+        }, 1000);
     }
     
     const startCheckout = async (id: string) => {
@@ -123,6 +126,10 @@ function ShoppingCart() {
     }
 
     const startCheckoutCart = async () => {
+        if(getCartInfo().length === 0) {
+            console.log("No Items in Cart!");
+            return;
+        }
         setisLoading(true);
 
         const { db, auth } = await import('../firebase/firebase-config');
@@ -184,8 +191,8 @@ function ShoppingCart() {
                             <h3>{item.name}</h3>
                             <p><strong>Price:</strong> ${(item.price / 100).toFixed(2)} </p>
                             <p><strong>Description:</strong> {item.description}</p>
-                            <br />
-                            {item.active ? <p>This Item Is Currently Available</p> : <p>This Item Is Not Available</p>}
+                            {/* <br />
+                            {item.active ? <p>This Item Is Currently Available</p> : <p>This Item Is Not Available</p>} */}
                             {/* <button className="checkout" onClick={() => startCheckout(item.price_id)} disabled={isLoading}>
                                 {isLoading ? "Loading": "Checkout"}
                             </button> */}
@@ -194,11 +201,8 @@ function ShoppingCart() {
                                 <label htmlFor="quantity">Quantity: </label>
                                 <input type="number" id="quantity" name="quantity" min="1" max="20" required/>
                                 <input type="hidden" id="priceId" name="priceId" value={item.price_id} />
-                                <button type="submit">Add To Cart</button>
+                                <button className="checkout" type="submit" disabled={isLoading}>{isLoading ? "Adding!": "Add To Cart"}</button>
                             </form>
-                            {/* <Link className="link" to={`/view-blog/${card.blogID}`}>
-                                View The Post<Arrow className="arrow" />
-                            </Link> */}
                         </div>
                     </div>
                 )
