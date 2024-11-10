@@ -8,9 +8,7 @@ import { useAuth } from '../contexts/UserContext';
 import { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
 
-function Navigation({ size }: {
-        size: number;
-    }) {
+function Navigation() {
     const [mobileView, setMobileView] = useState<boolean>(false);
     const [mobileNav, setMobileNav] = useState<boolean>(false);
     const [profileMenu, setProfileMenu] = useState<boolean>(false);
@@ -28,7 +26,8 @@ function Navigation({ size }: {
         isAuth,
         isAdmin,
         getProfileInfo,
-        logout
+        logout,
+        getCartInfo
     } = useAuth();
 
     const checkScreen = () => {
@@ -58,25 +57,28 @@ function Navigation({ size }: {
         <header className='header'>
             <nav className="container">
                 <div className="branding">
-                    <Link className="header" to="/">Dead:Market</Link>
+                    <Link className="header" to="/">Dead:Market</Link>         
                 </div>
+                
                 <div className="nav-links">
-                    {!mobileView && (
-                        <ul>
+                {!mobileView && (
+                        <>
                             <Link className="link" to="/cart">
-                                <div>
+                                <div className='branding'>
                                     <CartIcon/>
-                                    <div className="badge">{size}</div>
+                                    <div className="badge">{getCartInfo().length}</div>
                                 </div>
                             </Link>
-                            <Link className="link" to="/">Home</Link>
-                            <Link className="link" to="/blogs">Blogs</Link>
+                            <Link className="link desktop-link" to="/">Home</Link>
+                            <Link className="link desktop-link" to="/blogs">Blogs</Link>
                             <Link className="link" to="/cart">Cart</Link>
-                            {isAdmin && isAuth && <Link className="link" to="/create-post">Create Post</Link>}
-                            {!isAuth && (<Link className="link" to="/login">Login/Register</Link>)}
-                        </ul>
+                            {isAdmin && isAuth && <Link className="link desktop-link" to="/create-post">Create Post</Link>}
+                            {!isAuth && (<Link className="link desktop-link" to="/login">Login/Register</Link>)}
+                            
+                        </>
                     )}
-
+                </div>
+                <div className="profile-link">
                     {isAuth && (<div className="profile mobile-user-menu" id="profile" onClick={toggleProfileMenu}>
                         <span>{getProfileInfo().initials}</span>
                         {profileMenu && (

@@ -1,5 +1,6 @@
 import '../styles/ShoppingCart.css';
 import { useState, useEffect } from 'react';
+import { useAuth } from '../contexts/UserContext';
 
 function ShoppingCart() {
     const [isLoading, setisLoading] = useState<boolean>(false);
@@ -37,6 +38,8 @@ function ShoppingCart() {
 		displayProducts();
 	}, []);
 
+    const { getCartInfo, setCartInfo } = useAuth();
+
     const displayProducts = async () => {
 		try {
             const { db } = await import('../firebase/firebase-config');
@@ -71,6 +74,15 @@ function ShoppingCart() {
 		}
 	}
 
+    const addToCart = async (ev: any) => {
+    ev.preventDefault();
+    const formData = new FormData(ev.target);
+    const id = formData.get('priceId') as string;
+    const quantity = formData.get('quantity') as string;
+    id && quantity ? setCartInfo(id, parseInt(quantity)) : console.log("null or empty");
+    // console.log(getCartInfo());
+    }
+    
     const startCheckout = async (id: string) => {
         setisLoading(true);
 
@@ -110,8 +122,59 @@ function ShoppingCart() {
         }
     }
 
+    const startCheckoutCart = async () => {
+        setisLoading(true);
+
+        const { db, auth } = await import('../firebase/firebase-config');
+        const { addDoc, collection, onSnapshot } = await import('firebase/firestore');
+       
+        if (auth.currentUser) {
+             let checkoutSessionData = {
+                line_items: getCartInfo(), //price IDs & quantities in cart 
+                // line_items: [
+                //     {
+                //         price: "price_1QJRdLBFDsS6bfgy3JLTDAlb",
+                //         quantity: 2
+                //     },
+                //     {
+                //         price: "price_1QJRdLBFDsS6bfgy3JLTDAlb",
+                //         quantity: 2
+                //     }
+                // ],
+                success_url: window.location.origin, // can set this to a custom page
+                cancel_url: window.location.origin,   // can set this to a custom page
+                mode: "payment" // sets mode as a one-time payment (as opposed to subscription)
+            };
+
+            const custCollectionRef = collection(db, "customers", auth.currentUser.uid, "checkout_sessions");
+
+            console.log(auth.currentUser.uid)
+            const checkoutSessionRef = await addDoc(
+                // currentUser is provided by firebase, via getAuth().currentUser
+                custCollectionRef, checkoutSessionData
+            );
+
+            // The Stripe extension creates a payment link for us
+            onSnapshot(checkoutSessionRef, (snap) => {
+                //in case values are null
+                const { error, url } = snap.data() || {};
+
+                if (error) {
+                // handle error
+                }
+                if (url) {
+                    console.log(url);
+                window.location.assign(url);  // redirect to payment link
+                }
+            });
+        }
+    }
+
     return (
         <div className="blog-card-wrap">
+            <button className="checkout" onClick={() => startCheckoutCart()} disabled={isLoading}>
+                {isLoading ? "Loading": "Checkout Cart"}
+            </button>
         <div className="container blog-cards">
             {prodList.map((item, index) => {
                 return (
@@ -119,12 +182,20 @@ function ShoppingCart() {
                         <img src={item.image} alt="Blog Cover Photo" />
                         <div className="info">
                             <h3>{item.name}</h3>
-                            <p>Price: ${(item.price / 100).toFixed(2)} </p>
-                            <p>Description: {item.description}</p>
+                            <p><strong>Price:</strong> ${(item.price / 100).toFixed(2)} </p>
+                            <p><strong>Description:</strong> {item.description}</p>
+                            <br />
                             {item.active ? <p>This Item Is Currently Available</p> : <p>This Item Is Not Available</p>}
-                            <button className="checkout" onClick={() => startCheckout(item.price_id)} disabled={isLoading}>
+                            {/* <button className="checkout" onClick={() => startCheckout(item.price_id)} disabled={isLoading}>
                                 {isLoading ? "Loading": "Checkout"}
-                            </button>
+                            </button> */}
+                            <br />
+                            <form onSubmit={addToCart}>
+                                <label htmlFor="quantity">Quantity: </label>
+                                <input type="number" id="quantity" name="quantity" min="1" max="20" required/>
+                                <input type="hidden" id="priceId" name="priceId" value={item.price_id} />
+                                <button type="submit">Add To Cart</button>
+                            </form>
                             {/* <Link className="link" to={`/view-blog/${card.blogID}`}>
                                 View The Post<Arrow className="arrow" />
                             </Link> */}

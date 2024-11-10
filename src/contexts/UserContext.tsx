@@ -18,6 +18,11 @@ interface IContextProps {
     login: (email: string, password: string) => Promise<void>;
     logout: () => Promise<void>;
     register: (email: string, password: string) => Promise<UserCredential>;
+    getCartInfo: () => {
+        price: string,
+		quantity: number
+    }[];
+    setCartInfo: (price: string, amount: number) => void
 }
 
 const AuthContext = createContext({} as IContextProps);
@@ -37,6 +42,10 @@ export function UserContext({ children }: { children: React.ReactNode }) {
         userName: string | null;
         initials: string | null;
     }>({ id: "null", email: null, firstName: null, lastName: null, userName: null, initials: null });
+    const [cart, setCart] = useState<{
+        price: string,
+		quantity: number
+	}[]>([]);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, user => {
@@ -149,6 +158,20 @@ export function UserContext({ children }: { children: React.ReactNode }) {
         }
     }
 
+    const getCartInfo = () => {
+        return cart;
+    }
+
+    const setCartInfo = (price: string, amount: number) => {
+        setCart(current => [
+			{
+                price: price,
+                quantity: amount
+			},
+			...current
+		]);
+    }
+
     const value = {
         isAuth: authUser,
         isAdmin: adminUser,
@@ -157,7 +180,9 @@ export function UserContext({ children }: { children: React.ReactNode }) {
         setProfileInfo,
         login,
         logout,
-        register
+        register,
+        getCartInfo,
+        setCartInfo
     };
 
     return (

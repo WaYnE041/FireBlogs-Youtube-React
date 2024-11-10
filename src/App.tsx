@@ -182,7 +182,7 @@ function App() {
 					}}
 				>
 					<div className="app">
-						{!disabledRoutes.includes(location.pathname) && <Navigation size={8} />}
+						{!disabledRoutes.includes(location.pathname) && <Navigation />}
 						<Suspense fallback={<Loading />}>
 							<Routes location={displayLocation}>
 								{/* Unguarded Routes */}
