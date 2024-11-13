@@ -71,7 +71,8 @@ function Navigation() {
                             </Link>
                             <Link className="link desktop-link" to="/">Home</Link>
                             <Link className="link desktop-link" to="/blogs">Blogs</Link>
-                            <Link className="link" to="/cart">Cart</Link>
+                            <Link className="link desktop-link" to="/cart">Catalog</Link>
+                            <Link className="link desktop-link" to="/about">About</Link>
                             {isAdmin && isAuth && <Link className="link desktop-link" to="/create-post">Create Post</Link>}
                             {!isAuth && (<Link className="link desktop-link" to="/login">Login/Register</Link>)}
                             
@@ -122,7 +123,8 @@ function Navigation() {
             <ul className={mobileNav ? "show-mobile-nav mobile-nav" : "mobile-nav"} onClick={toggleMobileNav}>
                 <Link className="link" to="/">Home</Link>
                 <Link className="link" to="/blogs">Blogs</Link>
-                <Link className="link" to="/cart">Cart</Link>
+                <Link className="link" to="/cart">Catalog</Link>
+                <Link className="link" to="/about">About</Link>
                 {isAdmin && isAuth && <Link className="link" to="/create-post">Create Post</Link>}
                 {!isAuth && (<Link className="link" to="/login">Login/Register</Link>)}
             </ul>
