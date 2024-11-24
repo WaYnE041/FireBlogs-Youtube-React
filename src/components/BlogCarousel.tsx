@@ -1,6 +1,6 @@
 import '../styles/BlogCarousel.css';
 import { useState, useEffect } from 'react';
-import { ReactComponent as Arrow } from '../assets/Icons/arrow-right-light.svg';
+// import { ReactComponent as Arrow } from '../assets/Icons/arrow-right-light.svg';
 // import { useAuth } from '../contexts/UserContext';
 import { Link } from "react-router-dom";
 // import parse from 'html-react-parser';

@@ -146,9 +146,10 @@ function App() {
 	}
 
 	//Return first 2 entries to display as homepage feed
-	const blogPostsFeed = () => {
-		return blogPostList.slice(0, 5);
-	}
+	// const blogPostsFeed = () => {
+	// 	return blogPostList.slice(0, 5);
+	// }
+
 	//Return next 4 entries to display on homepage as cards
 	const blogCardsFeed = () => {
 		return blogPostList.slice(2, 6);

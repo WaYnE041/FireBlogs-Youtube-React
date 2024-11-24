@@ -1,5 +1,5 @@
 import '../styles/About.css';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 
 function About() {
 
