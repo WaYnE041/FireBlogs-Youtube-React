@@ -63,6 +63,11 @@ button,
 	&:hover {
 		background-color: rgba(48, 48, 48, 0.7);
 	}
+
+	&:disabled,
+	&[disabled]{
+		background-color: rgba(16, 15, 15, 0.5);
+	}
 }
 
 .button-ghost {

@@ -22,7 +22,9 @@ interface IContextProps {
         price: string,
 		quantity: number
     }[];
-    setCartInfo: (price: string, amount: number) => void
+    setCartInfo: (price: string, amount: number) => void;
+    startCheckout: (id: string) => Promise<void>;
+    startCheckoutCart: () => Promise<void>;
 }
 
 const AuthContext = createContext({} as IContextProps);
@@ -172,6 +174,94 @@ export function UserContext({ children }: { children: React.ReactNode }) {
 		]);
     }
 
+    const startCheckout = async (id: string) => {
+        console.log(id);
+        const { db, auth } = await import('../firebase/firebase-config');
+        const { addDoc, collection, onSnapshot } = await import('firebase/firestore');
+
+        if (auth.currentUser) {
+            let checkoutSessionData = {
+                price: id, // price ID from products fetch
+                success_url: window.location.origin, // can set this to a custom page
+                cancel_url: window.location.origin,   // can set this to a custom page
+                mode: "payment" // sets mode as a one-time payment (as opposed to subscription)
+            };
+
+            const custCollectionRef = collection(db, "customers", auth.currentUser.uid, "checkout_sessions");
+
+            console.log(auth.currentUser.uid)
+            const checkoutSessionRef = await addDoc(
+                // currentUser is provided by firebase, via getAuth().currentUser
+                custCollectionRef, checkoutSessionData
+            );
+
+            // The Stripe extension creates a payment link for us
+            onSnapshot(checkoutSessionRef, (snap) => {
+                //in case values are null
+                const { error, url } = snap.data() || {};
+
+                if (error) {
+                    // handle error
+                }
+                if (url) {
+                    console.log(url);
+                    window.location.assign(url);  // redirect to payment link
+                }
+            });
+        }
+    }
+
+    const startCheckoutCart = async () => {
+        if(getCartInfo().length === 0) {
+            console.log("No Items in Cart!");
+            return;
+        }
+
+        const { db, auth } = await import('../firebase/firebase-config');
+        const { addDoc, collection, onSnapshot } = await import('firebase/firestore');
+       
+        if (auth.currentUser) {
+             let checkoutSessionData = {
+                line_items: getCartInfo(), //price IDs & quantities in cart 
+                // line_items: [
+                //     {
+                //         price: "price_1QJRdLBFDsS6bfgy3JLTDAlb",
+                //         quantity: 2
+                //     },
+                //     {
+                //         price: "price_1QJRdLBFDsS6bfgy3JLTDAlb",
+                //         quantity: 2
+                //     }
+                // ],
+                success_url: window.location.origin, // can set this to a custom page
+                cancel_url: window.location.origin,   // can set this to a custom page
+                mode: "payment" // sets mode as a one-time payment (as opposed to subscription)
+            };
+
+            const custCollectionRef = collection(db, "customers", auth.currentUser.uid, "checkout_sessions");
+
+            console.log(auth.currentUser.uid)
+            const checkoutSessionRef = await addDoc(
+                // currentUser is provided by firebase, via getAuth().currentUser
+                custCollectionRef, checkoutSessionData
+            );
+
+            // The Stripe extension creates a payment link for us
+            onSnapshot(checkoutSessionRef, (snap) => {
+                //in case values are null
+                const { error, url } = snap.data() || {};
+
+                if (error) {
+                // handle error
+                }
+                if (url) {
+                    console.log(url);
+                window.location.assign(url);  // redirect to payment link
+                }
+            });
+        }
+    }
+
     const value = {
         isAuth: authUser,
         isAdmin: adminUser,
@@ -182,7 +272,9 @@ export function UserContext({ children }: { children: React.ReactNode }) {
         logout,
         register,
         getCartInfo,
-        setCartInfo
+        setCartInfo,
+        startCheckout,
+        startCheckoutCart
     };
 
     return (
