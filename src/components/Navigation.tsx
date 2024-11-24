@@ -12,7 +12,7 @@ function Navigation() {
     const [mobileView, setMobileView] = useState<boolean>(false);
     const [mobileNav, setMobileNav] = useState<boolean>(false);
     const [profileMenu, setProfileMenu] = useState<boolean>(false);
-    const [windowWidth, setWindowWith] = useState(0);
+    //const [windowWidth, setWindowWidth] = useState(0);
 
     useEffect(() => {
         checkScreen();
@@ -31,8 +31,9 @@ function Navigation() {
     } = useAuth();
 
     const checkScreen = () => {
-        setWindowWith(window.innerWidth);
-        if (windowWidth <= 800) {
+        //setWindowWidth(window.innerWidth);
+        console.log("hi");
+        if (window.innerWidth <= 1024) {
             setMobileView(true);
         } else {
             setMobileView(false);
@@ -70,7 +71,7 @@ function Navigation() {
                                 </div>
                             </Link>
                             <Link className="link desktop-link" to="/">Home</Link>
-                            <Link className="link desktop-link" to="/blogs">Blogs</Link>
+                            {/* <Link className="link desktop-link" to="/blogs">Blogs</Link> */}
                             <Link className="link desktop-link" to="/cart">Catalog</Link>
                             <Link className="link desktop-link" to="/about">About</Link>
                             {isAdmin && isAuth && <Link className="link desktop-link" to="/create-post">Create Post</Link>}
