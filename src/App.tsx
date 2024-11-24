@@ -12,6 +12,7 @@ import Blogs from './views/Blogs';
 import ShoppingCart from './views/ShoppingCart';
 import { useState, useEffect, Suspense, lazy } from 'react';
 import { Routes, Route, useLocation } from "react-router-dom";
+import About from './views/About';
 
 function App() {
 
@@ -204,6 +205,8 @@ function App() {
 								<Route path="/view-blog/:blogid" element={<ViewBlog blogPostList={blogPostList} />} />
 
 								<Route path="/cart" element={ <ShoppingCart />} />
+
+								<Route path="/about" element={ <About />} />
 
 								{/* Non-Authenticated Routes: accessible only if user in not authenticated */}
 								<Route element={<GuardedRoutes isRouteAccessible={!isAuth} redirectRoute={"/"} />}>
