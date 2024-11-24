@@ -28,7 +28,7 @@ function ShoppingCart() {
     }[]>([]);
 
     useEffect(() => {
-        document.title = "Shopping Cart | DeadMarket";
+        document.title = "Catalog | DeadMarket";
         return () => {
             document.title = "DeadMarket";
         };

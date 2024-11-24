@@ -190,7 +190,7 @@ function App() {
 								<Route path="/"
 									element={
 										<Home>
-											<BlogCarousel posts={blogPostsFeed()} welcomeScreen={false} />
+											<BlogCarousel welcomeScreen={false} />
 											<BlogCard editPostEnabled={editPostEnabled} cards={blogCardsFeed()} deletePostAlignment={deletePostAlignment} />
 										</Home>
 									}
