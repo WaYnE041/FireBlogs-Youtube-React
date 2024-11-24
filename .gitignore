@@ -27,3 +27,4 @@ dist-ssr
 src/firebase/firebase-config.tsx
 README.txt
 stripe_backup_code.txt
+.firebase/
