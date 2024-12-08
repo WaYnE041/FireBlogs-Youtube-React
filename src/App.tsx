@@ -1,5 +1,4 @@
 import './App.css';
-import BlogCard from './components/BlogCard';
 import BlogCarousel from './components/BlogCarousel';
 import Loading from "./components/Loading";
 import Footer from './components/Footer';
@@ -68,86 +67,6 @@ function App() {
 		}
 	}
 
-	//Set State Functions
-	const toggleEditPost = (value: boolean) => {
-		setEditPostEnabled(value);
-	}
-
-	//gets post from id for edit post page
-	const getCurrentPost = (id: string) => {
-		const index = blogPostList.findIndex(item => item.blogID === id);
-		return {
-			blogId: blogPostList[index].blogID,
-			blogHTML: blogPostList[index].blogHTML,
-			blogCoverPhoto: blogPostList[index].blogCoverPhoto,
-			blogCoverPhotoName: blogPostList[index].blogCoverPhotoName,
-			blogTitle: blogPostList[index].blogTitle
-		}
-	}
-
-	// Realigns Front-End List with Back-End List after 
-	// Create, Edit or Delete without causing a rerender
-	const createPostAlignment = (
-		currentPost: {
-			blogID: string;
-			blogHTML: string;
-			blogCoverPhoto: string;
-			blogCoverPhotoName: string;
-			blogTitle: string;
-			blogDate: number;
-		}) => {
-		setBlogPostList(current => [
-			{
-				blogID: currentPost.blogID,
-				blogHTML: currentPost.blogHTML,
-				blogCoverPhoto: currentPost.blogCoverPhoto,
-				blogCoverPhotoName: currentPost.blogCoverPhotoName,
-				blogTitle: currentPost.blogTitle,
-				blogDate: currentPost.blogDate
-			},
-			...current
-		]);
-	}
-
-	const editPostAlignment = (
-		currentPost: {
-			blogID: string;
-			blogHTML: string;
-			blogCoverPhoto?: string;
-			blogCoverPhotoName?: string;
-			blogTitle: string;
-		}) => {
-		const index = blogPostList.findIndex(item => item.blogID === currentPost.blogID);
-		const newBlogPostsList = blogPostList.slice();
-
-		newBlogPostsList[index] = {
-			blogID: newBlogPostsList[index].blogID,
-			blogHTML: currentPost.blogHTML,
-			blogCoverPhoto: currentPost.blogCoverPhoto ? currentPost.blogCoverPhoto : newBlogPostsList[index].blogCoverPhoto,
-			blogCoverPhotoName: currentPost.blogCoverPhotoName ? currentPost.blogCoverPhotoName : newBlogPostsList[index].blogCoverPhotoName,
-			blogTitle: currentPost.blogTitle,
-			blogDate: newBlogPostsList[index].blogDate,
-		}
-
-		setBlogPostList(newBlogPostsList);
-	}
-
-	const deletePostAlignment = (id: string) => {
-		setBlogPostList(current =>
-			current.filter((x) => x.blogID !== id)
-		);
-	}
-
-	//Return first 2 entries to display as homepage feed
-	// const blogPostsFeed = () => {
-	// 	return blogPostList.slice(0, 5);
-	// }
-
-	//Return next 4 entries to display on homepage as cards
-	const blogCardsFeed = () => {
-		return blogPostList.slice(2, 6);
-	}
-
 	const disabledRoutes = ["/login", "/register", "/forgot-password"]
 
 	const { isAuth, isAdmin } = useAuth();
@@ -185,7 +104,6 @@ function App() {
 									element={
 										<Home>
 											<BlogCarousel welcomeScreen={false} />
-											<BlogCard editPostEnabled={editPostEnabled} cards={blogCardsFeed()} deletePostAlignment={deletePostAlignment} />
 										</Home>
 									}
 								/>
