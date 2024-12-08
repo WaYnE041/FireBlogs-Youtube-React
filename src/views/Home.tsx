@@ -5,6 +5,7 @@ import { useAuth } from '../contexts/UserContext';
 import { useEffect } from 'react';
 import { Link } from "react-router-dom";
 
+
 function Home( { children }: { children: React.JSX.Element[] }) {
 	const welcomeScreenPost = [{
 		blogID: "-1",
