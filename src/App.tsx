@@ -1,6 +1,5 @@
 import './App.css';
 import BlogCard from './components/BlogCard';
-// import BlogPost from './components/BlogPost';
 import BlogCarousel from './components/BlogCarousel';
 import Loading from "./components/Loading";
 import Footer from './components/Footer';
@@ -8,23 +7,17 @@ import Navigation from './components/Navigation';
 import { useAuth } from './contexts/UserContext';
 import GuardedRoutes from './routes/GuardedRoutes';
 import Home from './views/Home';
-import Blogs from './views/Blogs';
-import ShoppingCart from './views/ShoppingCart';
 import { useState, useEffect, Suspense, lazy } from 'react';
 import { Routes, Route, useLocation } from "react-router-dom";
 import About from './views/About';
 
 function App() {
-
+	const ShoppingCart = lazy(() => import('./views/ShoppingCart'));
 	const Admin = lazy(() => import('./views/Admin'));
-	const BlogPreview = lazy(() => import('./views/BlogPreview'));
-	const CreatePost = lazy(() => import('./views/CreatePost'));
-	const EditPost = lazy(() => import('./views/EditPost'));
 	const ForgotPassword = lazy(() => import('./views/ForgotPassword'));
 	const Login = lazy(() => import('./views/Login'));
 	const Profile = lazy(() => import('./views/Profile'));
 	const Register = lazy(() => import('./views/Register'));
-	const ViewBlog = lazy(() => import('./views/ViewBlog'));
 
 	const location = useLocation();
 
@@ -196,18 +189,9 @@ function App() {
 										</Home>
 									}
 								/>
-								<Route path="/blogs"
-									element={
-										<Blogs toggleEditPost={toggleEditPost}>
-											<BlogCard editPostEnabled={editPostEnabled} cards={blogPostList} deletePostAlignment={deletePostAlignment} />
-										</Blogs>
-									}
-								/>
-								<Route path="/view-blog/:blogid" element={<ViewBlog blogPostList={blogPostList} />} />
-
 								<Route path="/cart" element={ <ShoppingCart />} />
-
 								<Route path="/about" element={ <About />} />
+								{/* <Route path="/view-blog/:blogid" element={<ViewBlog blogPostList={blogPostList} />} /> */}
 
 								{/* Non-Authenticated Routes: accessible only if user in not authenticated */}
 								<Route element={<GuardedRoutes isRouteAccessible={!isAuth} redirectRoute={"/"} />}>
@@ -224,13 +208,6 @@ function App() {
 								{/* Authenticated & Admin Routes */}
 								<Route element={<GuardedRoutes isRouteAccessible={isAuth && isAdmin} redirectRoute={"/"} />}>
 									<Route path="/admin" element={<Admin />} />
-									<Route path="/blog-preview" element={<BlogPreview />} />
-									<Route path="/create-post" element={
-										<CreatePost createPostAlignment={createPostAlignment} />
-									} />
-									<Route path="/edit-post/:routeid" element={
-										<EditPost getCurrentPost={getCurrentPost} editPostAlignment={editPostAlignment} />
-									} />
 								</Route>
 
 								{/* Not found Route */}
