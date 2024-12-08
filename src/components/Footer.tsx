@@ -9,7 +9,6 @@ import { Link } from "react-router-dom";
 function Footer() {
     const {
         isAuth,
-        isAdmin,
     } = useAuth();
 
     return (

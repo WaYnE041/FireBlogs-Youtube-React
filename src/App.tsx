@@ -22,7 +22,7 @@ function App() {
 
 	const [displayLocation, setDisplayLocation] = useState(location);
 	const [transitionStage, setTransistionStage] = useState("fadeIn");
-	const [editPostEnabled, setEditPostEnabled] = useState<boolean>(false);
+	//const [editPostEnabled, setEditPostEnabled] = useState<boolean>(false);
 	const [blogPostList, setBlogPostList] = useState<{
 		blogID: string;
 		blogHTML: string;
@@ -87,7 +87,7 @@ function App() {
 						if (transitionStage === "fadeOut") {
 							//Scroll To Top when Route Changes and fadeout ends
 							window.scrollTo(0, 0);
-							setEditPostEnabled(false)
+							//setEditPostEnabled(false)
 
 							setTransistionStage("fadeIn");
 							setDisplayLocation(location);	
@@ -103,7 +103,7 @@ function App() {
 								<Route path="/"
 									element={
 										<Home>
-											<BlogCarousel welcomeScreen={false} />
+											<BlogCarousel />
 										</Home>
 									}
 								/>
