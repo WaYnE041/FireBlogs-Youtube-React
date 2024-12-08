@@ -29,14 +29,14 @@ function Home( { children }: { children: React.JSX.Element[] }) {
 			{ !isAuth && (<BlogPost posts={welcomeScreenPost} welcomeScreen={true} />) }
 			{ children[0] }
 
-			<div className="blog-card-wrap">
+			{/* <div className="blog-card-wrap">
 				<div className="container">
 					<h3>View More Recent Blogs</h3>
 					<div className="blog-cards">
 						{ children[1] }
 					</div>
 				</div>
-			</div>
+			</div> */}
 
 			{ !isAuth && (
 				<div className="updates">
