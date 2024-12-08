@@ -1,7 +1,7 @@
 import '../styles/BlogCarousel.css';
 import { useState, useEffect } from 'react';
 // import { ReactComponent as Arrow } from '../assets/Icons/arrow-right-light.svg';
-// import { useAuth } from '../contexts/UserContext';
+import { useAuth } from '../contexts/UserContext';
 import { Link } from "react-router-dom";
 // import parse from 'html-react-parser';
 
@@ -15,6 +15,7 @@ function BlogPost({ welcomeScreen }: {
 	// 	return new URL(`../assets/blogPhotos/${name}.webp`, import.meta.url).href;
 	// }
 
+	const [isLoading, setisLoading] = useState<boolean>(false);
 	const [prodList, setProdList] = useState<{
         active: boolean,
         description: string,
@@ -27,6 +28,9 @@ function BlogPost({ welcomeScreen }: {
 	useEffect(() => {
         displayProducts();
     }, []);
+
+	const { getCartInfo, setCartInfo, startCheckoutCart } = useAuth();
+
 
 	const displayProducts = async () => {
         try {
@@ -63,6 +67,18 @@ function BlogPost({ welcomeScreen }: {
         }
     }
 
+	const addToCart = async (ev: any) => {
+        ev.preventDefault();
+        setisLoading(true);
+        const formData = new FormData(ev.target);
+        const id = formData.get('priceId') as string;
+        const quantity = formData.get('quantity') as string;
+        id && quantity ? setCartInfo(id, parseInt(quantity)) : console.log("null or empty");
+        setTimeout(function () {
+            setisLoading(false);
+        }, 1000);
+    }
+
 	return (
 		<div className="carousel">
 			<div id="slider">
@@ -75,17 +91,24 @@ function BlogPost({ welcomeScreen }: {
 					return (
 						// key props needed
 						<>
-							{welcomeScreen ? <h2 key={index} id={"title" + (index+1)}>{post.name}</h2> : <h2 key={index} id={"title" + (index+1)}>{post.name}</h2>}
+							{/* {welcomeScreen ? <h2 key={index} id={"title" + (index+1)}>{post.name}</h2> : <h2 key={index} id={"title" + (index+1)}>{post.name}</h2>} */}
 						</>
 					)
 				})}
 				{prodList.slice(0, 5).map((post, index) => {
 					return (
-						<label key={index} htmlFor={"s" + (index+1)} id={"slide" + (index+1)}>
-							<img src={post.image} alt="Blog Cover Photo" />
-							<Link className="btn" to={`/cart`} >
-								Add To Cart
-							</Link>
+						<label className="carousel-label" key={index} htmlFor={"s" + (index+1)} id={"slide" + (index+1)}>
+						<h2 key={index} id={"title" + (index+1)}>{post.name}</h2>
+						<img src={post.image} alt="Blog Cover Photo" />
+						{/* <Link className="btn" to={`/cart`} >
+							Add To Cart
+						</Link> */}
+						<form onSubmit={addToCart}>
+							<label htmlFor="quantity">Quantity: </label>
+							<input type="number" id="quantity" name="quantity" min="1" max="20" required />
+							<input type="hidden" id="priceId" name="priceId" value={post.price_id} />
+							<button className="checkout" type="submit" disabled={isLoading}>{"Add To Cart"}</button>
+						</form>
 						</label>
 					)
 				})}
