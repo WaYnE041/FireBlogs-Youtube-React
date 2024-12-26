@@ -6,6 +6,7 @@ interface IContextProps {
     isAuth: boolean | undefined;
     isAdmin: boolean | undefined;
     getUser: () => User | null;
+
     getProfileInfo: () => {
         id: string | null;
         email: string | null;
@@ -15,14 +16,17 @@ interface IContextProps {
         initials: string | null;
     };
     setProfileInfo: (user: User) => Promise<void>;
+
     login: (email: string, password: string) => Promise<void>;
     logout: () => Promise<void>;
     register: (email: string, password: string) => Promise<UserCredential>;
-    getCartInfo: () => {
-        price: string,
-		quantity: number
-    }[];
+    
+    getStripeProducts: () =>  { active: boolean, description: string, image: string, name: string, price: number, price_id: string }[];
+    setStripeProducts: () => Promise<void>;
+
+    getCartInfo: () => { price: string, quantity: number }[];
     setCartInfo: (price: string, amount: number) => void;
+
     startCheckout: (id: string) => Promise<void>;
     startCheckoutCart: () => Promise<void>;
 }
@@ -48,6 +52,32 @@ export function UserContext({ children }: { children: React.ReactNode }) {
         price: string,
 		quantity: number
 	}[]>([]);
+    const [prodList, setProdList] = useState<{
+        // id: string,
+        // object: string,
+        active: boolean,
+        // created: number,
+        // default_price: string,
+        description: string,
+        image: string,
+        // marketing_features: [],
+        // livemode: boolean,
+        // metadata: {},
+        name: string,
+        // package_dimensions: {},
+        // shippable: boolean,
+        // statement_descriptor: string,
+        // tax_code: string,
+        // unit_label: string,
+        // updated: number,
+        // url: string
+        price: number,
+        price_id: string
+    }[]>([]);
+
+    useEffect(() => {
+        setStripeProducts();
+    }, []);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, user => {
@@ -157,6 +187,44 @@ export function UserContext({ children }: { children: React.ReactNode }) {
         } catch (error: any) {
             console.log(error);
             throw new Error(error);
+        }
+    }
+
+    const getStripeProducts = () => {
+        return prodList;
+    }
+    const setStripeProducts = async () => {
+        try {
+            const { db } = await import('../firebase/firebase-config');
+            const { collection, getDocs, query, where } = await import('firebase/firestore');
+
+            const postCollectionRef = collection(db, "products");
+            const dataQuery = query(postCollectionRef, where("active", "==", true));
+            const dbResult = await getDocs(dataQuery);
+
+            const currentListPromise = dbResult.docs.map(async (doc) => {
+                const pricesCollectionRef = collection(db, "products", doc.id, "prices");
+                const pricesQuery = await getDocs(pricesCollectionRef);
+
+                // assume there is only one price per product
+                const priceDoc = pricesQuery.docs[0];
+
+                return {
+                    name: doc.data().name,
+                    image: doc.data().images[0],
+                    description: doc.data().description,
+                    active: doc.data().active,
+                    price: priceDoc.data().unit_amount,
+                    price_id: priceDoc.id
+                }
+            })
+
+            const currentList = await Promise.all(currentListPromise);
+			// console.log(currentList);
+            setProdList(currentList);
+
+        } catch (error) {
+            console.log(error);
         }
     }
 
@@ -271,6 +339,8 @@ export function UserContext({ children }: { children: React.ReactNode }) {
         login,
         logout,
         register,
+        getStripeProducts,
+        setStripeProducts,
         getCartInfo,
         setCartInfo,
         startCheckout,

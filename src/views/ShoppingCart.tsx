@@ -4,28 +4,6 @@ import { useAuth } from '../contexts/UserContext';
 
 function ShoppingCart() {
     const [isLoading, setisLoading] = useState<boolean>(false);
-    const [prodList, setProdList] = useState<{
-        // id: string,
-        // object: string,
-        active: boolean,
-        // created: number,
-        // default_price: string,
-        description: string,
-        image: string,
-        // marketing_features: [],
-        // livemode: boolean,
-        // metadata: {},
-        name: string,
-        // package_dimensions: {},
-        // shippable: boolean,
-        // statement_descriptor: string,
-        // tax_code: string,
-        // unit_label: string,
-        // updated: number,
-        // url: string
-        price: number,
-        price_id: string
-    }[]>([]);
 
     useEffect(() => {
         document.title = "Catalog | DeadMarket";
@@ -34,45 +12,7 @@ function ShoppingCart() {
         };
     }, []);
 
-    useEffect(() => {
-        displayProducts();
-    }, []);
-
-    const { getCartInfo, setCartInfo, startCheckoutCart } = useAuth();
-
-    const displayProducts = async () => {
-        try {
-            const { db } = await import('../firebase/firebase-config');
-            const { collection, getDocs, query, where } = await import('firebase/firestore');
-
-            const postCollectionRef = collection(db, "products");
-            const dataQuery = query(postCollectionRef, where("active", "==", true));
-            const dbResult = await getDocs(dataQuery);
-
-            const currentListPromise = dbResult.docs.map(async (doc) => {
-                const pricesCollectionRef = collection(db, "products", doc.id, "prices");
-                const pricesQuery = await getDocs(pricesCollectionRef);
-
-                // assume there is only one price per product
-                const priceDoc = pricesQuery.docs[0];
-
-                return {
-                    name: doc.data().name,
-                    image: doc.data().images[0],
-                    description: doc.data().description,
-                    active: doc.data().active,
-                    price: priceDoc.data().unit_amount,
-                    price_id: priceDoc.id
-                }
-            })
-
-            const currentList = await Promise.all(currentListPromise);
-            setProdList(currentList);
-
-        } catch (error) {
-            console.log(error);
-        }
-    }
+    const { getStripeProducts, getCartInfo, setCartInfo, startCheckoutCart } = useAuth();
 
     const addToCart = async (ev: any) => {
         ev.preventDefault();
@@ -105,7 +45,7 @@ function ShoppingCart() {
              </div>
             
             <div className="container blog-cards">
-                {prodList.map((item, index) => {
+                {getStripeProducts().map((item, index) => {
                     return (
                         <div key={index} className='blog-card'>
                             <img src={item.image} alt="Blog Cover Photo" />

@@ -1,68 +1,14 @@
 import '../styles/BlogCarousel.css';
-import { useState, useEffect } from 'react';
-// import { ReactComponent as Arrow } from '../assets/Icons/arrow-right-light.svg';
+import { useState } from 'react';
 import { useAuth } from '../contexts/UserContext';
+// import { ReactComponent as Arrow } from '../assets/Icons/arrow-right-light.svg';
 // import parse from 'html-react-parser';
 
 function BlogPost() {
-	
-	// const { isAuth } = useAuth();
-
-	// const getImageUrl = (name: string) => {
-	// 	return new URL(`../assets/blogPhotos/${name}.webp`, import.meta.url).href;
-	// }
 
 	const [isLoading, setisLoading] = useState<boolean>(false);
-	const [prodList, setProdList] = useState<{
-        active: boolean,
-        description: string,
-        image: string,
-        name: string,
-        price: number,
-        price_id: string
-    }[]>([]);
-
-	useEffect(() => {
-        displayProducts();
-    }, []);
-
-	const { setCartInfo } = useAuth();
-
-
-	const displayProducts = async () => {
-        try {
-            const { db } = await import('../firebase/firebase-config');
-            const { collection, getDocs, query, where } = await import('firebase/firestore');
-
-            const postCollectionRef = collection(db, "products");
-            const dataQuery = query(postCollectionRef, where("active", "==", true));
-            const dbResult = await getDocs(dataQuery);
-
-            const currentListPromise = dbResult.docs.map(async (doc) => {
-                const pricesCollectionRef = collection(db, "products", doc.id, "prices");
-                const pricesQuery = await getDocs(pricesCollectionRef);
-
-                // assume there is only one price per product
-                const priceDoc = pricesQuery.docs[0];
-
-                return {
-                    name: doc.data().name,
-                    image: doc.data().images[0],
-                    description: doc.data().description,
-                    active: doc.data().active,
-                    price: priceDoc.data().unit_amount,
-                    price_id: priceDoc.id
-                }
-            })
-
-            const currentList = await Promise.all(currentListPromise);
-			console.log(currentList);
-            setProdList(currentList);
-
-        } catch (error) {
-            console.log(error);
-        }
-    }
+	
+	const { getStripeProducts, setCartInfo } = useAuth();
 
 	const addToCart = async (ev: any) => {
         ev.preventDefault();
@@ -79,13 +25,13 @@ function BlogPost() {
 	return (
 		<div className="carousel">
 			<div id="slider">
-				{prodList.slice(0, 5).map((_item, index) => {
+				{getStripeProducts().slice(0, 5).map((_item, index) => {
 					return (
 						<input key={index} type="radio" name="slider" id={"s" + (index + 1)}></input>
 					)
 				})}
 				
-				{prodList.slice(0, 4).map((item, index) => {
+				{getStripeProducts().slice(0, 4).map((item, index) => {
 					return (
 						<label className="carousel-label" key={index} htmlFor={"s" + (index+1)} id={"slide" + (index+1)}>
 						<h2 key={index} id={"title" + (index+1)}>{item.name}</h2>
