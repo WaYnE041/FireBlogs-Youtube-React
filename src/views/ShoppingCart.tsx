@@ -6,9 +6,9 @@ function ShoppingCart() {
     const [isLoading, setisLoading] = useState<boolean>(false);
 
     useEffect(() => {
-        document.title = "Catalog | DeadMarket";
+        document.title = "Catalog | Market";
         return () => {
-            document.title = "DeadMarket";
+            document.title = "Market";
         };
     }, []);
 

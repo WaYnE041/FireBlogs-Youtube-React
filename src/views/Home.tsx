@@ -8,9 +8,9 @@ import { Link } from "react-router-dom";
 function Home( { children }: { children: React.JSX.Element }) {
 
 	useEffect(() => {
-		document.title = "Home | DeadMarket";
+		document.title = "Home | Market";
 		return () => {
-			document.title = "DeadMarket";
+			document.title = "Market";
 		};
 	}, []);
 

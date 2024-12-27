@@ -9,9 +9,9 @@ function Profile() {
 	const [modalMessage, setModalMessage] = useState<string>();
 
 	useEffect(() => {
-        document.title = "Profile | DeadMarket";
+        document.title = "Profile | Market";
         return () => {
-            document.title = "DeadMarket";
+            document.title = "Market";
         };
     }, []);
 

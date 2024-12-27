@@ -12,9 +12,9 @@ function ForgotPassword() {
     const [modalMessage, setModalMessage] = useState<string>();
 
     useEffect(() => {
-        document.title = "Forgot Password | DeadMarket";
+        document.title = "Forgot Password | Market";
         return () => {
-            document.title = "DeadMarket";
+            document.title = "Market";
         };
     }, []);
 

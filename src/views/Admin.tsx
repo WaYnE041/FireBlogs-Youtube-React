@@ -6,9 +6,9 @@ function Admin() {
 	const [message, setMessage] = useState<string>("");
 
 	useEffect(() => {
-        document.title = "Admin | DeadMarket";
+        document.title = "Admin | Market";
         return () => {
-            document.title = "DeadMarket";
+            document.title = "Market";
         };
     }, []);
 	

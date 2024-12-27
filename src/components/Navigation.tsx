@@ -71,7 +71,7 @@ function Navigation() {
         <header className='header'>
             <nav className="container">
                 <div className="branding">
-                    <Link className="header" to="/">Dead:Market</Link>         
+                    <Link className="header" to="/">Market</Link>         
                 </div>
                 
                 <div className="nav-links">

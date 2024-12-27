@@ -16,7 +16,7 @@ function Footer() {
             <div className="container">
                 <div className="left">
                     <div className="col-1">
-                        <Link className="header" to="/">Dead:Market</Link>
+                        <Link className="header" to="/">Market</Link>
                         <ul>
                             <li>
                                 <a href="https://www.youtube.com/" aria-label="Link to Youtube"><Youtube className="svg-icon" /></a>

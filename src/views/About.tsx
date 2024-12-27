@@ -4,9 +4,9 @@ import { useEffect } from 'react';
 function About() {
 
     useEffect(() => {
-        document.title = "About | DeadMarket";
+        document.title = "About | Market";
         return () => {
-            document.title = "DeadMarket";
+            document.title = "Market";
         };
     }, []);
 

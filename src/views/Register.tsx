@@ -16,9 +16,9 @@ function Register() {
     const [password, setPassword] = useState<string>();
 
     useEffect(() => {
-        document.title = "Register | DeadMarket";
+        document.title = "Register | Market";
         return () => {
-            document.title = "DeadMarket";
+            document.title = "Market";
         };
     }, []);
 
