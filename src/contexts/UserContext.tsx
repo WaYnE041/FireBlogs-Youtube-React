@@ -18,6 +18,7 @@ interface IContextProps {
     setProfileInfo: (user: User) => Promise<void>;
 
     login: (email: string, password: string) => Promise<void>;
+    loginGoogle: () => Promise<UserCredential>;
     logout: () => Promise<void>;
     register: (email: string, password: string) => Promise<UserCredential>;
     
@@ -178,6 +179,20 @@ export function UserContext({ children }: { children: React.ReactNode }) {
         }
     }
 
+    const loginGoogle  = async () => {
+        const { signInWithPopup, GoogleAuthProvider } = await import("firebase/auth");
+        try {
+            const provider = new GoogleAuthProvider();
+            const userCred =  await signInWithPopup(auth, provider);
+            return userCred;
+
+        } catch(error: any) {
+            const errorMessage = error.message;
+            console.log(errorMessage);
+            throw new Error(errorMessage);
+        };
+    }
+
     const logout = async () => {
         try {
             const { signOut } = await import("firebase/auth");
@@ -197,20 +212,6 @@ export function UserContext({ children }: { children: React.ReactNode }) {
             console.log(error);
             throw new Error(error);
         }
-    }
-
-    const loginGoogle  = async () => {
-        const { signInWithPopup, GoogleAuthProvider } = await import("firebase/auth");
-        try {
-            const provider = new GoogleAuthProvider();
-            const userCred =  await signInWithPopup(auth, provider);
-            return userCred;
-
-        } catch(error: any) {
-            const errorMessage = error.message;
-            console.log(errorMessage);
-            throw new Error(errorMessage);
-        };
     }
 
     const getStripeProducts = () => {
@@ -401,6 +402,7 @@ export function UserContext({ children }: { children: React.ReactNode }) {
         getProfileInfo,
         setProfileInfo,
         login,
+        loginGoogle,
         logout,
         register,
         getStripeProducts,

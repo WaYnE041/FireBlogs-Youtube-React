@@ -12,13 +12,13 @@ function Login() {
     const [errorMessage, setErrorMessage] = useState<string>();
 
     useEffect(() => {
-        document.title = "Login | DeadMarket";
+        document.title = "Login | Market";
         return () => {
-            document.title = "DeadMarket";
+            document.title = "Market";
         };
     }, []);
 
-    const { login } = useAuth();
+    const { login, loginGoogle} = useAuth();
     const navigate = useNavigate();
 
     const signIn = async (ev: any) => {
@@ -34,36 +34,65 @@ function Login() {
             try {
                 await login(email, password);
                 navigate("/");
-            } catch (error:any) {
+            } catch (error: any) {
                 setErrorMessage(`${error.code}: ${error.message}`);
                 setisError(true);
             }
         }
     }
 
+    const signInGoogle = async () => {
+            
+        try {
+            const userCred = await loginGoogle();
+            console.log(userCred.user?.providerData[0].email)
+
+            const gmail = userCred.user?.providerData[0].email;
+            const displayName = userCred.user?.providerData[0].displayName;
+            const { doc, setDoc } = await import('firebase/firestore');
+            const { db } = await import('../firebase/firebase-config');
+
+            const userCollectionRef = doc(db, "users", userCred.user.uid);
+            await setDoc(userCollectionRef, {
+                firstName: "firstName",
+                lastName: "lastName",
+                userName: displayName,
+                email: gmail
+            });
+            navigate("/");
+        } catch (error: any) {
+            setErrorMessage(`${error.code}: ${error.message}`);
+            setisError(true);
+        }
+    } 
+
     return (
         <div className="form-wrap">
-            <form className="login" onSubmit={signIn}>
-                <p className="login-register">
-                    Don't have an account?
-                    <Link className="router-link" to="/register">Register</Link>
-                </p>
-                <h2>Login to Dead:Market</h2>
-                <div className="inputs">
-                    <div className="input">
-                        <input type="text" name="email" placeholder="Email" onChange={(e) => {setEmail(e.target.value)}} />
-                        <Email className="icon" />
+            <div className="login">
+                <form onSubmit={signIn}>
+                    <p className="login-register">
+                        Don't have an account?
+                        <Link className="router-link" to="/register">Register</Link>
+                    </p>
+                    <h2>Login to Market</h2>
+                    <div className="inputs">
+                        <div className="input">
+                            <input type="text" name="email" placeholder="Email" onChange={(e) => { setEmail(e.target.value) }} />
+                            <Email className="icon" />
+                        </div>
+                        <div className="input">
+                            <input type="password" name="password" placeholder="Password" onChange={(e) => { setPassword(e.target.value) }} />
+                            <Password className="icon" />
+                        </div>
+                        {isError && <div className="error">{errorMessage}</div>}
                     </div>
-                    <div className="input">
-                        <input type="password" name="password" placeholder="Password" onChange={(e) => {setPassword(e.target.value)}} />
-                        <Password className="icon" />
-                    </div>
-                    { isError && <div className="error">{ errorMessage }</div> }
-                </div>
-                <Link className="forgot-password" to="/forgot-password">Forgot Your Password?</Link>
-                <button type="submit">Sign In</button>
-                <div className="angle"></div>
-            </form>
+                    <Link className="forgot-password" to="/forgot-password">Forgot Your Password?</Link>
+                    <button type="submit">Sign In</button>
+
+                    <div className="angle"></div>
+                </form>
+                <button onClick={() => signInGoogle()}>Sign In with Google</button>
+            </div>
             <div className="background"></div>
         </div>
     )
