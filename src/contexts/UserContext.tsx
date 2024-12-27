@@ -25,7 +25,8 @@ interface IContextProps {
     setStripeProducts: () => Promise<void>;
 
     getCartInfo: () => { price: string, quantity: number }[];
-    setCartInfo: (price: string, amount: number) => void;
+    setCartInfo: (price: string, amount: number) => Promise<void>;
+    clearCartInfo: () => Promise<void>;
 
     startCheckout: (id: string) => Promise<void>;
     startCheckoutCart: () => Promise<void>;
@@ -146,6 +147,14 @@ export function UserContext({ children }: { children: React.ReactNode }) {
                     userName: docSnap.data().userName,
                     initials: docSnap.data().firstName.match(/(\b\S)?/g).join("") + docSnap.data().lastName.match(/(\b\S)?/g).join("")
                 });
+                
+                const importedCart: 
+                        { 
+                            price: string, 
+                            quantity: number
+                        }[]  = docSnap.data().cart ? docSnap.data().cart : []
+                setCart(importedCart);
+                
                 setAuthUser(true);
                 const newAdminUser = await setAdmin(user)
                 setAdminUser(newAdminUser);
@@ -190,6 +199,20 @@ export function UserContext({ children }: { children: React.ReactNode }) {
         }
     }
 
+    const loginGoogle  = async () => {
+        const { signInWithPopup, GoogleAuthProvider } = await import("firebase/auth");
+        try {
+            const provider = new GoogleAuthProvider();
+            const userCred =  await signInWithPopup(auth, provider);
+            return userCred;
+
+        } catch(error: any) {
+            const errorMessage = error.message;
+            console.log(errorMessage);
+            throw new Error(errorMessage);
+        };
+    }
+
     const getStripeProducts = () => {
         return prodList;
     }
@@ -229,17 +252,58 @@ export function UserContext({ children }: { children: React.ReactNode }) {
     }
 
     const getCartInfo = () => {
+        // console.log(cart);
         return cart;
     }
 
-    const setCartInfo = (price: string, amount: number) => {
-        setCart(current => [
-			{
-                price: price,
-                quantity: amount
-			},
-			...current
-		]);
+    const setCartInfo = async (price: string, amount: number) => {
+        try {
+            const { doc, updateDoc } = await import('firebase/firestore');
+            const { db } = await import('../firebase/firebase-config');
+
+            const user = getUser();
+            if( user ){
+                const userCollectionRef = doc(db, "users", user.uid);             
+                await updateDoc(userCollectionRef, { 
+                    cart: [{
+                        price: price,
+                        quantity: amount
+                    },
+                    ...cart]
+                });
+                
+            }
+            setCart(current => [
+                {
+                    price: price,
+                    quantity: amount
+                },
+                ...current
+            ]);
+            
+           } catch (error: any) {
+                console.log(error);
+           } 
+    }
+
+    const clearCartInfo = async () => {
+        try {
+            const { doc, updateDoc } = await import('firebase/firestore');
+            const { db } = await import('../firebase/firebase-config');
+
+            const user = getUser();
+            if( user ){
+                const userCollectionRef = doc(db, "users", user.uid);             
+                await updateDoc(userCollectionRef, { 
+                    cart: []
+                });
+                
+            }
+            setCart([]);
+            
+           } catch (error: any) {
+                console.log(error);
+           } 
     }
 
     const startCheckout = async (id: string) => {
@@ -343,6 +407,7 @@ export function UserContext({ children }: { children: React.ReactNode }) {
         setStripeProducts,
         getCartInfo,
         setCartInfo,
+        clearCartInfo,
         startCheckout,
         startCheckoutCart
     };

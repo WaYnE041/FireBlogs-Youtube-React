@@ -12,7 +12,7 @@ function ShoppingCart() {
         };
     }, []);
 
-    const { getStripeProducts, getCartInfo, setCartInfo, startCheckoutCart } = useAuth();
+    const { getUser, getStripeProducts, getCartInfo, setCartInfo, startCheckoutCart } = useAuth();
 
     const addToCart = async (ev: any) => {
         ev.preventDefault();
@@ -36,11 +36,31 @@ function ShoppingCart() {
         }
     }
 
+    const clearCart = async () => {
+         try {
+                const { doc, updateDoc } = await import('firebase/firestore');
+			    const { db } = await import('../firebase/firebase-config');
+
+                const user = getUser();
+                if( user ){
+                    const userCollectionRef = doc(db, "users", user.uid);
+                    await updateDoc(userCollectionRef, { 
+                        cart: []
+                    });
+                }
+                
+        } catch (error: any) {
+        }
+    } 
+
     return (
         <div className="blog-card-wrap">
              <div className="container">
             <button className="checkout" onClick={() => checkOut()} disabled={isLoading}>
                 {isLoading ? "Loading" : "Checkout Cart"}
+            </button>
+            <button className="checkout" onClick={() => clearCart()}>
+                Clear Cart
             </button>
              </div>
             
