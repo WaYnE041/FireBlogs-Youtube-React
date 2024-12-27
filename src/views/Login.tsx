@@ -45,20 +45,30 @@ function Login() {
             
         try {
             const userCred = await loginGoogle();
-            console.log(userCred.user?.providerData[0].email)
 
             const gmail = userCred.user?.providerData[0].email;
             const displayName = userCred.user?.providerData[0].displayName;
-            const { doc, setDoc } = await import('firebase/firestore');
-            const { db } = await import('../firebase/firebase-config');
+            if (gmail) {
+                const { doc, setDoc, getDoc } = await import('firebase/firestore');
+                const { db } = await import('../firebase/firebase-config');
 
-            const userCollectionRef = doc(db, "users", userCred.user.uid);
-            await setDoc(userCollectionRef, {
-                firstName: "firstName",
-                lastName: "lastName",
-                userName: displayName,
-                email: gmail
-            });
+                const userCollectionRef = doc(db, "users", userCred.user.uid);
+
+                const docSnap = await getDoc(userCollectionRef);
+
+                if (!docSnap.exists()) {
+                    console.log("user doesnt exist, creating new one!");
+                    await setDoc(userCollectionRef, {
+                        firstName: "firstName",
+                        lastName: "lastName",
+                        userName: displayName,
+                        email: gmail,
+                    });
+                }
+                else {
+                    console.log("user exists!");
+                }
+            }
             navigate("/");
         } catch (error: any) {
             setErrorMessage(`${error.code}: ${error.message}`);

@@ -35,7 +35,6 @@ function Navigation() {
 
     const checkScreen = () => {
         //setWindowWidth(window.innerWidth);
-        console.log("hi");
         if (window.innerWidth <= 1024) {
             setMobileView(true);
         } else {
@@ -77,13 +76,15 @@ function Navigation() {
                 <div className="nav-links">
                 {!mobileView && (
                         <>
-                            <a className="link" onClick={() => checkOut()}>
-                                <div className='branding'>
-                                    {isLoading && (<Loading/> )}
-                                    <CartIcon/>
-                                    <div className="badge">{getCartInfo().length}</div>
-                                </div>
-                            </a>
+                            {isAuth && (
+                                <a className="link" onClick={() => checkOut()}>
+                                    <div className='branding'>
+                                        {isLoading && (<Loading/> )}
+                                        <CartIcon/>
+                                        <div className="badge">{getCartInfo().length}</div>
+                                    </div>
+                                </a>
+                            )}
                             <Link className="link desktop-link" to="/">Home</Link>
                             <Link className="link desktop-link" to="/cart">Catalog</Link>
                             <Link className="link desktop-link" to="/about">About</Link>
