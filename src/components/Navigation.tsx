@@ -87,7 +87,8 @@ function Navigation() {
                             <Link className="link desktop-link" to="/">Home</Link>
                             <Link className="link desktop-link" to="/cart">Catalog</Link>
                             <Link className="link desktop-link" to="/about">About</Link>
-                            {!isAuth && (<Link className="link desktop-link" to="/login">Login/Register</Link>)}
+                {!isAuth && (<Link className="link desktop-link" to="/login">Login/Register</Link>)}
+                {isAuth && (<a className="link" onClick={signUserOut}>Logout</a>)}
                             
                         </>
                     )}
@@ -105,7 +106,7 @@ function Navigation() {
                                         <p>{getProfileInfo().email}</p>
                                     </div>
                                 </div>
-                                <div className="options">
+                                {/* <div className="options">
                                     <Link className="option" to="/profile">
                                         <div className="option">
                                             <UserIcon className="icon" />
@@ -124,7 +125,7 @@ function Navigation() {
                                         <SignOutIcon className="icon" />
                                         <p>Sign Out</p>
                                     </div>
-                                </div>
+                                </div> */}
                             </div>
                         )}
                     </div>
@@ -139,7 +140,10 @@ function Navigation() {
                 <a className="link" onClick={() => checkOut()}>Checkout</a>
                 <Link className="link" to="/cart">Catalog</Link>
                 <Link className="link" to="/about">About</Link>
+                <Link className="link" to="/profile">Profile</Link>
+                {isAdmin && (<Link className="link" to="/admin">Admin</Link>)}
                 {!isAuth && (<Link className="link" to="/login">Login/Register</Link>)}
+                {isAuth && (<a className="link" onClick={signUserOut}>Logout</a>)}
             </ul>
         </header>
     )
