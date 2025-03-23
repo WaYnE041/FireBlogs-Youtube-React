@@ -1,5 +1,5 @@
 import '../styles/Profile.css';
-import Modal from '../archive/Modal';
+import Modal from '../components/Modal';
 import { useAuth } from '../contexts/UserContext';
 import { useState, useEffect } from 'react'
 import { ReactComponent as SignOutIcon } from '../assets/Icons/sign-out-alt-regular.svg';
