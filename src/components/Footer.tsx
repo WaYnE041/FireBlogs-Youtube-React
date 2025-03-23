@@ -36,13 +36,14 @@ function Footer() {
                         <ul>
                             <Link className="link" to="/">Home</Link>
                             <Link className="link" to="/cart">Catalog</Link>
-                            <Link className="link" to="/about">About</Link>
+                            <Link className="link" to="/about">About Us</Link>
+                            <Link className="link" to="/profile">Profile</Link>
                             {!isAuth && (<Link className="link" to="/login">Login In / Register</Link>)}
                         </ul>
                     </div>
                 </div>
                 <div className="right">
-                    <p>Copyright 2023 All Rights Reserved</p>
+                    <p>Copyright 2025 All Rights Reserved</p>
                 </div>
             </div>
         </footer>

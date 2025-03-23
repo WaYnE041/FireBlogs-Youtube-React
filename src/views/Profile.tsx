@@ -1,8 +1,8 @@
 import '../styles/Profile.css';
-import { ReactComponent as AdminIcon } from '../assets/Icons/user-crown-light.svg';
 import Modal from '../components/Modal';
 import { useAuth } from '../contexts/UserContext';
 import { useState, useEffect } from 'react'
+import { ReactComponent as SignOutIcon } from '../assets/Icons/sign-out-alt-regular.svg';
 
 function Profile() {
 	const [modalActive, setModalActive] = useState<boolean>(false);
@@ -15,12 +15,16 @@ function Profile() {
         };
     }, []);
 
-	const { isAdmin, getUser, getProfileInfo, setProfileInfo } = useAuth();
+	const { getUser, getProfileInfo, setProfileInfo, logout, } = useAuth();
 	const profileInfo = getProfileInfo();
 
 	const toggleModal = (value: boolean) => {
 		setModalActive(value);
 	}
+
+	const signUserOut = async () => {
+        await logout();
+    }
 
 	const updateProfile = async (e: any) => {
 		e.preventDefault();
@@ -72,7 +76,6 @@ function Profile() {
 		setModalActive(true);
 	}
 
-
 	return (
 		<>
 			{ modalActive && <Modal modalMessage={modalMessage || ""} toggleModal={toggleModal} /> }
@@ -80,12 +83,9 @@ function Profile() {
 				<h2>Account Settings</h2>
 				<div className="profile-info">
 					<div className="initials">{getProfileInfo().initials}</div>
-					{ isAdmin && 
-						<div className="admin-badge">
-							<AdminIcon className="icon" />
-							<span>admin</span>
-						</div>
-					}
+					<button className="sign-out-btn"  onClick={signUserOut}>
+						<SignOutIcon className="icon" />Logout
+					</button>
 					<form onSubmit={updateProfile}>
 						<div className="input">
 							<label htmlFor="firstName">First Name:</label>
