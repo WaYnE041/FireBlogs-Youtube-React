@@ -65,7 +65,7 @@ button,
 	}
 
 	&:disabled,
-	&[disabled]{
+	&[disabled] {
 		background-color: rgba(16, 15, 15, 0.5);
 	}
 }
@@ -109,30 +109,35 @@ button,
 
 .fadeIn {
 	animation: 0.5s fadeIn forwards;
-  }
-  
-  .fadeOut {
+}
+
+.fadeOut {
 	animation: 0.5s fadeOut forwards;
-  }
-  
-  @keyframes fadeIn {
-	0%,50% {
-	  opacity: 0;
-	  transform: translate(-20px, 0);
+}
+
+@keyframes fadeIn {
+
+	0%,
+	50% {
+		opacity: 0;
+		transform: translate(-20px, 0);
 	}
+
 	100% {
-	  opacity: 1;
-	  transform: translate(0px, 0px);
+		opacity: 1;
+		transform: translate(0px, 0px);
 	}
-  }
-  
-  @keyframes fadeOut {
+}
+
+@keyframes fadeOut {
 	0% {
-	  opacity: 1;
-	  transform: translate(0px, 0px);
+		opacity: 1;
+		transform: translate(0px, 0px);
 	}
-	50%, 100% {
-	  transform: translate(-20px, 0);
-	  opacity: 0;
+
+	50%,
+	100% {
+		transform: translate(-20px, 0);
+		opacity: 0;
 	}
-  }
+}

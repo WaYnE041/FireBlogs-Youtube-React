@@ -5,14 +5,11 @@ import { ReactComponent as Loading } from '../assets/Icons/shopping-cart-loading
 import { useAuth } from '../contexts/UserContext';
 import { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
-import { ReactComponent as UserIcon } from '../assets/Icons/user-alt-light.svg';
-
 
 function Navigation() {
     const [isLoading, setisLoading] = useState<boolean>(false);
     const [mobileView, setMobileView] = useState<boolean>(false);
     const [mobileNav, setMobileNav] = useState<boolean>(false);
-    //const [windowWidth, setWindowWidth] = useState(0);
 
     useEffect(() => {
         checkScreen();
@@ -31,7 +28,6 @@ function Navigation() {
     } = useAuth();
 
     const checkScreen = () => {
-        //setWindowWidth(window.innerWidth);
         if (window.innerWidth <= 1024) {
             setMobileView(true);
         } else {

@@ -1,6 +1,6 @@
 import '../styles/Login.css';
 import { ReactComponent as Email } from '../assets/Icons/envelope-regular.svg';
-import Modal from '../components/Modal';
+import Modal from '../archive/Modal';
 import Loading from '../components/Loading';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
