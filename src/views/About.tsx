@@ -11,7 +11,7 @@ function About() {
     }, []);
 
     return (
-        <div className="wrapper">
+        <div className="about-wrapper">
             <div className="about-container">
                 <div className="about-profile">
                     <h1 id="text14"><strong>ABOUT ME</strong></h1>

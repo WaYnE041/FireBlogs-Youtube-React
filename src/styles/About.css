@@ -10,13 +10,13 @@
     }
 }
 
-.wrapper {
+.about-wrapper {
     margin-top: 100px;
     padding: 2rem 4rem;
 }
 
 @media screen and (max-width: 640px) {
-    .wrapper {
+    .about-wrapper {
         padding: 0rem;
     }
 }
