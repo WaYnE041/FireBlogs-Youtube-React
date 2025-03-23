@@ -11,7 +11,7 @@ function Home( { children }: { children: React.JSX.Element }) {
 	}, []);
 
 	return (
-		<div className='home'>
+		<div>
 			{ children }
 		</div>
 	)
