@@ -54,7 +54,7 @@ function ShoppingCart() {
     } 
 
     return (
-        <div className="blog-card-wrap">
+        <div className="cart-wrap">
              <div className="container">
             <button className="checkout" onClick={() => checkOut()} disabled={isLoading}>
                 {isLoading ? "Loading" : "Checkout Cart"}
