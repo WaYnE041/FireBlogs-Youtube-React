@@ -4,7 +4,7 @@ import { useAuth } from '../contexts/UserContext';
 // import { ReactComponent as Arrow } from '../assets/Icons/arrow-right-light.svg';
 // import parse from 'html-react-parser';
 
-function BlogPost() {
+function BlogCarousel() {
 
 	const [isLoading, setisLoading] = useState<boolean>(false);
 	
@@ -60,4 +60,4 @@ function BlogPost() {
 	)
 }
 
-export default BlogPost;
+export default BlogCarousel;
