@@ -10,6 +10,7 @@ header {
         padding: 0 8px;
         transition: 0.3s color ease;
         margin-right: 32px;
+        color: black;
 
         &:hover {
             color: #1eb8b8;
