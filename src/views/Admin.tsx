@@ -31,16 +31,14 @@ function Admin() {
 
 	return (
 		<div className="admin">
-			<div className="container">
-				<h2>Administration</h2>
-				<div className="admin-info">
-					<h2>Add Admin</h2>
-					<div className="input">
-						<input placeholder="Enter user email to make them an admin" type="text" id="addAdmins" onChange={e => setAdminEmail(e.target.value)} />
-					</div>
-					<span>{message}</span>
-					<button onClick={addAdmin} className="button">Submit</button>
+			<h2>Administration</h2>
+			<div className="admin-info">
+				<h2>Add Admin</h2>
+				<div className="input">
+					<input placeholder="Enter user email to make them an admin" type="text" id="addAdmins" onChange={e => setAdminEmail(e.target.value)} />
 				</div>
+				<span>{message}</span>
+				<button onClick={addAdmin} className="button">Submit</button>
 			</div>
 		</div>
 	)

@@ -12,7 +12,7 @@ function About() {
 
     return (
         <div className="about-wrapper">
-            <div className="about-container">
+            <div className="container">
                 <div className="about-profile">
                     <h1 id="text14"><strong>ABOUT ME</strong></h1>
                     <img className="profile-img" src="https://placehold.co/400x400" />
